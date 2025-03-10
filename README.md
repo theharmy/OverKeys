@@ -103,6 +103,7 @@ This project was initially developed to help with system-wide practice of the **
   - Colemak DH
   - Colemak DH Matrix
   - Engram
+  - Focal
   - Gallium (Col-Stag)
   - Gallium V2 (Row-Stag)
   - Graphite

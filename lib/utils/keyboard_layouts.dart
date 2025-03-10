@@ -195,6 +195,16 @@ const handsDown = KeyboardLayout(
   ]
 );
 
+const focal = KeyboardLayout(
+  name: 'Focal',
+  keys: [
+    ['V', 'L', 'H', 'G', 'K', 'Q', 'F', 'O', 'U', 'J', '[', ']'],
+    ['S', 'R', 'N', 'T', 'B', 'Y', 'C', 'A', 'E', 'I', '/'],
+    ['Z', 'X', 'M', 'D', 'P', "'", 'W', '.', ';', ','],
+    [' '],
+  ],
+);
+
 final List<KeyboardLayout> availableLayouts = [
   qwerty,
   colemak,
@@ -205,6 +215,7 @@ final List<KeyboardLayout> availableLayouts = [
   colemakdh,
   colemakdhMatrix,
   engram,
+  focal,
   gallium,
   galliumV2,
   graphite,
