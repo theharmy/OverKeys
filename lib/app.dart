@@ -273,6 +273,19 @@ class _MainAppState extends State<MainApp> with TrayListener {
               _handleDisable();
             }
           });
+        case 'updateAutoHideEnabled':
+          final autoHideEnabled = call.arguments as bool;
+          setState(() {
+            _autoHideEnabled = autoHideEnabled;
+            if (_autoHideEnabled) {
+              _resetAutoHideTimer();
+            } else {
+              _autoHideTimer?.cancel();
+              if (!_isWindowVisible) {
+                _fadeIn();
+              }
+            }
+          });
         default:
           throw UnimplementedError('Unimplemented method ${call.method}');
       }
