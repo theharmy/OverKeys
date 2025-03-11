@@ -99,6 +99,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
     double spaceFontSize = await asyncPrefs.getDouble('spaceFontSize') ?? 14;
     FontWeight fontWeight = FontWeight
         .values[await asyncPrefs.getInt('fontWeight') ?? FontWeight.w600.index];
+        .values[await asyncPrefs.getInt('fontWeight') ?? FontWeight.w500.index];
     Color keyTextColor =
         Color(await asyncPrefs.getInt('keyTextColor') ?? 0xFFFFFFFF);
     Color keyTextColorNotPressed =
