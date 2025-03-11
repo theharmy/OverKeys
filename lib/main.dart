@@ -30,6 +30,7 @@ void main(List<String> args) async {
         await windowManager.setTitle("Preferences");
         await windowManager.setIcon("assets/images/app_icon.ico");
         await windowManager.center();
+        await windowManager.setMinimumSize(const Size(828, 621));
         await windowManager.show();
         await windowManager.focus();
       });
