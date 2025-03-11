@@ -776,8 +776,6 @@ class _PreferencesScreenState extends State<PreferencesScreen>
               width: 44,
               height: 44,
               borderRadius: 11,
-              borderColor: colorScheme.onSurface,
-              hasBorder: true,
               color: currentColor,
               onSelectFocus: false,
               onSelect: () async {
