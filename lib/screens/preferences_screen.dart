@@ -98,7 +98,6 @@ class _PreferencesScreenState extends State<PreferencesScreen>
     double keyFontSize = await asyncPrefs.getDouble('keyFontSize') ?? 20;
     double spaceFontSize = await asyncPrefs.getDouble('spaceFontSize') ?? 14;
     FontWeight fontWeight = FontWeight
-        .values[await asyncPrefs.getInt('fontWeight') ?? FontWeight.w600.index];
         .values[await asyncPrefs.getInt('fontWeight') ?? FontWeight.w500.index];
     Color keyTextColor =
         Color(await asyncPrefs.getInt('keyTextColor') ?? 0xFFFFFFFF);
@@ -736,7 +735,28 @@ class _PreferencesScreenState extends State<PreferencesScreen>
                 ? valueDisplayFormatter(value)
                 : value.toStringAsFixed(2),
             max: max,
-            onChanged: onChanged,
+            onChanged: (value) {
+              final Map<String, Function(double)> updates = {
+                'Font size': (v) => _keyFontSize = v,
+                'Space font size': (v) => _spaceFontSize = v,
+                'Key size': (v) => _keySize = v,
+                'Key border radius': (v) => _keyBorderRadius = v,
+                'Key padding': (v) => _keyPadding = v,
+                'Space width': (v) => _spaceWidth = v,
+                'Split width': (v) => _splitWidth = v,
+                'Opacity': (v) => _opacity = v,
+                'Auto-hide duration (seconds)': (v) =>
+                    _autoHideDuration = (v * 2).round() / 2,
+                'Marker offset': (v) => _markerOffset = v,
+                'Marker width': (v) => _markerWidth = v,
+                'Marker height': (v) => _markerHeight = v,
+                'Marker border radius': (v) => _markerBorderRadius = v,
+              };
+              setState(() {
+                updates[label]?.call(value);
+              });
+            },
+            onChangeEnd: onChanged,
             activeColor: colorScheme.primary,
             inactiveColor: colorScheme.outline,
           ),
