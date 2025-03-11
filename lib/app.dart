@@ -435,8 +435,8 @@ class _MainAppState extends State<MainApp> with TrayListener {
         for (final id in windowIds) {
           WindowController.fromWindowId(id).close();
         }
-        windowManager.close();
       });
+      windowManager.close();
       return;
     }
     _setupTray();
