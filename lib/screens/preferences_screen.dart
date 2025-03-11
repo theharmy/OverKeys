@@ -5,8 +5,10 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:window_manager/window_manager.dart';
 
 import 'package:overkeys/utils/keyboard_layouts.dart';
+import 'package:overkeys/utils/theme_manager.dart';
 
 class PreferencesScreen extends StatefulWidget {
   const PreferencesScreen({super.key, required this.windowController});
@@ -17,9 +19,11 @@ class PreferencesScreen extends StatefulWidget {
   State<PreferencesScreen> createState() => _PreferencesScreenState();
 }
 
-class _PreferencesScreenState extends State<PreferencesScreen> {
+class _PreferencesScreenState extends State<PreferencesScreen>
+    with WindowListener {
   final SharedPreferencesAsync asyncPrefs = SharedPreferencesAsync();
 
+  Brightness _brightness = Brightness.dark;
   String _currentTab = 'General';
 
   String _keyboardLayoutName = 'QWERTY';
@@ -43,16 +47,38 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
   String _keymapStyle = 'Staggered';
   double _splitWidth = 100;
   double _opacity = 0.6;
-  int _autoHideDuration = 2;
+  double _autoHideDuration = 2.0;
   bool _launchAtStartup = false;
   bool _autoHideEnabled = false;
 
   @override
   void initState() {
     super.initState();
+    windowManager.addListener(this);
     // asyncPrefs.clear();
     _loadPreferences();
     _setupMethodHandler();
+    _detectSystemTheme();
+  }
+
+  void _detectSystemTheme() {
+    final platformDispatcher = WidgetsBinding.instance.platformDispatcher;
+    _brightness = platformDispatcher.platformBrightness;
+
+    platformDispatcher.onPlatformBrightnessChanged = () {
+      if (mounted) {
+        setState(() {
+          _brightness = platformDispatcher.platformBrightness;
+        });
+      }
+    };
+  }
+
+  @override
+  void dispose() {
+    _savePreferences();
+    windowManager.removeListener(this);
+    super.dispose();
   }
 
   void _setupMethodHandler() {
@@ -63,12 +89,6 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
       }
       return null;
     });
-  }
-
-  @override
-  void dispose() {
-    _savePreferences();
-    super.dispose();
   }
 
   Future<void> _loadPreferences() async {
@@ -103,7 +123,8 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
         await asyncPrefs.getString('keymapStyle') ?? 'Staggered';
     double splitWidth = await asyncPrefs.getDouble('splitWidth') ?? 100;
     double opacity = await asyncPrefs.getDouble('opacity') ?? 0.6;
-    int autoHideDuration = await asyncPrefs.getInt('autoHideDuration') ?? 2;
+    double autoHideDuration =
+        await asyncPrefs.getDouble('autoHideDuration') ?? 2.0;
     bool launchAtStartup = await asyncPrefs.getBool('launchAtStartup') ?? false;
     bool autoHideEnabled = await asyncPrefs.getBool('autoHideEnabled') ?? false;
 
@@ -158,7 +179,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
     await asyncPrefs.setString('keymapStyle', _keymapStyle);
     await asyncPrefs.setDouble('splitWidth', _splitWidth);
     await asyncPrefs.setDouble('opacity', _opacity);
-    await asyncPrefs.setInt('autoHideDuration', _autoHideDuration);
+    await asyncPrefs.setDouble('autoHideDuration', _autoHideDuration);
     await asyncPrefs.setBool('launchAtStartup', _launchAtStartup);
     await asyncPrefs.setBool('autoHideEnabled', _autoHideEnabled);
   }
@@ -175,10 +196,10 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData theme = ThemeManager.getTheme(_brightness);
+
     return MaterialApp(
-      theme: ThemeData(
-        fontFamily: 'Manrope',
-      ),
+      theme: theme,
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
@@ -189,21 +210,23 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
       ],
       home: Builder(builder: (context) {
         return Scaffold(
-          backgroundColor: const Color(0xFF1E1E2E),
           appBar: AppBar(
-            backgroundColor: const Color(0xFF1E1E2E),
             toolbarHeight: 100,
-            title: const Padding(
-              padding: EdgeInsets.all(100),
-              child: Text('Preferences',
-                  style: TextStyle(
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white)),
+            title: Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 80, vertical: 100),
+              child: Text(
+                'Preferences',
+                style: TextStyle(
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
             ),
           ),
           body: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 100.0),
+            padding: const EdgeInsets.symmetric(horizontal: 80.0),
             child: Column(
               children: [
                 _buildTabBar(),
@@ -234,20 +257,21 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
   }
 
   Widget _buildTabButton(String tabName) {
+    final colorScheme = ThemeManager.getTheme(_brightness).colorScheme;
     bool isActive = _currentTab == tabName;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8),
       child: ElevatedButton(
         onPressed: () => setState(() => _currentTab = tabName),
         style: ElevatedButton.styleFrom(
-          backgroundColor:
-              isActive ? const Color(0xFF3A3A4C) : Colors.transparent,
-          foregroundColor: isActive ? Colors.white : const Color(0xFF3A3A4C),
+          backgroundColor: isActive ? colorScheme.primary : Colors.transparent,
+          foregroundColor:
+              isActive ? colorScheme.onPrimary : colorScheme.primary,
           elevation: 0,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          side: const BorderSide(
-            color: Color(0xFF3A3A4C),
+          side: BorderSide(
+            color: colorScheme.primary,
             width: 2.0,
           ),
         ),
@@ -286,6 +310,13 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
           setState(() => _autoHideEnabled = value);
           _updateMainWindow('updateAutoHideEnabled', value);
         }),
+        _buildSliderOption(
+            'Auto-hide duration (seconds)', _autoHideDuration, 0.5, 5.0, 9,
+            (value) {
+          double roundedValue = (value * 2).round() / 2;
+          setState(() => _autoHideDuration = roundedValue);
+          _updateMainWindow('updateAutoHideDuration', roundedValue);
+        }, valueDisplayFormatter: (value) => value.toStringAsFixed(1)),
         _buildDropdownOption('Layout', _keyboardLayoutName,
             availableLayouts.map((layout) => (layout.name)).toList(), (value) {
           setState(() => _keyboardLayoutName = value!);
@@ -303,12 +334,6 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
         _buildSliderOption('Opacity', _opacity, 0.1, 1.0, 18, (value) {
           setState(() => _opacity = value);
           _updateMainWindow('updateOpacity', value);
-        }),
-        _buildSliderOption(
-            'Auto-hide duration', _autoHideDuration.toDouble(), 1.0, 10.0, 9,
-            (value) {
-          setState(() => _autoHideDuration = value.round());
-          _updateMainWindow('updateAutoHideDuration', value.round());
         }),
       ],
     );
@@ -530,48 +555,66 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
   }
 
   Widget _buildAboutTab() {
+    final colorScheme = ThemeManager.getTheme(_brightness).colorScheme;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildSectionTitle('About'),
-        const Text('OverKeys',
+        Text('OverKeys',
             style: TextStyle(
-                color: Colors.white,
+                color: colorScheme.onSurface,
                 fontSize: 24,
                 fontWeight: FontWeight.bold)),
         const SizedBox(height: 8),
-        const Text('Version 0.1.1', style: TextStyle(color: Colors.grey)),
+        Text('Version 0.1.1',
+            style: TextStyle(color: colorScheme.onSurface.withOpacity(0.6))),
         const SizedBox(height: 16),
-        const Text(
+        Text(
             'OverKeys is an open-source, customizable on-screen keyboard for Windows. Learn and practice alternative layouts, personalize appearance, and improve your typing.',
-            style: TextStyle(color: Colors.white)),
+            style: TextStyle(color: colorScheme.onSurface)),
         const SizedBox(height: 16),
-        const Text('© 2024 Angelo Convento. All rights reserved.',
-            style: TextStyle(color: Colors.grey)),
+        Text('© 2024 Angelo Convento. All rights reserved.',
+            style: TextStyle(color: colorScheme.onSurface.withOpacity(0.6))),
       ],
     );
   }
 
   Widget _buildSectionTitle(String title) {
+    final colorScheme = ThemeManager.getTheme(_brightness).colorScheme;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 16),
-      child: Text(title,
-          style: const TextStyle(
-              color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+      child: Text(
+        title,
+        style: TextStyle(
+            color: colorScheme.onSurface,
+            fontSize: 20,
+            fontWeight: FontWeight.bold),
+      ),
     );
   }
 
   Widget _buildToggleOption(
       String label, bool value, Function(bool) onChanged) {
+    final colorScheme = ThemeManager.getTheme(_brightness).colorScheme;
     return _buildOptionContainer(
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: const TextStyle(color: Colors.white)),
+          Text(label,
+              style: TextStyle(
+                  color: colorScheme.onSurface,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 16)),
           Switch(
             value: value,
             onChanged: onChanged,
-            activeColor: Colors.green,
+            thumbColor: WidgetStateProperty.resolveWith<Color>((states) {
+              if (states.contains(WidgetState.selected)) {
+                return colorScheme.surface;
+              }
+              return colorScheme.outline;
+            }),
           ),
         ],
       ),
@@ -580,27 +623,57 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
 
   Widget _buildDropdownOptionWithSubtitle(String label, String subtitle,
       String value, List<String> options, Function(String?) onChanged) {
+    final colorScheme = ThemeManager.getTheme(_brightness).colorScheme;
+
     return _buildOptionContainer(
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(label, style: const TextStyle(color: Colors.white)),
-              Text(subtitle,
-                  style: const TextStyle(color: Colors.grey, fontSize: 13.0)),
-            ],
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(label,
+                    style: TextStyle(
+                        color: colorScheme.onSurface,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 16)),
+                Text(
+                  subtitle,
+                  style: TextStyle(
+                      color: colorScheme.onSurface.withOpacity(0.6),
+                      fontSize: 14.0),
+                  softWrap: true,
+                  overflow: TextOverflow.visible,
+                ),
+              ],
+            ),
           ),
+          const SizedBox(width: 16),
           DropdownButton<String>(
             value: value,
             items: options
                 .map((String option) => DropdownMenuItem<String>(
-                    value: option, child: Text(option)))
+                      value: option,
+                      child: Text(
+                        option,
+                        style: TextStyle(
+                          fontFamily: option,
+                          fontFamilyFallback: const ['Manrope'],
+                          color: colorScheme.onSurface,
+                          fontSize: 15,
+                        ),
+                      ),
+                    ))
                 .toList(),
             onChanged: onChanged,
-            dropdownColor: const Color(0xFF2A2A3C),
-            style: const TextStyle(color: Colors.white, fontFamily: 'Manrope'),
+            dropdownColor: colorScheme.surface,
+            style: TextStyle(
+              fontFamily: value,
+              fontFamilyFallback: const ['Manrope'],
+              color: colorScheme.onSurface,
+              fontSize: 15,
+            ),
           ),
         ],
       ),
@@ -609,6 +682,8 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
 
   Widget _buildDropdownOption(String label, String value, List<String> options,
       Function(String?) onChanged) {
+    final colorScheme = ThemeManager.getTheme(_brightness).colorScheme;
+
     return _buildOptionContainer(
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -616,7 +691,11 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(label, style: const TextStyle(color: Colors.white)),
+              Text(label,
+                  style: TextStyle(
+                      color: colorScheme.onSurface,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16)),
             ],
           ),
           DropdownButton<String>(
@@ -626,8 +705,9 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                     value: option, child: Text(option)))
                 .toList(),
             onChanged: onChanged,
-            dropdownColor: const Color(0xFF2A2A3C),
-            style: const TextStyle(color: Colors.white, fontFamily: 'Manrope'),
+            dropdownColor: colorScheme.surface,
+            style:
+                TextStyle(color: colorScheme.onSurface, fontFamily: 'Manrope'),
           ),
         ],
       ),
@@ -635,20 +715,29 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
   }
 
   Widget _buildSliderOption(String label, double value, double min, double max,
-      int divisions, Function(double) onChanged) {
+      int divisions, Function(double) onChanged,
+      {String Function(double)? valueDisplayFormatter}) {
+    final colorScheme = ThemeManager.getTheme(_brightness).colorScheme;
     return _buildOptionContainer(
       Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label, style: const TextStyle(color: Colors.white)),
+          Text(label,
+              style: TextStyle(
+                  color: colorScheme.onSurface,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 16)),
           Slider(
             value: value,
             min: min,
             divisions: divisions,
-            label: value.toStringAsFixed(2),
+            label: valueDisplayFormatter != null
+                ? valueDisplayFormatter(value)
+                : value.toStringAsFixed(2),
             max: max,
             onChanged: onChanged,
-            activeColor: Colors.green,
+            activeColor: colorScheme.primary,
+            inactiveColor: colorScheme.outline,
           ),
         ],
       ),
@@ -656,11 +745,12 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
   }
 
   Widget _buildOptionContainer(Widget child) {
+    final colorScheme = ThemeManager.getTheme(_brightness).colorScheme;
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF2A2A3C),
+        color: colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(16),
       ),
       child: child,
@@ -669,17 +759,23 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
 
   Widget _buildColorOption(
       String label, Color currentColor, Function(Color) onColorChanged) {
+    final colorScheme = ThemeManager.getTheme(_brightness).colorScheme;
+
     return _buildOptionContainer(
       Builder(builder: (context) {
         return Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(label, style: const TextStyle(color: Colors.white)),
+            Text(label,
+                style: TextStyle(
+                    color: colorScheme.onSurface,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16)),
             ColorIndicator(
               width: 44,
               height: 44,
               borderRadius: 11,
-              borderColor: Colors.white,
+              borderColor: colorScheme.onSurface,
               hasBorder: true,
               color: currentColor,
               onSelectFocus: false,
@@ -689,6 +785,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                   builder: (BuildContext context) {
                     Color pickerColor = currentColor;
                     return AlertDialog(
+                      backgroundColor: colorScheme.surface,
                       content: SingleChildScrollView(
                         child: ColorPicker(
                           wheelDiameter: 250,
@@ -702,7 +799,9 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                           },
                           heading: Text(
                             'Select color',
-                            style: Theme.of(context).textTheme.titleSmall,
+                            style: TextStyle(
+                                color: colorScheme.onSurface,
+                                fontWeight: FontWeight.bold),
                           ),
                           showColorName: true,
                           showColorCode: true,
@@ -713,9 +812,9 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                             ctrlV: true,
                           ),
                           colorNameTextStyle:
-                              Theme.of(context).textTheme.bodySmall,
+                              TextStyle(color: colorScheme.onSurface),
                           colorCodeTextStyle:
-                              Theme.of(context).textTheme.bodySmall,
+                              TextStyle(color: colorScheme.onSurface),
                           pickersEnabled: const <ColorPickerType, bool>{
                             ColorPickerType.primary: false,
                             ColorPickerType.accent: false,
@@ -725,16 +824,16 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                       ),
                       actions: <Widget>[
                         TextButton(
-                          child: const Text('Cancel',
-                              style: TextStyle(color: Colors.black)),
+                          child: Text('Cancel',
+                              style: TextStyle(color: colorScheme.primary)),
                           onPressed: () {
                             onColorChanged(currentColor);
                             Navigator.of(context).pop();
                           },
                         ),
                         TextButton(
-                          child: const Text('OK',
-                              style: TextStyle(color: Colors.black)),
+                          child: Text('OK',
+                              style: TextStyle(color: colorScheme.primary)),
                           onPressed: () {
                             Navigator.of(context).pop(pickerColor);
                           },
