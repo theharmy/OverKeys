@@ -286,6 +286,8 @@ class _MainAppState extends State<MainApp> with TrayListener {
               }
             }
           });
+          _setupTray();
+
         default:
           throw UnimplementedError('Unimplemented method ${call.method}');
       }
@@ -415,9 +417,6 @@ class _MainAppState extends State<MainApp> with TrayListener {
       MenuItem(
         key: 'exit',
         label: 'Exit',
-        onClick: (menuItem) {
-          windowManager.close();
-        },
       ),
     ]));
   }
@@ -431,6 +430,14 @@ class _MainAppState extends State<MainApp> with TrayListener {
               id, 'updateAutoHideFromMainWindow', _autoHideEnabled);
         }
       });
+    } else if (menuItem.key == 'exit') {
+      DesktopMultiWindow.getAllSubWindowIds().then((windowIds) {
+        for (final id in windowIds) {
+          WindowController.fromWindowId(id).close();
+        }
+        windowManager.close();
+      });
+      return;
     }
     _setupTray();
   }
