@@ -424,6 +424,14 @@ class _MainAppState extends State<MainApp> with TrayListener {
 
   @override
   void onTrayMenuItemClick(MenuItem menuItem) {
+    if (menuItem.key == 'toggle_auto_hide') {
+      DesktopMultiWindow.getAllSubWindowIds().then((windowIds) {
+        for (final id in windowIds) {
+          DesktopMultiWindow.invokeMethod(
+              id, 'updateAutoHideFromMainWindow', _autoHideEnabled);
+        }
+      });
+    }
     _setupTray();
   }
 

@@ -52,6 +52,17 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
     super.initState();
     // asyncPrefs.clear();
     _loadPreferences();
+    _setupMethodHandler();
+  }
+
+  void _setupMethodHandler() {
+    DesktopMultiWindow.setMethodHandler((call, fromWindowId) async {
+      if (call.method == 'updateAutoHideFromMainWindow' && mounted) {
+        setState(() => _autoHideEnabled = call.arguments as bool);
+        await asyncPrefs.setBool('autoHideEnabled', _autoHideEnabled);
+      }
+      return null;
+    });
   }
 
   @override
