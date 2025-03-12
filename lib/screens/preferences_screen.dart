@@ -166,7 +166,8 @@ class _PreferencesScreenState extends State<PreferencesScreen>
     await asyncPrefs.setInt(
         'keyTextColorNotPressed', _keyTextColorNotPressed.toARGB32());
     await asyncPrefs.setInt('keyColorPressed', _keyColorPressed.toARGB32());
-    await asyncPrefs.setInt('keyColorNotPressed', _keyColorNotPressed.toARGB32());
+    await asyncPrefs.setInt(
+        'keyColorNotPressed', _keyColorNotPressed.toARGB32());
     await asyncPrefs.setDouble('keySize', _keySize);
     await asyncPrefs.setDouble('keyBorderRadius', _keyBorderRadius);
     await asyncPrefs.setDouble('keyPadding', _keyPadding);
@@ -567,7 +568,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
                 fontSize: 24,
                 fontWeight: FontWeight.bold)),
         const SizedBox(height: 8),
-        Text('Version 0.1.1',
+        Text('Version 0.1.2',
             style: TextStyle(color: colorScheme.onSurface.withAlpha(153))),
         const SizedBox(height: 16),
         Text(
