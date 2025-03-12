@@ -1,7 +1,7 @@
 name: overkeys
 description: "An open-source, customizable on-screen keyboard for Windows. Learn and practice alternative layouts, personalize appearance, and improve your typing."
 publish_to: "none"
-version: 0.1.1
+version: 0.1.2
 repository: https://github.com/conventoangelo/OverKeys
 
 environment:
@@ -62,3 +62,4 @@ flutter_launcher_icons:
     generate: true
     image_path: "assets/images/OK.png"
     icon_size: 256 # min:48, max:256, default: 48
+
