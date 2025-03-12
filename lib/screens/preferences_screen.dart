@@ -162,15 +162,15 @@ class _PreferencesScreenState extends State<PreferencesScreen>
     await asyncPrefs.setDouble('keyFontSize', _keyFontSize);
     await asyncPrefs.setDouble('spaceFontSize', _spaceFontSize);
     await asyncPrefs.setInt('fontWeight', _fontWeight.index);
-    await asyncPrefs.setInt('keyTextColor', _keyTextColor.value);
+    await asyncPrefs.setInt('keyTextColor', _keyTextColor.toARGB32());
     await asyncPrefs.setInt(
-        'keyTextColorNotPressed', _keyTextColorNotPressed.value);
-    await asyncPrefs.setInt('keyColorPressed', _keyColorPressed.value);
-    await asyncPrefs.setInt('keyColorNotPressed', _keyColorNotPressed.value);
+        'keyTextColorNotPressed', _keyTextColorNotPressed.toARGB32());
+    await asyncPrefs.setInt('keyColorPressed', _keyColorPressed.toARGB32());
+    await asyncPrefs.setInt('keyColorNotPressed', _keyColorNotPressed.toARGB32());
     await asyncPrefs.setDouble('keySize', _keySize);
     await asyncPrefs.setDouble('keyBorderRadius', _keyBorderRadius);
     await asyncPrefs.setDouble('keyPadding', _keyPadding);
-    await asyncPrefs.setInt('markerColor', _markerColor.value);
+    await asyncPrefs.setInt('markerColor', _markerColor.toARGB32());
     await asyncPrefs.setDouble('markerOffset', _markerOffset);
     await asyncPrefs.setDouble('markerWidth', _markerWidth);
     await asyncPrefs.setDouble('markerHeight', _markerHeight);
@@ -186,7 +186,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
 
   void _updateMainWindow(dynamic method, dynamic value) async {
     if (value is Color) {
-      value = value.value;
+      value = value.toARGB32();
     } else if (value is FontWeight) {
       value = value.index;
     }
@@ -568,14 +568,14 @@ class _PreferencesScreenState extends State<PreferencesScreen>
                 fontWeight: FontWeight.bold)),
         const SizedBox(height: 8),
         Text('Version 0.1.1',
-            style: TextStyle(color: colorScheme.onSurface.withOpacity(0.6))),
+            style: TextStyle(color: colorScheme.onSurface.withAlpha(153))),
         const SizedBox(height: 16),
         Text(
             'OverKeys is an open-source, customizable on-screen keyboard for Windows. Learn and practice alternative layouts, personalize appearance, and improve your typing.',
             style: TextStyle(color: colorScheme.onSurface)),
         const SizedBox(height: 16),
         Text('© 2024 Angelo Convento. All rights reserved.',
-            style: TextStyle(color: colorScheme.onSurface.withOpacity(0.6))),
+            style: TextStyle(color: colorScheme.onSurface.withAlpha(153))),
       ],
     );
   }
@@ -641,7 +641,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
                 Text(
                   subtitle,
                   style: TextStyle(
-                      color: colorScheme.onSurface.withOpacity(0.6),
+                      color: colorScheme.onSurface.withAlpha(153),
                       fontSize: 14.0),
                   softWrap: true,
                   overflow: TextOverflow.visible,

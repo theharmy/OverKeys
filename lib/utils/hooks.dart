@@ -26,7 +26,7 @@ int lowLevelKeyboardProc(
 
 void setHook(SendPort port) {
   sendPort = port;
-  hookId = SetWindowsHookEx(WINDOWS_HOOK_ID.WH_KEYBOARD_LL, keyboardProc,
+  hookId = SetWindowsHookEx(WH_KEYBOARD_LL, keyboardProc,
       GetModuleHandle(nullptr), 0);
   if (hookId == 0) {
     if (kDebugMode) {

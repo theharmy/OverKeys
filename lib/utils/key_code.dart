@@ -3,85 +3,85 @@ import 'package:win32/win32.dart';
 int getVirtualKeyCode(String key) {
   switch (key) {
     case 'A':
-      return VIRTUAL_KEY.VK_A;
+      return VK_A;
     case 'B':
-      return VIRTUAL_KEY.VK_B;
+      return VK_B;
     case 'C':
-      return VIRTUAL_KEY.VK_C;
+      return VK_C;
     case 'D':
-      return VIRTUAL_KEY.VK_D;
+      return VK_D;
     case 'E':
-      return VIRTUAL_KEY.VK_E;
+      return VK_E;
     case 'F':
-      return VIRTUAL_KEY.VK_F;
+      return VK_F;
     case 'G':
-      return VIRTUAL_KEY.VK_G;
+      return VK_G;
     case 'H':
-      return VIRTUAL_KEY.VK_H;
+      return VK_H;
     case 'I':
-      return VIRTUAL_KEY.VK_I;
+      return VK_I;
     case 'J':
-      return VIRTUAL_KEY.VK_J;
+      return VK_J;
     case 'K':
-      return VIRTUAL_KEY.VK_K;
+      return VK_K;
     case 'L':
-      return VIRTUAL_KEY.VK_L;
+      return VK_L;
     case 'M':
-      return VIRTUAL_KEY.VK_M;
+      return VK_M;
     case 'N':
-      return VIRTUAL_KEY.VK_N;
+      return VK_N;
     case 'O':
-      return VIRTUAL_KEY.VK_O;
+      return VK_O;
     case 'P':
-      return VIRTUAL_KEY.VK_P;
+      return VK_P;
     case 'Q':
-      return VIRTUAL_KEY.VK_Q;
+      return VK_Q;
     case 'R':
-      return VIRTUAL_KEY.VK_R;
+      return VK_R;
     case 'S':
-      return VIRTUAL_KEY.VK_S;
+      return VK_S;
     case 'T':
-      return VIRTUAL_KEY.VK_T;
+      return VK_T;
     case 'U':
-      return VIRTUAL_KEY.VK_U;
+      return VK_U;
     case 'V':
-      return VIRTUAL_KEY.VK_V;
+      return VK_V;
     case 'W':
-      return VIRTUAL_KEY.VK_W;
+      return VK_W;
     case 'X':
-      return VIRTUAL_KEY.VK_X;
+      return VK_X;
     case 'Y':
-      return VIRTUAL_KEY.VK_Y;
+      return VK_Y;
     case 'Z':
-      return VIRTUAL_KEY.VK_Z;
+      return VK_Z;
     case ' ':
-      return VIRTUAL_KEY.VK_SPACE;
+      return VK_SPACE;
     case ',':
-      return VIRTUAL_KEY.VK_OEM_COMMA;
+      return VK_OEM_COMMA;
     case '.':
-      return VIRTUAL_KEY.VK_OEM_PERIOD;
+      return VK_OEM_PERIOD;
     case ';':
-      return VIRTUAL_KEY.VK_OEM_1;
+      return VK_OEM_1;
     case '/':
-      return VIRTUAL_KEY.VK_OEM_2;
+      return VK_OEM_2;
     case '?':
-      return VIRTUAL_KEY.VK_OEM_2;
+      return VK_OEM_2;
     // No virtual key code for number sign
     case '#':
-      return VIRTUAL_KEY.VK_3;
+      return VK_3;
     case '[':
-      return VIRTUAL_KEY.VK_OEM_4;
+      return VK_OEM_4;
     case ']':
-      return VIRTUAL_KEY.VK_OEM_6;
+      return VK_OEM_6;
     // No separate keycode for single and double quotes
     case "'":
-      return VIRTUAL_KEY.VK_OEM_7;
+      return VK_OEM_7;
     case '"':
-      return VIRTUAL_KEY.VK_OEM_7;
+      return VK_OEM_7;
     case '=':
-      return VIRTUAL_KEY.VK_OEM_PLUS;
+      return VK_OEM_PLUS;
     case '-':
-      return VIRTUAL_KEY.VK_OEM_MINUS;
+      return VK_OEM_MINUS;
     default:
       return 0;
   }

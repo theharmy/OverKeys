@@ -168,15 +168,16 @@ class _MainAppState extends State<MainApp> with TrayListener {
     await asyncPrefs.setDouble('keyFontSize', _keyFontSize);
     await asyncPrefs.setDouble('spaceFontSize', _spaceFontSize);
     await asyncPrefs.setInt('fontWeight', _fontWeight.index);
-    await asyncPrefs.setInt('keyTextColor', _keyTextColor.value);
+    await asyncPrefs.setInt('keyTextColor', _keyTextColor.toARGB32());
     await asyncPrefs.setInt(
-        'keyTextColorNotPressed', _keyTextColorNotPressed.value);
-    await asyncPrefs.setInt('keyColorPressed', _keyColorPressed.value);
-    await asyncPrefs.setInt('keyColorNotPressed', _keyColorNotPressed.value);
+        'keyTextColorNotPressed', _keyTextColorNotPressed.toARGB32());
+    await asyncPrefs.setInt('keyColorPressed', _keyColorPressed.toARGB32());
+    await asyncPrefs.setInt(
+        'keyColorNotPressed', _keyColorNotPressed.toARGB32());
     await asyncPrefs.setDouble('keySize', _keySize);
     await asyncPrefs.setDouble('keyBorderRadius', _keyBorderRadius);
     await asyncPrefs.setDouble('keyPadding', _keyPadding);
-    await asyncPrefs.setInt('markerColor', _markerColor.value);
+    await asyncPrefs.setInt('markerColor', _markerColor.toARGB32());
     await asyncPrefs.setDouble('markerOffset', _markerOffset);
     await asyncPrefs.setDouble('markerWidth', _markerWidth);
     await asyncPrefs.setDouble('markerHeight', _markerHeight);
