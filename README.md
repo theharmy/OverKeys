@@ -6,9 +6,7 @@
   <img src="assets/images/OK.png" alt="OverKeys Logo" width="160" height="160">
   <h1 align="center">OverKeys</h1>
   <p align="center">
-    A customizable, open-source on-screen keyboard for alternative layouts!
-    <br />
-    <a href="https://github.com/conventoangelo/OverKeys"><strong>Explore the docs »</strong></a>
+    A customizable, open-source on-screen keyboard visualizer for alternative layouts!
     <br />
     <br />
     <a href="https://github.com/conventoangelo/OverKeys/releases">Download Release</a>
@@ -182,7 +180,7 @@ To load your own keyboard layout, follow these steps:
    - Run the app with the terminal open:
 
      ```sh
-     flutter run
+     flutter run -d windows
      ```
 
    - Alternatively, build the project by running:
@@ -200,9 +198,9 @@ To load your own keyboard layout, follow these steps:
 Contributions are what make the open-source community such an amazing place to learn and collaborate. Any contributions to **OverKeys** are greatly appreciated.
 
 1. Fork the Project.
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`).
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`).
-4. Push to the Branch (`git push origin feature/AmazingFeature`).
+2. Create your Feature Branch (`git checkout -b feat/amazing-feature`).
+3. Commit your Changes (`git commit -m 'feat: add some amazing feature'`).
+4. Push to the Branch (`git push origin feat/amazing-feature`).
 5. Open a Pull Request.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
