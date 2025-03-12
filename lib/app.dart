@@ -364,6 +364,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
     _resetAutoHideTimer();
   }
 
+  bool autoHideBeforeMove = false;
   Future<void> _setupTray() async {
     String iconPath = Platform.isWindows
         ? 'assets/images/app_icon.ico'
@@ -382,6 +383,19 @@ class _MainAppState extends State<MainApp> with TrayListener {
             }
             _ignoreMouseEvents = !_ignoreMouseEvents;
             windowManager.setIgnoreMouseEvents(_ignoreMouseEvents);
+            if (!_ignoreMouseEvents) {
+              autoHideBeforeMove = _autoHideEnabled;
+              _autoHideEnabled = false;
+              _autoHideTimer?.cancel();
+              if (!_isWindowVisible) {
+                _fadeIn();
+              }
+            } else {
+              _autoHideEnabled = autoHideBeforeMove;
+              if (_autoHideEnabled) {
+                _resetAutoHideTimer();
+              }
+            }
           });
           _fadeIn();
         },
@@ -391,6 +405,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
         key: 'toggle_auto_hide',
         label: 'Auto Hide',
         checked: _autoHideEnabled,
+        disabled: !_ignoreMouseEvents,
         onClick: (menuItem) {
           setState(() {
             if (kDebugMode) {
@@ -408,6 +423,13 @@ class _MainAppState extends State<MainApp> with TrayListener {
           });
         },
       ),
+      MenuItem.separator(),
+      MenuItem(
+          key: 'reset_position',
+          label: 'Reset Position',
+          onClick: (menuItem) {
+            windowManager.setAlignment(Alignment.bottomCenter);
+          }),
       MenuItem.separator(),
       MenuItem(
         key: 'preferences',
