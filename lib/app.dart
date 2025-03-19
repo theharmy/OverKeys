@@ -77,15 +77,15 @@ class _MainAppState extends State<MainApp> with TrayListener {
     _setupMethodHandler();
     _init();
     _loadKanataConfig();
-    _kanataService.onLayerChange = (newLayout, isDefaultLayer) {
+    _kanataService.onLayerChange = (newLayout, isDefaultUserLayout) {
       setState(() {
         _keyboardLayout = newLayout;
-        if (!isDefaultLayer && _autoHideEnabled) {
+        if (!isDefaultUserLayout && _autoHideEnabled) {
           // Disable auto-hide for non-default layers
           _autoHideEnabled = false;
           _autoHideTimer?.cancel();
           autoHideBeforeMove = true;
-        } else if (isDefaultLayer && autoHideBeforeMove) {
+        } else if (isDefaultUserLayout && autoHideBeforeMove) {
           // Re-enable auto-hide when returning to default layer if it was enabled before
           _autoHideEnabled = true;
           _resetAutoHideTimer();
@@ -129,9 +129,10 @@ class _MainAppState extends State<MainApp> with TrayListener {
 
     if (_kanataEnabled) {
       _kanataService.updateSettings(
-          config.kanataHost, config.kanataPort, config.kanataLayers);
+          config.kanataHost, config.kanataPort, config.userLayouts);
 
-      final defaultLayout = _kanataService.getLayoutByName(config.defaultLayer);
+      final defaultLayout =
+          _kanataService.getLayoutByName(config.defaultUserLayout);
       if (defaultLayout != null) {
         setState(() {
           _keyboardLayout = defaultLayout;

@@ -3,13 +3,13 @@ import '../utils/keyboard_layouts.dart';
 class UserConfig {
   String kanataHost;
   int kanataPort;
-  List<KeyboardLayout> kanataLayers;
-  String defaultLayer;
+  List<KeyboardLayout> userLayouts;
+  String defaultUserLayout;
 
   UserConfig({
     this.kanataHost = '127.0.0.1',
     this.kanataPort = 4039,
-    this.kanataLayers = const [
+    this.userLayouts = const [
       KeyboardLayout(
         name: 'QWERTY',
         keys: [
@@ -20,14 +20,14 @@ class UserConfig {
         ],
       ),
     ],
-    this.defaultLayer = 'QWERTY',
+    this.defaultUserLayout = 'QWERTY',
   });
 
   factory UserConfig.fromJson(Map<String, dynamic> json) {
     // Convert the layers from JSON to KeyboardLayout objects
     List<KeyboardLayout> layers = [];
-    if (json['kanataLayers'] != null) {
-      for (var layerJson in json['kanataLayers']) {
+    if (json['userLayouts'] != null) {
+      for (var layerJson in json['userLayouts']) {
         layers.add(KeyboardLayout(
           name: layerJson['name'],
           keys: List<List<String>>.from(
@@ -40,14 +40,14 @@ class UserConfig {
     return UserConfig(
       kanataHost: json['kanataHost'] ?? '127.0.0.1',
       kanataPort: json['kanataPort'] ?? 4039,
-      kanataLayers: layers,
-      defaultLayer: json['defaultLayer'] ?? 'QWERTY',
+      userLayouts: layers,
+      defaultUserLayout: json['defaultUserLayout'] ?? 'QWERTY',
     );
   }
 
   Map<String, dynamic> toJson() {
     // Convert KeyboardLayout objects to JSON
-    List<Map<String, dynamic>> layersJson = kanataLayers
+    List<Map<String, dynamic>> layersJson = userLayouts
         .map((layer) => {
               'name': layer.name,
               'keys': layer.keys,
@@ -57,8 +57,8 @@ class UserConfig {
     return {
       'kanataHost': kanataHost,
       'kanataPort': kanataPort,
-      'kanataLayers': layersJson,
-      'defaultLayer': defaultLayer,
+      'userLayouts': layersJson,
+      'defaultUserLayout': defaultUserLayout,
     };
   }
 }

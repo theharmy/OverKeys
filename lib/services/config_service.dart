@@ -72,8 +72,8 @@ class ConfigService {
     return {
       'host': config.kanataHost,
       'port': config.kanataPort,
-      'kanataLayers': config.kanataLayers,
-      'defaultLayer': config.defaultLayer,
+      'userLayouts': config.userLayouts,
+      'defaultUserLayout': config.defaultUserLayout,
     };
   }
 }

@@ -6,7 +6,7 @@ import 'package:overkeys/services/config_service.dart';
 import 'package:overkeys/utils/keyboard_layouts.dart';
 
 typedef LayerChangeCallback = void Function(
-    KeyboardLayout layout, bool isDefaultLayer);
+    KeyboardLayout layout, bool isDefaultUserLayout);
 
 class KanataService {
   final ConfigService _configService = ConfigService();
@@ -17,8 +17,8 @@ class KanataService {
   int _port = 4039;
   LayerChangeCallback? onLayerChange;
   bool _reconnectEnabled = true;
-  List<KeyboardLayout> _kanataLayers = [];
-  String _defaultLayer = 'QWERTY';
+  List<KeyboardLayout> _userLayouts = [];
+  String _defaultUserLayout = 'QWERTY';
 
   bool get isConnected => _isConnected;
 
@@ -26,8 +26,8 @@ class KanataService {
     final config = await _configService.loadConfig();
     _host = config.kanataHost;
     _port = config.kanataPort;
-    _kanataLayers = config.kanataLayers;
-    _defaultLayer = config.defaultLayer;
+    _userLayouts = config.userLayouts;
+    _defaultUserLayout = config.defaultUserLayout;
 
     connect();
   }
@@ -44,12 +44,12 @@ class KanataService {
       final config = await _configService.loadConfig();
       _host = config.kanataHost;
       _port = config.kanataPort;
-      _kanataLayers = config.kanataLayers;
-      _defaultLayer = config.defaultLayer;
+      _userLayouts = config.userLayouts;
+      _defaultUserLayout = config.defaultUserLayout;
 
       if (kDebugMode) {
         print(
-            'Connecting to Kanata at $_host:$_port with ${_kanataLayers.length} layers. Default layer: $_defaultLayer');
+            'Connecting to Kanata at $_host:$_port with ${_userLayouts.length} layers. Default layer: $_defaultUserLayout');
       }
 
       _kanataSocket = await Socket.connect(_host, _port);
@@ -111,7 +111,7 @@ class KanataService {
 
         if (layoutName.isNotEmpty && onLayerChange != null) {
           try {
-            KeyboardLayout? newLayout = _kanataLayers.firstWhere(
+            KeyboardLayout? newLayout = _userLayouts.firstWhere(
               (layout) => layout.name.toUpperCase() == layoutName,
               orElse: () => availableLayouts.firstWhere(
                 (layout) => layout.name.toUpperCase() == layoutName,
@@ -120,10 +120,10 @@ class KanataService {
               ),
             );
 
-            bool isDefaultLayer =
-                newLayout.name.toUpperCase() == _defaultLayer.toUpperCase();
+            bool isDefaultUserLayout =
+                newLayout.name.toUpperCase() == _defaultUserLayout.toUpperCase();
 
-            onLayerChange!(newLayout, isDefaultLayer);
+            onLayerChange!(newLayout, isDefaultUserLayout);
 
             if (kDebugMode) {
               print('Switched to layout: ${newLayout.name}');
@@ -155,7 +155,7 @@ class KanataService {
     disconnect();
     _host = host;
     _port = port;
-    _kanataLayers = layers;
+    _userLayouts = layers;
 
     if (shouldReconnect) {
       _reconnectEnabled = true;
@@ -165,7 +165,7 @@ class KanataService {
 
   KeyboardLayout? getLayoutByName(String name) {
     try {
-      return _kanataLayers.firstWhere(
+      return _userLayouts.firstWhere(
         (layout) => layout.name.toUpperCase() == name.toUpperCase(),
         orElse: () => throw Exception(),
       );
@@ -174,7 +174,7 @@ class KanataService {
     }
   }
 
-  List<KeyboardLayout> get kanataLayers => _kanataLayers;
+  List<KeyboardLayout> get userLayouts => _userLayouts;
 
   void dispose() {
     disconnect();
