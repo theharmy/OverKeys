@@ -14,20 +14,48 @@ int lowLevelKeyboardProc(
   int wParam,
   int lParam,
 ) {
-  if (nCode >= 0 && wParam == WM_KEYDOWN || wParam == WM_KEYUP) {
+  if (nCode >= 0 &&
+      (wParam == WM_KEYDOWN ||
+          wParam == WM_KEYUP ||
+          wParam == WM_SYSKEYDOWN ||
+          wParam == WM_SYSKEYUP)) {
     final keyStruct = Pointer<KBDLLHOOKSTRUCT>.fromAddress(lParam).ref;
-    int key = keyStruct.vkCode;
-    bool isKeyDown = (wParam == WM_KEYDOWN);
+    // if (kDebugMode) {
+    //   print('KBDLLHOOKSTRUCT: {');
+    //   print('  vkCode: ${keyStruct.vkCode},');
+    //   print('  LLKHF_INJECTED: ${(keyStruct.flags & LLKHF_INJECTED) != 0},');
+    //   print('  LLKHF_UP: ${(keyStruct.flags & LLKHF_UP) != 0},');
+    //   print('}');
+    // }
+    int keyCode = keyStruct.vkCode;
+    bool isPressed = !((keyStruct.flags & LLKHF_UP) != 0);
+    bool isShiftDown = GetKeyState(VK_SHIFT) & 0x8000 != 0;
 
-    sendPort?.send([key, isKeyDown]);
+    // Pros: Would fix behavior when OK opened after Kanata
+    // Cons: Would make app non-responsive when not using Kanata
+    // if ((keyStruct.flags & LLKHF_INJECTED) != 0) {
+    sendPort?.send([keyCode, isPressed, isShiftDown]);
+    // }
+
+    // For key release events, also send update for shifted variant
+    // Due to Kanata releasing shift key before sending key release event
+    if (!isPressed) {
+      if (!isShiftDown) {
+        // If shift is not down, send shifted variant
+        sendPort?.send([keyCode, false, true]);
+      } else {
+        // If shift is down, send non-shifted variant
+        sendPort?.send([keyCode, false, false]);
+      }
+    }
   }
   return CallNextHookEx(hookId, nCode, wParam, lParam);
 }
 
 void setHook(SendPort port) {
   sendPort = port;
-  hookId = SetWindowsHookEx(WH_KEYBOARD_LL, keyboardProc,
-      GetModuleHandle(nullptr), 0);
+  hookId = SetWindowsHookEx(
+      WH_KEYBOARD_LL, keyboardProc, GetModuleHandle(nullptr), 0);
   if (hookId == 0) {
     if (kDebugMode) {
       print('Failed to install hook.');

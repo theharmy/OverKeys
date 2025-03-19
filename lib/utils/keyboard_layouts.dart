@@ -185,15 +185,12 @@ const sturdyAngle = KeyboardLayout(
   ],
 );
 
-const handsDown = KeyboardLayout(
-  name: 'Hands Down',
-  keys: [
-    ['Q', 'C', 'H', 'P', 'V', 'K', 'Y', 'O', 'J', '/', '[', ']'],
-    ['R', 'S', 'N', 'T', 'G', 'W', 'U', 'E', 'I', 'A', ';'],
-    ['X', 'M', 'L', 'D', 'B', 'Z', 'F', "'", ',', '.'],
-    [' '],
-  ]
-);
+const handsDown = KeyboardLayout(name: 'Hands Down', keys: [
+  ['Q', 'C', 'H', 'P', 'V', 'K', 'Y', 'O', 'J', '/', '[', ']'],
+  ['R', 'S', 'N', 'T', 'G', 'W', 'U', 'E', 'I', 'A', ';'],
+  ['X', 'M', 'L', 'D', 'B', 'Z', 'F', "'", ',', '.'],
+  [' '],
+]);
 
 const focal = KeyboardLayout(
   name: 'Focal',

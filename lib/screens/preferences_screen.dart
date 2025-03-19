@@ -1,9 +1,12 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:desktop_multi_window/desktop_multi_window.dart';
+import 'package:overkeys/models/user_config.dart';
+import 'package:overkeys/services/config_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:window_manager/window_manager.dart';
 
@@ -50,6 +53,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
   double _autoHideDuration = 2.0;
   bool _launchAtStartup = false;
   bool _autoHideEnabled = false;
+  bool _kanataEnabled = false;
 
   @override
   void initState() {
@@ -127,6 +131,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
         await asyncPrefs.getDouble('autoHideDuration') ?? 2.0;
     bool launchAtStartup = await asyncPrefs.getBool('launchAtStartup') ?? false;
     bool autoHideEnabled = await asyncPrefs.getBool('autoHideEnabled') ?? false;
+    bool kanataEnabled = await asyncPrefs.getBool('kanataEnabled') ?? false;
 
     setState(() {
       _keyboardLayoutName = keyboardLayoutName;
@@ -153,6 +158,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
       _autoHideDuration = autoHideDuration;
       _launchAtStartup = launchAtStartup;
       _autoHideEnabled = autoHideEnabled;
+      _kanataEnabled = kanataEnabled;
     });
   }
 
@@ -183,6 +189,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
     await asyncPrefs.setDouble('autoHideDuration', _autoHideDuration);
     await asyncPrefs.setBool('launchAtStartup', _launchAtStartup);
     await asyncPrefs.setBool('autoHideEnabled', _autoHideEnabled);
+    await asyncPrefs.setBool('kanataEnabled', _kanataEnabled);
   }
 
   void _updateMainWindow(dynamic method, dynamic value) async {
@@ -336,6 +343,11 @@ class _PreferencesScreenState extends State<PreferencesScreen>
           setState(() => _opacity = value);
           _updateMainWindow('updateOpacity', value);
         }),
+        _buildToggleOption('Connect to Kanata', _kanataEnabled, (value) {
+          setState(() => _kanataEnabled = value);
+          _updateMainWindow('updateKanataEnabled', value);
+        }),
+        _buildOpenConfigButton(),
       ],
     );
   }
@@ -675,6 +687,81 @@ class _PreferencesScreenState extends State<PreferencesScreen>
               color: colorScheme.onSurface,
               fontSize: 15,
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildOpenConfigButton() {
+    final colorScheme = ThemeManager.getTheme(_brightness).colorScheme;
+
+    return _buildOptionContainer(
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Open config file',
+                    style: TextStyle(
+                        color: colorScheme.onSurface,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 16)),
+                Text(
+                  'Restart OverKeys to apply any changes made to this file',
+                  style: TextStyle(
+                      color: colorScheme.onSurface.withAlpha(153),
+                      fontSize: 14.0),
+                  softWrap: true,
+                  overflow: TextOverflow.visible,
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 16),
+          ElevatedButton.icon(
+            icon: Icon(Icons.folder_open, color: colorScheme.primary),
+            label: Text('Open', style: TextStyle(color: colorScheme.primary)),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: colorScheme.surfaceContainerHighest,
+              elevation: 0,
+              side: BorderSide(color: colorScheme.primary),
+            ),
+            onPressed: () async {
+              try {
+                final configService = ConfigService();
+                final configPath = await configService.configPath;
+                final file = File(configPath);
+
+                if (await file.exists()) {
+                  Process.start('explorer.exe', ['/select,', configPath]);
+                } else {
+                  // Create the file if it doesn't exist
+                  await configService.saveConfig(UserConfig());
+                  Process.start('explorer.exe', ['/select,', configPath]);
+                }
+              } catch (e) {
+                debugPrint('Error opening config file: $e');
+                // Show error dialog
+                if (mounted) {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: Text('Error'),
+                      content: Text('Could not open config file: $e'),
+                      actions: [
+                        TextButton(
+                          child: Text('OK'),
+                          onPressed: () => Navigator.of(context).pop(),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+              }
+            },
           ),
         ],
       ),

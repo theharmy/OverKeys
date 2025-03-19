@@ -6,6 +6,9 @@ import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:launch_at_startup/launch_at_startup.dart';
+import 'package:overkeys/services/config_service.dart';
+import 'package:overkeys/services/kanata_service.dart';
+import 'package:overkeys/utils/key_code.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tray_manager/tray_manager.dart';
 import 'package:window_manager/window_manager.dart';
@@ -22,7 +25,7 @@ class MainApp extends StatefulWidget {
 }
 
 class _MainAppState extends State<MainApp> with TrayListener {
-  final Map<int, bool> _keyPressStates = {};
+  final Map<String, bool> _keyPressStates = {};
   KeyboardLayout _keyboardLayout = qwerty;
   Timer? _autoHideTimer;
   bool _isWindowVisible = true;
@@ -53,8 +56,14 @@ class _MainAppState extends State<MainApp> with TrayListener {
   double _lastOpacity = 0.6;
   double _autoHideDuration = 2.0;
   bool _autoHideEnabled = false;
+  bool _kanataEnabled = false;
+  KeyboardLayout? _preKanataLayout;
   // ignore: unused_field
   bool _launchAtStartup = false;
+
+  // Kanata TCP client
+
+  final KanataService _kanataService = KanataService();
 
   @override
   void initState() {
@@ -66,6 +75,30 @@ class _MainAppState extends State<MainApp> with TrayListener {
     _setupKeyListener();
     _setupMethodHandler();
     _init();
+    _loadKanataConfig();
+    _kanataService.onLayerChange = (newLayout, isDefaultLayer) {
+      setState(() {
+        _keyboardLayout = newLayout;
+        if (!isDefaultLayer && _autoHideEnabled) {
+          // Disable auto-hide for non-default layers
+          _autoHideEnabled = false;
+          _autoHideTimer?.cancel();
+          autoHideBeforeMove = true;
+        } else if (isDefaultLayer && autoHideBeforeMove) {
+          // Re-enable auto-hide when returning to default layer if it was enabled before
+          _autoHideEnabled = true;
+          _resetAutoHideTimer();
+          autoHideBeforeMove = false;
+        }
+      });
+      _fadeIn();
+    };
+
+    Future.delayed(const Duration(seconds: 3), () {
+      if (_kanataEnabled) {
+        _kanataService.connect();
+      }
+    });
   }
 
   _init() async {
@@ -89,11 +122,29 @@ class _MainAppState extends State<MainApp> with TrayListener {
     await _init();
   }
 
+  Future<void> _loadKanataConfig() async {
+    final configService = ConfigService();
+    final config = await configService.loadConfig();
+
+    if (_kanataEnabled) {
+      _kanataService.updateSettings(
+          config.kanataHost, config.kanataPort, config.kanataLayers);
+
+      final defaultLayout = _kanataService.getLayoutByName(config.defaultLayer);
+      if (defaultLayout != null) {
+        setState(() {
+          _keyboardLayout = defaultLayout;
+        });
+      }
+    }
+  }
+
   @override
   void dispose() {
     trayManager.removeListener(this);
     unhook();
     _autoHideTimer?.cancel();
+    _kanataService.dispose();
     _savePreferences();
     super.dispose();
   }
@@ -133,10 +184,12 @@ class _MainAppState extends State<MainApp> with TrayListener {
     double autoHideDuration =
         await asyncPrefs.getDouble('autoHideDuration') ?? 2.0;
     bool autoHideEnabled = await asyncPrefs.getBool('autoHideEnabled') ?? false;
+    bool kanataEnabled = await asyncPrefs.getBool('kanataEnabled') ?? false;
 
     setState(() {
       _keyboardLayout = availableLayouts
           .firstWhere((layout) => layout.name == keyboardLayoutName);
+      _preKanataLayout = _keyboardLayout;
       _fontStyle = fontStyle;
       _keyFontSize = keyFontSize;
       _spaceFontSize = spaceFontSize;
@@ -159,11 +212,12 @@ class _MainAppState extends State<MainApp> with TrayListener {
       _opacity = opacity;
       _autoHideDuration = autoHideDuration;
       _autoHideEnabled = autoHideEnabled;
+      _kanataEnabled = kanataEnabled;
     });
   }
 
   Future<void> _savePreferences() async {
-    await asyncPrefs.setString('layout', _keyboardLayout.name);
+    await asyncPrefs.setString('layout', _preKanataLayout!.name);
     await asyncPrefs.setString('fontStyle', _fontStyle);
     await asyncPrefs.setDouble('keyFontSize', _keyFontSize);
     await asyncPrefs.setDouble('spaceFontSize', _spaceFontSize);
@@ -196,9 +250,14 @@ class _MainAppState extends State<MainApp> with TrayListener {
         case 'updateLayout':
           final layoutName = call.arguments as String;
           setState(() {
-            _lastOpacity = _opacity;
-            _keyboardLayout = availableLayouts
-                .firstWhere((layout) => layout.name == layoutName);
+            if (_kanataEnabled) {
+              _preKanataLayout = availableLayouts
+                  .firstWhere((layout) => layout.name == layoutName);
+            } else {
+              _keyboardLayout = availableLayouts
+                  .firstWhere((layout) => layout.name == layoutName);
+              _preKanataLayout = _keyboardLayout;
+            }
           });
           _fadeIn();
         case 'updateFontStyle':
@@ -292,7 +351,24 @@ class _MainAppState extends State<MainApp> with TrayListener {
             }
           });
           _setupTray();
-
+        case 'updateKanataEnabled':
+          final kanataEnabled = call.arguments as bool;
+          setState(() {
+            if (kanataEnabled && !_kanataEnabled) {
+              _preKanataLayout = _keyboardLayout;
+              _kanataEnabled = true;
+              _loadKanataConfig().then((_) {
+                _kanataService.connect();
+              });
+            } else if (!kanataEnabled && _kanataEnabled) {
+              _kanataEnabled = false;
+              _kanataService.disconnect();
+              if (_preKanataLayout != null) {
+                _keyboardLayout = _preKanataLayout!;
+                _fadeIn();
+              }
+            }
+          });
         default:
           throw UnimplementedError('Unimplemented method ${call.method}');
       }
@@ -313,13 +389,16 @@ class _MainAppState extends State<MainApp> with TrayListener {
     receivePort.listen((message) {
       setState(() {
         if (message[0] is int) {
-          int key = message[0];
+          int keyCode = message[0];
           bool isPressed = message[1];
+          bool isShiftDown = message[2];
           if (kDebugMode) {
-            print('Received message: $message');
+            print(
+                'Key: ${getKeyFromKeyCodeShift(keyCode, isShiftDown).padRight(10)}\tKeyCode: ${keyCode.toString().padRight(5)}\tPressed: ${isPressed.toString().padRight(5)}\tShift: $isShiftDown');
           }
 
-          _keyPressStates[key] = isPressed;
+          _keyPressStates[getKeyFromKeyCodeShift(keyCode, isShiftDown)] =
+              isPressed;
           _resetAutoHideTimer();
           if (_autoHideEnabled && !_isWindowVisible) {
             _fadeIn();
