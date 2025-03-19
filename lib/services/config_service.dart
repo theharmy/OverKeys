@@ -3,21 +3,19 @@ import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter/foundation.dart';
 import '../models/user_config.dart';
+import '../utils/keyboard_layouts.dart';
 
 class ConfigService {
   static const String _configFileName = 'overkeys_config.json';
   UserConfig? _cachedConfig;
 
-  // Get the path to the config file
   Future<String> get _configPath async {
     final directory = await getApplicationSupportDirectory();
     return '${directory.path}\\$_configFileName';
   }
 
-  // Public accessor for config path
   Future<String> get configPath => _configPath;
 
-  // Load configuration from file
   Future<UserConfig> loadConfig() async {
     if (_cachedConfig != null) {
       // If config is changed, while app is running, cached config will be returned
@@ -52,7 +50,6 @@ class ConfigService {
     return _cachedConfig!;
   }
 
-  // Save configuration to file
   Future<void> saveConfig(UserConfig config) async {
     try {
       final path = await _configPath;
@@ -65,7 +62,6 @@ class ConfigService {
     }
   }
 
-  // Get Kanata configuration if enabled
   Future<Map<String, dynamic>?> getKanataConfig() async {
     final config = await loadConfig();
 
@@ -75,5 +71,26 @@ class ConfigService {
       'userLayouts': config.userLayouts,
       'defaultUserLayout': config.defaultUserLayout,
     };
+  }
+
+  Future<KeyboardLayout?> getUserLayout() async {
+    final config = await loadConfig();
+    final defaultLayoutName = config.defaultUserLayout;
+
+    for (final layout in config.userLayouts) {
+      if (layout.name == defaultLayoutName) {
+        return layout;
+      }
+    }
+
+    try {
+      return availableLayouts
+          .firstWhere((layout) => layout.name == defaultLayoutName);
+    } catch (e) {
+      if (kDebugMode) {
+        print('Default user layout "$defaultLayoutName" not found');
+      }
+      return null;
+    }
   }
 }

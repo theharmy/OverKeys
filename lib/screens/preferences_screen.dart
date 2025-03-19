@@ -54,13 +54,13 @@ class _PreferencesScreenState extends State<PreferencesScreen>
   double _autoHideDuration = 2.0;
   bool _launchAtStartup = false;
   bool _autoHideEnabled = false;
+  bool _useUserLayout = false;
   bool _kanataEnabled = false;
 
   @override
   void initState() {
     super.initState();
     windowManager.addListener(this);
-    // asyncPrefs.clear();
     _loadPreferences();
     _setupMethodHandler();
     _detectSystemTheme();
@@ -134,6 +134,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
         await asyncPrefs.getDouble('autoHideDuration') ?? 2.0;
     bool launchAtStartup = await asyncPrefs.getBool('launchAtStartup') ?? false;
     bool autoHideEnabled = await asyncPrefs.getBool('autoHideEnabled') ?? false;
+    bool useUserLayout = await asyncPrefs.getBool('useUserLayout') ?? false;
     bool kanataEnabled = await asyncPrefs.getBool('kanataEnabled') ?? false;
 
     setState(() {
@@ -162,6 +163,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
       _autoHideDuration = autoHideDuration;
       _launchAtStartup = launchAtStartup;
       _autoHideEnabled = autoHideEnabled;
+      _useUserLayout = useUserLayout;
       _kanataEnabled = kanataEnabled;
     });
   }
@@ -195,6 +197,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
     await asyncPrefs.setDouble('autoHideDuration', _autoHideDuration);
     await asyncPrefs.setBool('launchAtStartup', _launchAtStartup);
     await asyncPrefs.setBool('autoHideEnabled', _autoHideEnabled);
+    await asyncPrefs.setBool('useUserLayout', _useUserLayout);
     await asyncPrefs.setBool('kanataEnabled', _kanataEnabled);
   }
 
@@ -348,6 +351,11 @@ class _PreferencesScreenState extends State<PreferencesScreen>
         _buildSliderOption('Opacity', _opacity, 0.1, 1.0, 18, (value) {
           setState(() => _opacity = value);
           _updateMainWindow('updateOpacity', value);
+        }),
+        _buildToggleOption('Use custom layout from config', _useUserLayout,
+            (value) {
+          setState(() => _useUserLayout = value);
+          _updateMainWindow('updateUseUserLayout', value);
         }),
         _buildToggleOption('Connect to Kanata', _kanataEnabled, (value) {
           setState(() => _kanataEnabled = value);
@@ -749,28 +757,11 @@ class _PreferencesScreenState extends State<PreferencesScreen>
                 if (await file.exists()) {
                   Process.start('explorer.exe', ['/select,', configPath]);
                 } else {
-                  // Create the file if it doesn't exist
                   await configService.saveConfig(UserConfig());
                   Process.start('explorer.exe', ['/select,', configPath]);
                 }
               } catch (e) {
                 debugPrint('Error opening config file: $e');
-                // Show error dialog
-                if (mounted) {
-                  showDialog(
-                    context: context,
-                    builder: (context) => AlertDialog(
-                      title: Text('Error'),
-                      content: Text('Could not open config file: $e'),
-                      actions: [
-                        TextButton(
-                          child: Text('OK'),
-                          onPressed: () => Navigator.of(context).pop(),
-                        ),
-                      ],
-                    ),
-                  );
-                }
               }
             },
           ),
