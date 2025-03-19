@@ -11,20 +11,41 @@ class UserConfig {
     this.kanataPort = 4039,
     this.userLayouts = const [
       KeyboardLayout(
-        name: 'QWERTY',
+        name: "Extend",
         keys: [
-          ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', '[', ']'],
-          ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', ';', "'"],
-          ['Z', 'X', 'C', 'V', 'B', 'N', 'M', ',', '.', '/'],
-          [' '],
+          [
+            "UNDO",
+            "CUT",
+            "COPY",
+            "PASTE",
+            "FIND",
+            "DEV",
+            "⇤",
+            "↑",
+            "⇥",
+            "",
+            "",
+            ""
+          ],
+          ["1", "2", "3", "4", "5", "⤒", "←", "↓", "→", "⤓", ""],
+          ["6", "7", "8", "9", "0", "", "", "", "", ""],
+          [" "],
+        ],
+      ),
+      KeyboardLayout(
+        name: "Symbol",
+        keys: [
+          ["'", "<", ">", ":", "@", "~", "\"", "{", "}", "%", "[", "]"],
+          ["!", "-", "+", "=", "`", "|", ".", "(", ")", "?", "'"],
+          ["^", "/", "*", "_", "\\", "&", "\$", "[", "]", "#"],
+          [" "],
         ],
       ),
     ],
-    this.defaultUserLayout = 'QWERTY',
+    this.defaultUserLayout = 'Symbol',
   });
 
   factory UserConfig.fromJson(Map<String, dynamic> json) {
-    // Convert the layers from JSON to KeyboardLayout objects
     List<KeyboardLayout> layers = [];
     if (json['userLayouts'] != null) {
       for (var layerJson in json['userLayouts']) {
@@ -46,7 +67,6 @@ class UserConfig {
   }
 
   Map<String, dynamic> toJson() {
-    // Convert KeyboardLayout objects to JSON
     List<Map<String, dynamic>> layersJson = userLayouts
         .map((layer) => {
               'name': layer.name,
