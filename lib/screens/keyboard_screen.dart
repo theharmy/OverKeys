@@ -17,6 +17,7 @@ class KeyboardScreen extends StatelessWidget {
   final double keyBorderRadius;
   final double keyPadding;
   final Color markerColor;
+  final Color markerColorNotPressed;
   final double markerOffset;
   final double markerWidth;
   final double markerHeight;
@@ -41,6 +42,7 @@ class KeyboardScreen extends StatelessWidget {
       required this.keyBorderRadius,
       required this.keyPadding,
       required this.markerColor,
+      required this.markerColorNotPressed,
       required this.markerOffset,
       required this.markerWidth,
       required this.markerHeight,
@@ -96,6 +98,7 @@ class KeyboardScreen extends StatelessWidget {
 
     Color keyColor = isPressed ? keyColorPressed : keyColorNotPressed;
     Color textColor = isPressed ? keyTextColor : keyTextColorNotPressed;
+    Color tactMarkerColor = isPressed ? markerColor : markerColorNotPressed;
 
     Widget keyWidget = Padding(
       padding: EdgeInsets.all(keyPadding),
@@ -142,7 +145,7 @@ class KeyboardScreen extends StatelessWidget {
               width: markerWidth,
               height: markerHeight,
               decoration: BoxDecoration(
-                color: markerColor,
+                color: tactMarkerColor,
                 borderRadius: BorderRadius.circular(markerBorderRadius),
               ),
             ),

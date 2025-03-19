@@ -44,7 +44,8 @@ class _MainAppState extends State<MainApp> with TrayListener {
   double _keySize = 48;
   double _keyBorderRadius = 12;
   double _keyPadding = 3;
-  Color _markerColor = Colors.black54;
+  Color _markerColor = Colors.white;
+  Color _markerColorNotPressed = Colors.black;
   double _markerOffset = 10;
   double _markerWidth = 10;
   double _markerHeight = 2;
@@ -170,7 +171,9 @@ class _MainAppState extends State<MainApp> with TrayListener {
         await asyncPrefs.getDouble('keyBorderRadius') ?? 12;
     double keyPadding = await asyncPrefs.getDouble('keyPadding') ?? 3;
     Color markerColor =
-        Color(await asyncPrefs.getInt('markerColor') ?? 0xFF000000);
+        Color(await asyncPrefs.getInt('markerColor') ?? 0xFFFFFFFF);
+    Color markerColorNotPressed =
+        Color(await asyncPrefs.getInt('markerColorNotPressed') ?? 0xFF000000);
     double markerOffset = await asyncPrefs.getDouble('markerOffset') ?? 10;
     double markerWidth = await asyncPrefs.getDouble('markerWidth') ?? 10;
     double markerHeight = await asyncPrefs.getDouble('markerHeight') ?? 2;
@@ -202,6 +205,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
       _keyBorderRadius = keyBorderRadius;
       _keyPadding = keyPadding;
       _markerColor = markerColor;
+      _markerColorNotPressed = markerColorNotPressed;
       _markerOffset = markerOffset;
       _markerWidth = markerWidth;
       _markerHeight = markerHeight;
@@ -232,6 +236,8 @@ class _MainAppState extends State<MainApp> with TrayListener {
     await asyncPrefs.setDouble('keyBorderRadius', _keyBorderRadius);
     await asyncPrefs.setDouble('keyPadding', _keyPadding);
     await asyncPrefs.setInt('markerColor', _markerColor.toARGB32());
+    await asyncPrefs.setInt(
+        'markerColorNotPressed', _markerColorNotPressed.toARGB32());
     await asyncPrefs.setDouble('markerOffset', _markerOffset);
     await asyncPrefs.setDouble('markerWidth', _markerWidth);
     await asyncPrefs.setDouble('markerHeight', _markerHeight);
@@ -297,6 +303,9 @@ class _MainAppState extends State<MainApp> with TrayListener {
         case 'updateMarkerColor':
           final markerColor = call.arguments as int;
           setState(() => _markerColor = Color(markerColor));
+        case 'updateMarkerColorNotPressed':
+          final markerColorNotPressed = call.arguments as int;
+          setState(() => _markerColorNotPressed = Color(markerColorNotPressed));
         case 'updateMarkerOffset':
           final markerOffset = call.arguments as double;
           setState(() => _markerOffset = markerOffset);
@@ -617,6 +626,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
                     keyBorderRadius: _keyBorderRadius,
                     keyPadding: _keyPadding,
                     markerColor: _markerColor,
+                    markerColorNotPressed: _markerColorNotPressed,
                     markerOffset: _markerOffset,
                     markerWidth: _markerWidth,
                     markerHeight: _markerHeight,

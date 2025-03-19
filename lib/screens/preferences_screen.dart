@@ -41,7 +41,8 @@ class _PreferencesScreenState extends State<PreferencesScreen>
   double _keySize = 48;
   double _keyBorderRadius = 12;
   double _keyPadding = 3;
-  Color _markerColor = Colors.black54;
+  Color _markerColor = Colors.white;
+  Color _markerColorNotPressed = Colors.black;
   double _markerOffset = 10;
   double _markerWidth = 10;
   double _markerHeight = 2;
@@ -116,7 +117,9 @@ class _PreferencesScreenState extends State<PreferencesScreen>
         await asyncPrefs.getDouble('keyBorderRadius') ?? 12;
     double keyPadding = await asyncPrefs.getDouble('keyPadding') ?? 3;
     Color markerColor =
-        Color(await asyncPrefs.getInt('markerColor') ?? 0xFF000000);
+        Color(await asyncPrefs.getInt('markerColor') ?? 0xFFFFFFFF);
+    Color markerColorNotPressed =
+        Color(await asyncPrefs.getInt('markerColorNotPressed') ?? 0xFF000000);
     double markerOffset = await asyncPrefs.getDouble('markerOffset') ?? 10;
     double markerWidth = await asyncPrefs.getDouble('markerWidth') ?? 10;
     double markerHeight = await asyncPrefs.getDouble('markerHeight') ?? 2;
@@ -147,6 +150,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
       _keyBorderRadius = keyBorderRadius;
       _keyPadding = keyPadding;
       _markerColor = markerColor;
+      _markerColorNotPressed = markerColorNotPressed;
       _markerOffset = markerOffset;
       _markerWidth = markerWidth;
       _markerHeight = markerHeight;
@@ -178,6 +182,8 @@ class _PreferencesScreenState extends State<PreferencesScreen>
     await asyncPrefs.setDouble('keyBorderRadius', _keyBorderRadius);
     await asyncPrefs.setDouble('keyPadding', _keyPadding);
     await asyncPrefs.setInt('markerColor', _markerColor.toARGB32());
+    await asyncPrefs.setInt(
+        'markerColorNotPressed', _markerColorNotPressed.toARGB32());
     await asyncPrefs.setDouble('markerOffset', _markerOffset);
     await asyncPrefs.setDouble('markerWidth', _markerWidth);
     await asyncPrefs.setDouble('markerHeight', _markerHeight);
@@ -542,9 +548,14 @@ class _PreferencesScreenState extends State<PreferencesScreen>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildSectionTitle('Tactile Markers Settings'),
-        _buildColorOption('Marker color', _markerColor, (color) {
+        _buildColorOption('Marker color (presed)', _markerColor, (color) {
           setState(() => _markerColor = color);
           _updateMainWindow('updateMarkerColor', color);
+        }),
+        _buildColorOption('Marker color (not pressed)', _markerColorNotPressed,
+            (color) {
+          setState(() => _markerColorNotPressed = color);
+          _updateMainWindow('updateMarkerColorNotPressed', color);
         }),
         _buildSliderOption('Marker offset', _markerOffset, 0, 20, 20, (value) {
           setState(() => _markerOffset = value);
