@@ -354,11 +354,29 @@ class _PreferencesScreenState extends State<PreferencesScreen>
         }),
         _buildToggleOption('Use custom layout from config', _useUserLayout,
             (value) {
-          setState(() => _useUserLayout = value);
+          if (value && _kanataEnabled) {
+            // If turning on useUserLayout, turn off kanataEnabled
+            setState(() {
+              _useUserLayout = value;
+              _kanataEnabled = false;
+            });
+            _updateMainWindow('updateKanataEnabled', false);
+          } else {
+            setState(() => _useUserLayout = value);
+          }
           _updateMainWindow('updateUseUserLayout', value);
         }),
         _buildToggleOption('Connect to Kanata', _kanataEnabled, (value) {
-          setState(() => _kanataEnabled = value);
+          if (value && _useUserLayout) {
+            // If turning on kanataEnabled, turn off useUserLayout
+            setState(() {
+              _kanataEnabled = value;
+              _useUserLayout = false;
+            });
+            _updateMainWindow('updateUseUserLayout', false);
+          } else {
+            setState(() => _kanataEnabled = value);
+          }
           _updateMainWindow('updateKanataEnabled', value);
         }),
         _buildOpenConfigButton(),
