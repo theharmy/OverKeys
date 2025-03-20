@@ -176,6 +176,22 @@ To load your own keyboard layout, follow these steps:
 
 > **Note**: Since OverKeys uses Windows LLHOOK for key detection, this feature is only guaranteed to work with Kanata implementations that also use Windows LLHOOK. Integration has been tested and confirmed working with kanata_gui.exe.
 
+Demos:
+<details>
+  <summary>With Kanata Debug</summary>
+  
+https://github.com/user-attachments/assets/5e7878d8-b51d-447d-946d-6ffeb063701c
+  
+</details>
+
+<details>
+  <summary>With Kanata Shortcut</summary>
+  
+https://github.com/user-attachments/assets/ab50455d-52e4-44b5-a409-c90f1e07c15b
+  
+</details>
+
+
 1. **Access Configuration**:
 
    - Right-click the OverKeys icon in the system tray
