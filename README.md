@@ -163,6 +163,7 @@ To load your own keyboard layout, follow these steps:
    - Add your custom layouts as needed in the `userLayouts` section. Use the key symbols found in [mappings.dart](lib/models/mappings.dart) and [key_code.dart](lib/utils/key_code.dart) as reference for key names and special characters that OverKeys recognize.
    - Set the `defaultUserLayout` property to specify which layout to use (can be one of your custom layouts or any supported layout)
    - Save the file
+     - It is recommended to make a backup copy of `overkeys_config.json`, as testing has shown that it may occasionally revert to the default configuration unexpectedly
 
 3. **Apply Changes**:
 
@@ -187,8 +188,10 @@ To load your own keyboard layout, follow these steps:
    - Edit the `overkeys_config.json` file that opens in your default text editor
    - Add your kanata layers as needed in the `userLayouts` section. Use the key symbols found in [mappings.dart](lib/models/mappings.dart) and [key_code.dart](lib/utils/key_code.dart) as reference for key names and special characters that OverKeys recognize.
      - You may also add unsupported keys (e.g., COPY, PASTE). They would appear on the keyboard upon layer switching but won't be triggered due to not being supported (yet?)
+   - Define the default layer you use in `defaultUserLayout`
    - Define the TCP address you want to use in `kanataHost` and `kanataPort` (defaults are `127.0.0.1` and `4039`)
    - Save the file
+     - It is recommended to make a backup copy of `overkeys_config.json`, as testing has shown that it may occasionally revert to the default configuration unexpectedly
    - Restart OverKeys
 
 3. **Kanata Configuration**
@@ -199,13 +202,14 @@ To load your own keyboard layout, follow these steps:
      kanata.exe -p ${kanataHost}:${kanataPort}
      ```
 
-     - Tip: Create a shortcut for `kanata_gui.exe` and place it in the Windows Startup folder (`C:\Users\%USERNAME%\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup`). This allows Kanata to launch after OverKeys on system boot. Add the parameter `-p 127.0.0.1:4039` (or your custom `kanataHost:kanataPort`) to the shortcut's target field in Properties. When your PC starts, both applications will open automatically and connect.
+   - Tip: Create a shortcut for `kanata_gui.exe` and place it in the Windows Startup folder (`C:\Users\%USERNAME%\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup`). This allows Kanata to launch after OverKeys on system boot. Add the parameter `-p 127.0.0.1:4039` (or your custom `kanataHost:kanataPort`) to the shortcut's target field in Properties. When your PC starts, both applications will open automatically and connect.
 
 4. **Apply Changes**:
 
    - Return to **Preferences** > **General** tab
    - Toggle on **Connect to Kanata**
    - OverKeys should now be connected to Kanata
+   - When you switch to any layer other than your `defaultUserLayout`, OverKeys will temporarily disable its auto-hide feature until you return to the default layer
 
 > **Note**: If you've previously enabled "Connect to Kanata" in a session, OverKeys will automatically attempt to connect the next time it opens. It's recommended to open OverKeys first, then launch Kanata, to avoid detecting double key presses (as OverKeys would otherwise detect both the `defsrc` layer key and the injected kanata key press).
 
