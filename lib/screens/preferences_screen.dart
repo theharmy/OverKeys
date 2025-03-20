@@ -1,17 +1,15 @@
 import 'dart:async';
 import 'dart:io';
-
+import 'package:desktop_multi_window/desktop_multi_window.dart';
+import 'package:window_manager/window_manager.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flex_color_picker/flex_color_picker.dart';
-import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:overkeys/models/user_config.dart';
-import 'package:overkeys/services/config_service.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:window_manager/window_manager.dart';
-
 import 'package:overkeys/utils/keyboard_layouts.dart';
 import 'package:overkeys/utils/theme_manager.dart';
+import 'package:overkeys/services/config_service.dart';
 
 class PreferencesScreen extends StatefulWidget {
   const PreferencesScreen({super.key, required this.windowController});
@@ -26,36 +24,46 @@ class _PreferencesScreenState extends State<PreferencesScreen>
     with WindowListener {
   final SharedPreferencesAsync asyncPrefs = SharedPreferencesAsync();
 
+  // UI state
   Brightness _brightness = Brightness.dark;
   String _currentTab = 'General';
 
+  // General settings
+  bool _launchAtStartup = false;
+  bool _autoHideEnabled = false;
+  double _autoHideDuration = 2.0;
   String _keyboardLayoutName = 'QWERTY';
-  String _fontStyle = 'GeistMono';
-  double _keyFontSize = 20;
-  double _spaceFontSize = 14;
-  FontWeight _fontWeight = FontWeight.w600;
-  Color _keyTextColor = Colors.white;
-  Color _keyTextColorNotPressed = Colors.black;
+  bool _showAdvancedSettings = false;
+  bool _useUserLayout = false;
+  bool _kanataEnabled = false;
+
+  // Appearance settings
+  double _opacity = 0.6;
   Color _keyColorPressed = const Color.fromARGB(255, 30, 30, 30);
   Color _keyColorNotPressed = const Color.fromARGB(255, 119, 171, 255);
-  double _keySize = 48;
-  double _keyBorderRadius = 12;
-  double _keyPadding = 3;
   Color _markerColor = Colors.white;
   Color _markerColorNotPressed = Colors.black;
   double _markerOffset = 10;
   double _markerWidth = 10;
   double _markerHeight = 2;
   double _markerBorderRadius = 10;
-  double _spaceWidth = 320;
+
+  // Keyboard settings
   String _keymapStyle = 'Staggered';
+  bool _showTopRow = false;
+  double _keySize = 48;
+  double _keyBorderRadius = 12;
+  double _keyPadding = 3;
+  double _spaceWidth = 320;
   double _splitWidth = 100;
-  double _opacity = 0.6;
-  double _autoHideDuration = 2.0;
-  bool _launchAtStartup = false;
-  bool _autoHideEnabled = false;
-  bool _useUserLayout = false;
-  bool _kanataEnabled = false;
+
+  // Text settings
+  String _fontStyle = 'GeistMono';
+  double _keyFontSize = 20;
+  double _spaceFontSize = 14;
+  FontWeight _fontWeight = FontWeight.w600;
+  Color _keyTextColor = Colors.white;
+  Color _keyTextColorNotPressed = Colors.black;
 
   @override
   void initState() {
@@ -97,25 +105,24 @@ class _PreferencesScreenState extends State<PreferencesScreen>
   }
 
   Future<void> _loadPreferences() async {
+    // General settings
+    bool launchAtStartup = await asyncPrefs.getBool('launchAtStartup') ?? false;
+    bool autoHideEnabled = await asyncPrefs.getBool('autoHideEnabled') ?? false;
+    double autoHideDuration =
+        await asyncPrefs.getDouble('autoHideDuration') ?? 2.0;
     String keyboardLayoutName =
         await asyncPrefs.getString('layout') ?? 'QWERTY';
-    String fontStyle = await asyncPrefs.getString('fontStyle') ?? 'GeistMono';
-    double keyFontSize = await asyncPrefs.getDouble('keyFontSize') ?? 20;
-    double spaceFontSize = await asyncPrefs.getDouble('spaceFontSize') ?? 14;
-    FontWeight fontWeight = FontWeight
-        .values[await asyncPrefs.getInt('fontWeight') ?? FontWeight.w500.index];
-    Color keyTextColor =
-        Color(await asyncPrefs.getInt('keyTextColor') ?? 0xFFFFFFFF);
-    Color keyTextColorNotPressed =
-        Color(await asyncPrefs.getInt('keyTextColorNotPressed') ?? 0xFF000000);
+    bool showAdvancedSettings =
+        await asyncPrefs.getBool('showAdvancedSettings') ?? false;
+    bool useUserLayout = await asyncPrefs.getBool('useUserLayout') ?? false;
+    bool kanataEnabled = await asyncPrefs.getBool('kanataEnabled') ?? false;
+
+    // Appearance settings
+    double opacity = await asyncPrefs.getDouble('opacity') ?? 0.6;
     Color keyColorPressed =
         Color(await asyncPrefs.getInt('keyColorPressed') ?? 0xFF1E1E1E);
     Color keyColorNotPressed =
         Color(await asyncPrefs.getInt('keyColorNotPressed') ?? 0xFF77ABFF);
-    double keySize = await asyncPrefs.getDouble('keySize') ?? 48;
-    double keyBorderRadius =
-        await asyncPrefs.getDouble('keyBorderRadius') ?? 12;
-    double keyPadding = await asyncPrefs.getDouble('keyPadding') ?? 3;
     Color markerColor =
         Color(await asyncPrefs.getInt('markerColor') ?? 0xFFFFFFFF);
     Color markerColorNotPressed =
@@ -125,64 +132,84 @@ class _PreferencesScreenState extends State<PreferencesScreen>
     double markerHeight = await asyncPrefs.getDouble('markerHeight') ?? 2;
     double markerBorderRadius =
         await asyncPrefs.getDouble('markerBorderRadius') ?? 10;
-    double spaceWidth = await asyncPrefs.getDouble('spaceWidth') ?? 320;
+
+    // Keyboard settings
     String keymapStyle =
         await asyncPrefs.getString('keymapStyle') ?? 'Staggered';
+    bool showTopRow = await asyncPrefs.getBool('showTopRow') ?? false;
+    double keySize = await asyncPrefs.getDouble('keySize') ?? 48;
+    double keyBorderRadius =
+        await asyncPrefs.getDouble('keyBorderRadius') ?? 12;
+    double keyPadding = await asyncPrefs.getDouble('keyPadding') ?? 3;
+    double spaceWidth = await asyncPrefs.getDouble('spaceWidth') ?? 320;
     double splitWidth = await asyncPrefs.getDouble('splitWidth') ?? 100;
-    double opacity = await asyncPrefs.getDouble('opacity') ?? 0.6;
-    double autoHideDuration =
-        await asyncPrefs.getDouble('autoHideDuration') ?? 2.0;
-    bool launchAtStartup = await asyncPrefs.getBool('launchAtStartup') ?? false;
-    bool autoHideEnabled = await asyncPrefs.getBool('autoHideEnabled') ?? false;
-    bool useUserLayout = await asyncPrefs.getBool('useUserLayout') ?? false;
-    bool kanataEnabled = await asyncPrefs.getBool('kanataEnabled') ?? false;
+
+    // Text settings
+    String fontStyle = await asyncPrefs.getString('fontStyle') ?? 'GeistMono';
+    double keyFontSize = await asyncPrefs.getDouble('keyFontSize') ?? 20;
+    double spaceFontSize = await asyncPrefs.getDouble('spaceFontSize') ?? 14;
+    FontWeight fontWeight = FontWeight
+        .values[await asyncPrefs.getInt('fontWeight') ?? FontWeight.w500.index];
+    Color keyTextColor =
+        Color(await asyncPrefs.getInt('keyTextColor') ?? 0xFFFFFFFF);
+    Color keyTextColorNotPressed =
+        Color(await asyncPrefs.getInt('keyTextColorNotPressed') ?? 0xFF000000);
 
     setState(() {
+      // General settings
+      _launchAtStartup = launchAtStartup;
+      _autoHideEnabled = autoHideEnabled;
+      _autoHideDuration = autoHideDuration;
       _keyboardLayoutName = keyboardLayoutName;
-      _fontStyle = fontStyle;
-      _keyFontSize = keyFontSize;
-      _spaceFontSize = spaceFontSize;
-      _fontWeight = fontWeight;
-      _keyTextColor = keyTextColor;
-      _keyTextColorNotPressed = keyTextColorNotPressed;
+      _showAdvancedSettings = showAdvancedSettings;
+      _useUserLayout = useUserLayout;
+      _kanataEnabled = kanataEnabled;
+
+      // Appearance settings
+      _opacity = opacity;
       _keyColorPressed = keyColorPressed;
       _keyColorNotPressed = keyColorNotPressed;
-      _keySize = keySize;
-      _keyBorderRadius = keyBorderRadius;
-      _keyPadding = keyPadding;
       _markerColor = markerColor;
       _markerColorNotPressed = markerColorNotPressed;
       _markerOffset = markerOffset;
       _markerWidth = markerWidth;
       _markerHeight = markerHeight;
       _markerBorderRadius = markerBorderRadius;
-      _spaceWidth = spaceWidth;
+
+      // Keyboard settings
       _keymapStyle = keymapStyle;
+      _showTopRow = showTopRow;
+      _keySize = keySize;
+      _keyBorderRadius = keyBorderRadius;
+      _keyPadding = keyPadding;
+      _spaceWidth = spaceWidth;
       _splitWidth = splitWidth;
-      _opacity = opacity;
-      _autoHideDuration = autoHideDuration;
-      _launchAtStartup = launchAtStartup;
-      _autoHideEnabled = autoHideEnabled;
-      _useUserLayout = useUserLayout;
-      _kanataEnabled = kanataEnabled;
+
+      // Text settings
+      _fontStyle = fontStyle;
+      _keyFontSize = keyFontSize;
+      _spaceFontSize = spaceFontSize;
+      _fontWeight = fontWeight;
+      _keyTextColor = keyTextColor;
+      _keyTextColorNotPressed = keyTextColorNotPressed;
     });
   }
 
   Future<void> _savePreferences() async {
+    // General settings
+    await asyncPrefs.setBool('launchAtStartup', _launchAtStartup);
+    await asyncPrefs.setBool('autoHideEnabled', _autoHideEnabled);
+    await asyncPrefs.setDouble('autoHideDuration', _autoHideDuration);
     await asyncPrefs.setString('layout', _keyboardLayoutName);
-    await asyncPrefs.setString('fontStyle', _fontStyle);
-    await asyncPrefs.setDouble('keyFontSize', _keyFontSize);
-    await asyncPrefs.setDouble('spaceFontSize', _spaceFontSize);
-    await asyncPrefs.setInt('fontWeight', _fontWeight.index);
-    await asyncPrefs.setInt('keyTextColor', _keyTextColor.toARGB32());
-    await asyncPrefs.setInt(
-        'keyTextColorNotPressed', _keyTextColorNotPressed.toARGB32());
+    await asyncPrefs.setBool('showAdvancedSettings', _showAdvancedSettings);
+    await asyncPrefs.setBool('useUserLayout', _useUserLayout);
+    await asyncPrefs.setBool('kanataEnabled', _kanataEnabled);
+
+    // Appearance settings
+    await asyncPrefs.setDouble('opacity', _opacity);
     await asyncPrefs.setInt('keyColorPressed', _keyColorPressed.toARGB32());
     await asyncPrefs.setInt(
         'keyColorNotPressed', _keyColorNotPressed.toARGB32());
-    await asyncPrefs.setDouble('keySize', _keySize);
-    await asyncPrefs.setDouble('keyBorderRadius', _keyBorderRadius);
-    await asyncPrefs.setDouble('keyPadding', _keyPadding);
     await asyncPrefs.setInt('markerColor', _markerColor.toARGB32());
     await asyncPrefs.setInt(
         'markerColorNotPressed', _markerColorNotPressed.toARGB32());
@@ -190,15 +217,24 @@ class _PreferencesScreenState extends State<PreferencesScreen>
     await asyncPrefs.setDouble('markerWidth', _markerWidth);
     await asyncPrefs.setDouble('markerHeight', _markerHeight);
     await asyncPrefs.setDouble('markerBorderRadius', _markerBorderRadius);
-    await asyncPrefs.setDouble('spaceWidth', _spaceWidth);
+
+    // Keyboard settings
     await asyncPrefs.setString('keymapStyle', _keymapStyle);
+    await asyncPrefs.setBool('showTopRow', _showTopRow);
+    await asyncPrefs.setDouble('keySize', _keySize);
+    await asyncPrefs.setDouble('keyBorderRadius', _keyBorderRadius);
+    await asyncPrefs.setDouble('keyPadding', _keyPadding);
+    await asyncPrefs.setDouble('spaceWidth', _spaceWidth);
     await asyncPrefs.setDouble('splitWidth', _splitWidth);
-    await asyncPrefs.setDouble('opacity', _opacity);
-    await asyncPrefs.setDouble('autoHideDuration', _autoHideDuration);
-    await asyncPrefs.setBool('launchAtStartup', _launchAtStartup);
-    await asyncPrefs.setBool('autoHideEnabled', _autoHideEnabled);
-    await asyncPrefs.setBool('useUserLayout', _useUserLayout);
-    await asyncPrefs.setBool('kanataEnabled', _kanataEnabled);
+
+    // Text settings
+    await asyncPrefs.setString('fontStyle', _fontStyle);
+    await asyncPrefs.setDouble('keyFontSize', _keyFontSize);
+    await asyncPrefs.setDouble('spaceFontSize', _spaceFontSize);
+    await asyncPrefs.setInt('fontWeight', _fontWeight.index);
+    await asyncPrefs.setInt('keyTextColor', _keyTextColor.toARGB32());
+    await asyncPrefs.setInt(
+        'keyTextColorNotPressed', _keyTextColorNotPressed.toARGB32());
   }
 
   void _updateMainWindow(dynamic method, dynamic value) async {
@@ -266,7 +302,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
     return Container(
       padding: const EdgeInsets.all(8),
       child: Row(
-        children: ['General', 'Text', 'Keyboard', 'Tactile Markers', 'About']
+        children: ['General', 'Appearance', 'Keyboard', 'Text', 'About']
             .map((tab) => _buildTabButton(tab))
             .toList(),
       ),
@@ -301,12 +337,12 @@ class _PreferencesScreenState extends State<PreferencesScreen>
     switch (_currentTab) {
       case 'General':
         return _buildGeneralTab();
+      case 'Appearance':
+        return _buildAppearanceTab();
       case 'Text':
         return _buildTextTab();
       case 'Keyboard':
         return _buildKeyboardTab();
-      case 'Tactile Markers':
-        return _buildTactileMarkersTab();
       case 'About':
         return _buildAboutTab();
       default:
@@ -327,18 +363,117 @@ class _PreferencesScreenState extends State<PreferencesScreen>
           setState(() => _autoHideEnabled = value);
           _updateMainWindow('updateAutoHideEnabled', value);
         }),
-        _buildSliderOption(
-            'Auto-hide duration (seconds)', _autoHideDuration, 0.5, 5.0, 9,
-            (value) {
-          double roundedValue = (value * 2).round() / 2;
-          setState(() => _autoHideDuration = roundedValue);
-          _updateMainWindow('updateAutoHideDuration', roundedValue);
-        }, valueDisplayFormatter: (value) => value.toStringAsFixed(1)),
+        if (_autoHideEnabled)
+          _buildSliderOption(
+              'Auto-hide duration (seconds)', _autoHideDuration, 0.5, 5.0, 9,
+              (value) {
+            double roundedValue = (value * 2).round() / 2;
+            setState(() => _autoHideDuration = roundedValue);
+            _updateMainWindow('updateAutoHideDuration', roundedValue);
+          }, valueDisplayFormatter: (value) => value.toStringAsFixed(1)),
         _buildDropdownOption('Layout', _keyboardLayoutName,
             availableLayouts.map((layout) => (layout.name)).toList(), (value) {
           setState(() => _keyboardLayoutName = value!);
           _updateMainWindow('updateLayout', value);
         }),
+        _buildToggleOption('Show advanced settings', _showAdvancedSettings,
+            (value) {
+          setState(() => _showAdvancedSettings = value);
+          _savePreferences();
+        }),
+        if (_showAdvancedSettings) ...[
+          _buildToggleOption('Use custom layout from config', _useUserLayout,
+              subtitle:
+                  'Sets layout to user-defined defaultUserLayout. Make sure that the layout is saved in the config file.',
+              (value) {
+            if (value && _kanataEnabled) {
+              // If turning on useUserLayout, turn off kanataEnabled
+              setState(() {
+                _useUserLayout = value;
+                _kanataEnabled = false;
+              });
+              _updateMainWindow('updateKanataEnabled', false);
+            } else {
+              setState(() => _useUserLayout = value);
+            }
+            _updateMainWindow('updateUseUserLayout', value);
+          }),
+          _buildToggleOption('Connect to Kanata', _kanataEnabled,
+              subtitle:
+                  'Make sure that Kanata and OverKeys are using the same port.',
+              (value) {
+            if (value && _useUserLayout) {
+              // If turning on kanataEnabled, turn off useUserLayout
+              setState(() {
+                _kanataEnabled = value;
+                _useUserLayout = false;
+              });
+              _updateMainWindow('updateUseUserLayout', false);
+            } else {
+              setState(() => _kanataEnabled = value);
+            }
+            _updateMainWindow('updateKanataEnabled', value);
+          }),
+          _buildOpenConfigButton(),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildAppearanceTab() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildSectionTitle('Appearance Settings'),
+        _buildSliderOption('Opacity', _opacity, 0.1, 1.0, 18, (value) {
+          setState(() => _opacity = value);
+          _updateMainWindow('updateOpacity', value);
+        }),
+        _buildColorOption('Key color (pressed)', _keyColorPressed, (color) {
+          setState(() => _keyColorPressed = color);
+          _updateMainWindow('updateKeyColorPressed', color);
+        }),
+        _buildColorOption('Key color (not pressed)', _keyColorNotPressed,
+            (color) {
+          setState(() => _keyColorNotPressed = color);
+          _updateMainWindow('updateKeyColorNotPressed', color);
+        }),
+        _buildSectionTitle('Tactile Markers'),
+        _buildColorOption('Marker color (pressed)', _markerColor, (color) {
+          setState(() => _markerColor = color);
+          _updateMainWindow('updateMarkerColor', color);
+        }),
+        _buildColorOption('Marker color (not pressed)', _markerColorNotPressed,
+            (color) {
+          setState(() => _markerColorNotPressed = color);
+          _updateMainWindow('updateMarkerColorNotPressed', color);
+        }),
+        _buildSliderOption('Marker offset', _markerOffset, 0, 20, 20, (value) {
+          setState(() => _markerOffset = value);
+          _updateMainWindow('updateMarkerOffset', value);
+        }),
+        _buildSliderOption('Marker width', _markerWidth, 0, 20, 20, (value) {
+          setState(() => _markerWidth = value);
+          _updateMainWindow('updateMarkerWidth', value);
+        }),
+        _buildSliderOption('Marker height', _markerHeight, 0, 10, 10, (value) {
+          setState(() => _markerHeight = value);
+          _updateMainWindow('updateMarkerHeight', value);
+        }),
+        _buildSliderOption(
+            'Marker border radius', _markerBorderRadius, 0, 10, 10, (value) {
+          setState(() => _markerBorderRadius = value);
+          _updateMainWindow('updateMarkerBorderRadius', value);
+        }),
+      ],
+    );
+  }
+
+  Widget _buildKeyboardTab() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildSectionTitle('Keyboard Layout'),
         _buildDropdownOption('Keymap style', _keymapStyle,
             ['Staggered', 'Matrix', 'Split Matrix'], (value) {
           if (value == 'Split Matrix' && _spaceWidth > 300) {
@@ -348,38 +483,41 @@ class _PreferencesScreenState extends State<PreferencesScreen>
           setState(() => _keymapStyle = value!);
           _updateMainWindow('updateKeymapStyle', value);
         }),
-        _buildSliderOption('Opacity', _opacity, 0.1, 1.0, 18, (value) {
-          setState(() => _opacity = value);
-          _updateMainWindow('updateOpacity', value);
-        }),
-        _buildToggleOption('Use custom layout from config', _useUserLayout,
+        _buildToggleOption('Show top row', _showTopRow,
+            subtitle:
+                'Recommended to toggle when keyboard is visible or auto-hide is off. Toggling while hidden may cause rendering errors.',
             (value) {
-          if (value && _kanataEnabled) {
-            // If turning on useUserLayout, turn off kanataEnabled
-            setState(() {
-              _useUserLayout = value;
-              _kanataEnabled = false;
-            });
-            _updateMainWindow('updateKanataEnabled', false);
-          } else {
-            setState(() => _useUserLayout = value);
-          }
-          _updateMainWindow('updateUseUserLayout', value);
+          setState(() => _showTopRow = value);
+          _updateMainWindow('updateShowTopRow', value);
         }),
-        _buildToggleOption('Connect to Kanata', _kanataEnabled, (value) {
-          if (value && _useUserLayout) {
-            // If turning on kanataEnabled, turn off useUserLayout
-            setState(() {
-              _kanataEnabled = value;
-              _useUserLayout = false;
-            });
-            _updateMainWindow('updateUseUserLayout', false);
-          } else {
-            setState(() => _kanataEnabled = value);
-          }
-          _updateMainWindow('updateKanataEnabled', value);
+        _buildSectionTitle('Key Dimensions'),
+        _buildSliderOption('Key size', _keySize, 40, 60, 40, (value) {
+          setState(() => _keySize = value);
+          _updateMainWindow('updateKeySize', value);
         }),
-        _buildOpenConfigButton(),
+        _buildSliderOption('Key border radius', _keyBorderRadius, 0, 30, 30,
+            (value) {
+          setState(() => _keyBorderRadius = value);
+          _updateMainWindow('updateKeyBorderRadius', value);
+        }),
+        _buildSliderOption('Key padding', _keyPadding, 0, 10, 20, (value) {
+          setState(() => _keyPadding = value);
+          _updateMainWindow('updateKeyPadding', value);
+        }),
+        _buildSliderOption(
+            'Space width',
+            _spaceWidth,
+            120,
+            (_keymapStyle == 'Split Matrix') ? 300 : 500,
+            (_keymapStyle == 'Split Matrix') ? 90 : 190, (value) {
+          setState(() => _spaceWidth = value);
+          _updateMainWindow('updateSpaceWidth', value);
+        }),
+        if (_keymapStyle == 'Split Matrix')
+          _buildSliderOption('Split width', _splitWidth, 30, 200, 34, (value) {
+            setState(() => _splitWidth = value);
+            _updateMainWindow('updateSplitWidth', value);
+          }),
       ],
     );
   }
@@ -389,10 +527,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildSectionTitle('Text Settings'),
-        _buildDropdownOptionWithSubtitle(
-            'Font style',
-            'Make sure that the font is installed in your system. Falls back to Geist Mono',
-            _fontStyle, [
+        _buildDropdownOption('Font style', _fontStyle, [
           'Berkeley Mono',
           'Cascadia Mono',
           'Comic Mono',
@@ -438,8 +573,10 @@ class _PreferencesScreenState extends State<PreferencesScreen>
         ], (value) {
           setState(() => _fontStyle = value!);
           _updateMainWindow('updateFontStyle', value);
-        }),
-        _buildSliderOption('Font size', _keyFontSize, 12, 32, 40, (value) {
+        },
+            subtitle:
+                'Make sure that the font is installed in your system. Falls back to Geist Mono'),
+        _buildSliderOption('Key font size', _keyFontSize, 12, 32, 40, (value) {
           setState(() => _keyFontSize = value);
           _updateMainWindow('updateKeyFontSize', value);
         }),
@@ -524,86 +661,6 @@ class _PreferencesScreenState extends State<PreferencesScreen>
     );
   }
 
-  Widget _buildKeyboardTab() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildSectionTitle('Keyboard Settings'),
-        _buildSliderOption('Key size', _keySize, 40, 60, 40, (value) {
-          setState(() => _keySize = value);
-          _updateMainWindow('updateKeySize', value);
-        }),
-        _buildSliderOption('Key border radius', _keyBorderRadius, 0, 30, 30,
-            (value) {
-          setState(() => _keyBorderRadius = value);
-          _updateMainWindow('updateKeyBorderRadius', value);
-        }),
-        _buildSliderOption('Key padding', _keyPadding, 0, 10, 20, (value) {
-          setState(() => _keyPadding = value);
-          _updateMainWindow('updateKeyPadding', value);
-        }),
-        _buildSliderOption(
-            'Space width',
-            _spaceWidth,
-            120,
-            (_keymapStyle == 'Split Matrix') ? 300 : 500,
-            (_keymapStyle == 'Split Matrix') ? 90 : 190, (value) {
-          setState(() => _spaceWidth = value);
-          _updateMainWindow('updateSpaceWidth', value);
-        }),
-        if (_keymapStyle == 'Split Matrix')
-          _buildSliderOption('Split width', _splitWidth, 30, 200, 34, (value) {
-            setState(() => _splitWidth = value);
-            _updateMainWindow('updateSplitWidth', value);
-          }),
-        _buildColorOption('Key color (pressed)', _keyColorPressed, (color) {
-          setState(() => _keyColorPressed = color);
-          _updateMainWindow('updateKeyColorPressed', color);
-        }),
-        _buildColorOption('Key color (not pressed)', _keyColorNotPressed,
-            (color) {
-          setState(() => _keyColorNotPressed = color);
-          _updateMainWindow('updateKeyColorNotPressed', color);
-        }),
-      ],
-    );
-  }
-
-  Widget _buildTactileMarkersTab() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildSectionTitle('Tactile Markers Settings'),
-        _buildColorOption('Marker color (presed)', _markerColor, (color) {
-          setState(() => _markerColor = color);
-          _updateMainWindow('updateMarkerColor', color);
-        }),
-        _buildColorOption('Marker color (not pressed)', _markerColorNotPressed,
-            (color) {
-          setState(() => _markerColorNotPressed = color);
-          _updateMainWindow('updateMarkerColorNotPressed', color);
-        }),
-        _buildSliderOption('Marker offset', _markerOffset, 0, 20, 20, (value) {
-          setState(() => _markerOffset = value);
-          _updateMainWindow('updateMarkerOffset', value);
-        }),
-        _buildSliderOption('Marker width', _markerWidth, 0, 20, 20, (value) {
-          setState(() => _markerWidth = value);
-          _updateMainWindow('updateMarkerWidth', value);
-        }),
-        _buildSliderOption('Marker height', _markerHeight, 0, 10, 10, (value) {
-          setState(() => _markerHeight = value);
-          _updateMainWindow('updateMarkerHeight', value);
-        }),
-        _buildSliderOption(
-            'Marker border radius', _markerBorderRadius, 0, 10, 10, (value) {
-          setState(() => _markerBorderRadius = value);
-          _updateMainWindow('updateMarkerBorderRadius', value);
-        }),
-      ],
-    );
-  }
-
   Widget _buildAboutTab() {
     final colorScheme = ThemeManager.getTheme(_brightness).colorScheme;
 
@@ -644,18 +701,35 @@ class _PreferencesScreenState extends State<PreferencesScreen>
     );
   }
 
-  Widget _buildToggleOption(
-      String label, bool value, Function(bool) onChanged) {
+  Widget _buildToggleOption(String label, bool value, Function(bool) onChanged,
+      {String? subtitle}) {
     final colorScheme = ThemeManager.getTheme(_brightness).colorScheme;
     return _buildOptionContainer(
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label,
-              style: TextStyle(
-                  color: colorScheme.onSurface,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 16)),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(label,
+                    style: TextStyle(
+                        color: colorScheme.onSurface,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 16)),
+                if (subtitle != null)
+                  Text(
+                    subtitle,
+                    style: TextStyle(
+                        color: colorScheme.onSurface.withAlpha(153),
+                        fontSize: 14.0),
+                    softWrap: true,
+                    overflow: TextOverflow.visible,
+                  ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 16),
           Switch(
             value: value,
             onChanged: onChanged,
@@ -671,8 +745,9 @@ class _PreferencesScreenState extends State<PreferencesScreen>
     );
   }
 
-  Widget _buildDropdownOptionWithSubtitle(String label, String subtitle,
-      String value, List<String> options, Function(String?) onChanged) {
+  Widget _buildDropdownOption(String label, String value, List<String> options,
+      Function(String?) onChanged,
+      {String? subtitle}) {
     final colorScheme = ThemeManager.getTheme(_brightness).colorScheme;
 
     return _buildOptionContainer(
@@ -688,14 +763,15 @@ class _PreferencesScreenState extends State<PreferencesScreen>
                         color: colorScheme.onSurface,
                         fontWeight: FontWeight.w600,
                         fontSize: 16)),
-                Text(
-                  subtitle,
-                  style: TextStyle(
-                      color: colorScheme.onSurface.withAlpha(153),
-                      fontSize: 14.0),
-                  softWrap: true,
-                  overflow: TextOverflow.visible,
-                ),
+                if (subtitle != null)
+                  Text(
+                    subtitle,
+                    style: TextStyle(
+                        color: colorScheme.onSurface.withAlpha(153),
+                        fontSize: 14.0),
+                    softWrap: true,
+                    overflow: TextOverflow.visible,
+                  ),
               ],
             ),
           ),
@@ -788,40 +864,6 @@ class _PreferencesScreenState extends State<PreferencesScreen>
     );
   }
 
-  Widget _buildDropdownOption(String label, String value, List<String> options,
-      Function(String?) onChanged) {
-    final colorScheme = ThemeManager.getTheme(_brightness).colorScheme;
-
-    return _buildOptionContainer(
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(label,
-                  style: TextStyle(
-                      color: colorScheme.onSurface,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 16)),
-            ],
-          ),
-          DropdownButton<String>(
-            value: value,
-            items: options
-                .map((String option) => DropdownMenuItem<String>(
-                    value: option, child: Text(option)))
-                .toList(),
-            onChanged: onChanged,
-            dropdownColor: colorScheme.surface,
-            style:
-                TextStyle(color: colorScheme.onSurface, fontFamily: 'Manrope'),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildSliderOption(String label, double value, double min, double max,
       int divisions, Function(double) onChanged,
       {String Function(double)? valueDisplayFormatter}) {
@@ -870,19 +912,6 @@ class _PreferencesScreenState extends State<PreferencesScreen>
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildOptionContainer(Widget child) {
-    final colorScheme = ThemeManager.getTheme(_brightness).colorScheme;
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: colorScheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: child,
     );
   }
 
@@ -977,6 +1006,19 @@ class _PreferencesScreenState extends State<PreferencesScreen>
           ],
         );
       }),
+    );
+  }
+
+  Widget _buildOptionContainer(Widget child) {
+    final colorScheme = ThemeManager.getTheme(_brightness).colorScheme;
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: colorScheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: child,
     );
   }
 }
