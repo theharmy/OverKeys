@@ -24,6 +24,7 @@
     <li><a href="#about-the-project">About The Project</a></li>
     <li><a href="#features">Features</a></li>
     <li><a href="#getting-started">Getting Started</a></li>
+    <li><a href="#configuration">Configuration</a></li>
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#license">License</a></li>
     <li><a href="#contact">Contact</a></li>
@@ -91,31 +92,39 @@ This project was initially developed to help with system-wide practice of the **
 
 ## Features
 
-- **Multi-layout support**: The following layouts are currently supported:
-  - QWERTY
-  - Colemak
-  - Dvorak
-  - Canaria
-  - Canary
-  - Canary Matrix
-  - Colemak DH
-  - Colemak DH Matrix
-  - Engram
-  - Focal
-  - Gallium (Col-Stag)
-  - Gallium V2 (Row-Stag)
-  - Graphite
-  - Halmak
-  - Hands Down
-  - NERPS
-  - Norman
-  - Sturdy
-  - Sturdy Angle (Staggered)
-  - Workman
+- **Multi-layout support**: The following layouts are currently natively supported.
+  <details>
+  <summary>Layouts</summary>
+    <ul>
+      <li>QWERTY</li>
+      <li>Colemak</li>
+      <li>Dvorak</li>
+      <li>Canaria</li>
+      <li>Canary</li>
+      <li>Canary Matrix</li>
+      <li>Colemak DH</li>
+      <li>Colemak DH Matrix</li>
+      <li>Engram</li>
+      <li>Focal</li>
+      <li>Gallium (Col-Stag)</li>
+      <li>Gallium V2 (Row-Stag)</li>
+      <li>Graphite</li>
+      <li>Halmak</li>
+      <li>Hands Down</li>
+      <li>NERPS</li>
+      <li>Norman</li>
+      <li>Sturdy</li>
+      <li>Sturdy Angle (Staggered)</li>
+      <li>Workman</li>
+    </ul>
+  </details>
 - **Customizable styles**: Change colors, fonts, sizes, offsets, and key styles to fit your preference.
 - **Always on top**: Keep the keyboard on top of all windows for constant access.
 - **Auto-hide**: The keyboard hides automatically when not in use.
 - **Keymap layouts**: Supports keymap layouts such as staggered, matrix, and split matrix.
+- [**Layer switching (Kanata)**](#layer-switching-through-kanata-tcp): Connect to [Kanata](https://github.com/jtroo/kanata) through TCP to dynamically display the active layer.
+- **User configurations**: Easily add and use custom keyboard layouts through `user_config.json`.
+- **Auto-hide**: The keyboard hides automatically when not in use.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -140,6 +149,79 @@ To change the app settings, right-click the OverKeys icon in the system tray and
 ### Loading Your Own Layout
 
 To load your own keyboard layout, follow these steps:
+
+1. **Access Configuration**:
+
+   - Right-click the OverKeys icon in the system tray
+   - Select **Preferences**
+   - Go to the **General** tab
+   - Click **Open Config** option
+
+2. **Edit Configuration**:
+
+   - Edit the `overkeys_config.json` file that opens in your default text editor
+   - Add your custom layouts as needed in the `userLayouts` section. Use the key symbols found in [mappings.dart](lib/models/mappings.dart) and [key_code.dart](lib/utils/key_code.dart) as reference for key names and special characters that OverKeys recognize.
+   - Set the `defaultUserLayout` property to specify which layout to use (can be one of your custom layouts or any supported layout)
+   - Save the file
+
+3. **Apply Changes**:
+
+   - Restart OverKeys
+   - Return to **Preferences** > **General** tab
+   - Toggle on **Use custom layout from config**
+   - Your custom layout should now be active
+
+### Layer Switching through Kanata TCP
+
+> **Note**: Since OverKeys uses Windows LLHOOK for key detection, this feature is only guaranteed to work with Kanata implementations that also use Windows LLHOOK. Integration has been tested and confirmed working with kanata_gui.exe.
+
+1. **Access Configuration**:
+
+   - Right-click the OverKeys icon in the system tray
+   - Select **Preferences**
+   - Go to the **General** tab
+   - Click **Open Config** option
+
+2. **Edit Configuration**:
+
+   - Edit the `overkeys_config.json` file that opens in your default text editor
+   - Add your kanata layers as needed in the `userLayouts` section. Use the key symbols found in [mappings.dart](lib/models/mappings.dart) and [key_code.dart](lib/utils/key_code.dart) as reference for key names and special characters that OverKeys recognize.
+     - You may also add unsupported keys (e.g., COPY, PASTE). They would appear on the keyboard upon layer switching but won't be triggered due to not being supported (yet?)
+   - Define the TCP address you want to use in `kanataHost` and `kanataPort` (defaults are `127.0.0.1` and `4039`)
+   - Save the file
+   - Restart OverKeys
+
+3. **Kanata Configuration**
+
+   - When running Kanata, (assuming that the `kanata.kbd` is in the same directory as the kanata executable so no more `-c` flag needed) use the `-p` flag with the same address and port:
+
+     ```pwsh
+     kanata.exe -p ${kanataHost}:${kanataPort}
+     ```
+
+     - Tip: Create a shortcut for `kanata_gui.exe` and place it in the Windows Startup folder (`C:\Users\%USERNAME%\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup`). This allows Kanata to launch after OverKeys on system boot. Add the parameter `-p 127.0.0.1:4039` (or your custom `kanataHost:kanataPort`) to the shortcut's target field in Properties. When your PC starts, both applications will open automatically and connect.
+
+4. **Apply Changes**:
+
+   - Return to **Preferences** > **General** tab
+   - Toggle on **Connect to Kanata**
+   - OverKeys should now be connected to Kanata
+
+> **Note**: If you've previously enabled "Connect to Kanata" in a session, OverKeys will automatically attempt to connect the next time it opens. It's recommended to open OverKeys first, then launch Kanata, to avoid detecting double key presses (as OverKeys would otherwise detect both the `defsrc` layer key and the injected kanata key press).
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+## Contributing
+
+Contributions are what make the open-source community such an amazing place to learn and collaborate. Any contributions to **OverKeys** are greatly appreciated.
+
+1. Fork the Project.
+2. Create your Feature Branch (`git checkout -b feat/amazing-feature`).
+3. Commit your Changes (`git commit -m 'feat: add some amazing feature'`).
+4. Push to the Branch (`git push origin feat/amazing-feature`).
+5. Open a Pull Request.
+
+### Building
 
 1. **Install Flutter**:
 
@@ -193,18 +275,6 @@ To load your own keyboard layout, follow these steps:
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-## Contributing
-
-Contributions are what make the open-source community such an amazing place to learn and collaborate. Any contributions to **OverKeys** are greatly appreciated.
-
-1. Fork the Project.
-2. Create your Feature Branch (`git checkout -b feat/amazing-feature`).
-3. Commit your Changes (`git commit -m 'feat: add some amazing feature'`).
-4. Push to the Branch (`git push origin feat/amazing-feature`).
-5. Open a Pull Request.
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
 ## License
 
 Distributed under the GPL-3.0 License. See `LICENSE` file for more information.
@@ -232,6 +302,6 @@ Project Link: [https://github.com/conventoangelo/OverKeys](https://github.com/co
 - [desktop_multi_window](https://pub.dev/packages/desktop_multi_window) - A flutter plugin that create and manager multi window in desktop.
 - [flex_color_picker](https://github.com/rydmike/flex_color_picker) - A highly customizable Flutter color picker.
 - [Best-README-Template](https://github.com/othneildrew/Best-README-Template) - An awesome README template to jumpstart your projects!
-- Alaine - for the OverKeys logo.
+- Alaine - for creating the beautiful OverKeys logo with love and care.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
