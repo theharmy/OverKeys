@@ -38,6 +38,10 @@
 
 ![OverKeys Demo](https://github.com/conventoangelo/OverKeys/blob/main/assets/images/OverKeysDemo.gif)
 
+
+https://github.com/user-attachments/assets/c687a448-52b0-41bc-9b6b-07e61c2d3b31
+
+
 OverKeys is an open-source on-screen keyboard designed for users to practice alternative keyboard layouts, such as **Canary**, **Colemak**, **Dvorak**, and many more. Built in [**Flutter**](https://flutter.dev/), it allows full customizability, making it perfect for users learning or working with non-traditional layouts.
 
 This project was initially developed to help with system-wide practice of the **Canary layout**, but has since evolved to support multiple layouts and customization options.
@@ -123,7 +127,7 @@ This project was initially developed to help with system-wide practice of the **
 - **Auto-hide**: The keyboard hides automatically when not in use.
 - **Keymap layouts**: Supports keymap layouts such as staggered, matrix, and split matrix.
 - [**Layer switching (Kanata)**](#layer-switching-through-kanata-tcp): Connect to [Kanata](https://github.com/jtroo/kanata) through TCP to dynamically display the active layer.
-- **User configurations**: Easily add and use custom keyboard layouts through `user_config.json`.
+- **User configurations**: Easily add and use custom keyboard layouts through `overkeys_config.json`.
 - **Auto-hide**: The keyboard hides automatically when not in use.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
