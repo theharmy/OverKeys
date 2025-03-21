@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:overkeys/services/config_service.dart';
-import 'package:overkeys/utils/keyboard_layouts.dart';
+import 'package:overkeys/models/keyboard_layouts.dart';
 
 typedef LayerChangeCallback = void Function(
     KeyboardLayout layout, bool isDefaultUserLayout);

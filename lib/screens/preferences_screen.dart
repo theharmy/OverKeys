@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:overkeys/models/user_config.dart';
-import 'package:overkeys/utils/keyboard_layouts.dart';
+import 'package:overkeys/models/keyboard_layouts.dart';
 import 'package:overkeys/utils/theme_manager.dart';
 import 'package:overkeys/services/config_service.dart';
 

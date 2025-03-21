@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter/foundation.dart';
 import '../models/user_config.dart';
-import '../utils/keyboard_layouts.dart';
+import '../models/keyboard_layouts.dart';
 
 class ConfigService {
   static const String _configFileName = 'overkeys_config.json';

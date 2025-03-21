@@ -12,7 +12,7 @@ import 'package:window_manager/window_manager.dart';
 import 'package:overkeys/services/config_service.dart';
 import 'package:overkeys/services/kanata_service.dart';
 import 'package:overkeys/utils/key_code.dart';
-import 'utils/keyboard_layouts.dart';
+import 'models/keyboard_layouts.dart';
 import 'screens/keyboard_screen.dart';
 import 'utils/hooks.dart';
 

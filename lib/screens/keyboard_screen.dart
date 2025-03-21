@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../utils/keyboard_layouts.dart';
+import '../models/keyboard_layouts.dart';
 import '../models/mappings.dart';
 
 class KeyboardScreen extends StatelessWidget {

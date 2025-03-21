@@ -1,4 +1,4 @@
-import '../utils/keyboard_layouts.dart';
+import 'keyboard_layouts.dart';
 
 class UserConfig {
   String kanataHost;
