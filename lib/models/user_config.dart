@@ -15,7 +15,20 @@ class UserConfig {
         name: "Extend",
         keys: [
           ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "=", "BSPC"],
-          ["UNDO", "CUT", "COPY", "PASTE", "FIND", "DEV", "⇤", "↑", "⇥", "", "", ""],
+          [
+            "UNDO",
+            "CUT",
+            "COPY",
+            "PASTE",
+            "FIND",
+            "DEV",
+            "⇤",
+            "↑",
+            "⇥",
+            "",
+            "",
+            ""
+          ],
           ["1", "2", "3", "4", "5", "⤒", "←", "↓", "→", "⤓", ""],
           ["6", "7", "8", "9", "0", "", "", "", "", ""],
           [" "],
@@ -31,9 +44,29 @@ class UserConfig {
           [" "],
         ],
       ),
+      KeyboardLayout(
+        name: "Arabic",
+        keys: [
+          ["١", "٢", "٣", "٤", "٥", "٦", "٧", "٨", "٩", "٠", "", "", ""],
+          ["ض", "ص", "ث", "ق", "ف", "غ", "ع", "ه", "خ", "ح", "ج", "د"],
+          ["ش", "س", "ي", "ب", "ل", "ا", "ت", "ن", "م", "ك", "ط"],
+          ["ئ", "ء", "ؤ", "ر", "لا", "ى", "ة", "و", "ز", "ظ"],
+          [" "],
+        ],
+      ),
+      KeyboardLayout(
+        name: "Russian",
+        keys: [
+          ["", "", "", "", "", "", "", "", "", "", "", "", ""],
+          ["й", "ц", "у", "к", "е", "н", "г", "ш", "щ", "з", "х", "ъ"],
+          ["ф", "ы", "в", "а", "п", "р", "о", "л", "д", "ж", "э"],
+          ["я", "ч", "с", "м", "и", "т", "ь", "б", "ю", "ё"],
+          [" "],
+        ],
+      ),
     ],
     this.defaultUserLayout = 'Symbol',
-    this.altLayout = 'Symbol',
+    this.altLayout = 'Arabic',
   });
 
   factory UserConfig.fromJson(Map<String, dynamic> json) {
@@ -53,8 +86,8 @@ class UserConfig {
       kanataHost: json['kanataHost'] ?? '127.0.0.1',
       kanataPort: json['kanataPort'] ?? 4039,
       userLayouts: layers,
-      defaultUserLayout: json['defaultUserLayout'] ?? 'QWERTY',
-      altLayout: json['altLayout'] ?? 'QWERTY',
+      defaultUserLayout: json['defaultUserLayout'] ?? 'Symbol',
+      altLayout: json['altLayout'] ?? 'Arabic',
     );
   }
 
