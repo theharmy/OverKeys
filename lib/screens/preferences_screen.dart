@@ -697,7 +697,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
                 fontSize: 24,
                 fontWeight: FontWeight.bold)),
         const SizedBox(height: 8),
-        Text('Version 0.2.2',
+        Text('Version 0.2.3-alpha.1',
             style: TextStyle(color: colorScheme.onSurface.withAlpha(153))),
         const SizedBox(height: 16),
         Text(
