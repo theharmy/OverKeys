@@ -50,6 +50,8 @@ class _MainAppState extends State<MainApp> with TrayListener {
   KeyboardLayout _keyboardLayout = qwerty;
   KeyboardLayout? _initialKeyboardLayout;
   bool _useUserLayout = false;
+  KeyboardLayout? _altLayout;
+  bool _showAltLayout = false;
   bool _kanataEnabled = false;
 
   // Appearance settings
@@ -74,7 +76,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
   double _splitWidth = 100;
 
   // Text settings
-  String _fontStyle = 'GeistMono';
+  String _fontFamily = 'GeistMono';
   double _keyFontSize = 20;
   double _spaceFontSize = 14;
   FontWeight _fontWeight = FontWeight.w600;
@@ -101,6 +103,9 @@ class _MainAppState extends State<MainApp> with TrayListener {
     Future.delayed(const Duration(seconds: 2), () {
       if (_useUserLayout) {
         _loadUserLayout();
+      }
+      if (_showAltLayout) {
+        _loadAltLayout();
       }
       if (_kanataEnabled) {
         _kanataService.connect();
@@ -174,6 +179,21 @@ class _MainAppState extends State<MainApp> with TrayListener {
     }
   }
 
+  Future<void> _loadAltLayout() async {
+    if (!_showAltLayout) return;
+    final configService = ConfigService();
+    final altLayout = await configService.getAltLayout();
+
+    if (altLayout != null) {
+      setState(() {
+        _altLayout = altLayout;
+      });
+      if (kDebugMode) {
+        print('Loaded alt layout: ${altLayout.name}');
+      }
+    }
+  }
+
   Future<void> _loadKanataConfig() async {
     final configService = ConfigService();
     final config = await configService.loadConfig();
@@ -182,24 +202,23 @@ class _MainAppState extends State<MainApp> with TrayListener {
       _kanataService.updateSettings(
           config.kanataHost, config.kanataPort, config.userLayouts);
 
-      final defaultLayout =
-          _kanataService.getLayoutByName(config.defaultUserLayout);
-      if (defaultLayout != null) {
-        setState(() {
+      final defaultLayout = await configService.getUserLayout();
+      setState(() {
+        if (defaultLayout != null) {
           _keyboardLayout = defaultLayout;
-        });
-      }
+        }
+      });
     }
   }
 
   Future<void> _adjustWindowSize() async {
     _fadeIn();
     double height = _showTopRow
-      ? _defaultWindowHeight + _defaultTopRowExtraHeight
-      : _defaultWindowHeight;
+        ? _defaultWindowHeight + _defaultTopRowExtraHeight
+        : _defaultWindowHeight;
     double width = _showTopRow
-      ? _defaultWindowWidth + _defaultTopRowExtraWidth
-      : _defaultWindowWidth;
+        ? _defaultWindowWidth + _defaultTopRowExtraWidth
+        : _defaultWindowWidth;
     await windowManager.setSize(Size(width, height));
     await windowManager.setAlignment(Alignment.bottomCenter);
   }
@@ -222,6 +241,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
     String keyboardLayoutName =
         await asyncPrefs.getString('layout') ?? 'QWERTY';
     bool useUserLayout = await asyncPrefs.getBool('useUserLayout') ?? false;
+    bool showAltLayout = await asyncPrefs.getBool('showAltLayout') ?? false;
     bool kanataEnabled = await asyncPrefs.getBool('kanataEnabled') ?? false;
 
     // Appearance settings
@@ -252,7 +272,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
     double splitWidth = await asyncPrefs.getDouble('splitWidth') ?? 100;
 
     // Text settings
-    String fontStyle = await asyncPrefs.getString('fontStyle') ?? 'GeistMono';
+    String fontFamily = await asyncPrefs.getString('fontFamily') ?? 'GeistMono';
     double keyFontSize = await asyncPrefs.getDouble('keyFontSize') ?? 20;
     double spaceFontSize = await asyncPrefs.getDouble('spaceFontSize') ?? 14;
     FontWeight fontWeight = FontWeight
@@ -270,6 +290,8 @@ class _MainAppState extends State<MainApp> with TrayListener {
           .firstWhere((layout) => layout.name == keyboardLayoutName);
       _initialKeyboardLayout = _keyboardLayout;
       _useUserLayout = useUserLayout;
+      _showAltLayout = showAltLayout;
+      _altLayout = _keyboardLayout;
       _kanataEnabled = kanataEnabled;
 
       // Appearance settings
@@ -293,7 +315,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
       _splitWidth = splitWidth;
 
       // Text settings
-      _fontStyle = fontStyle;
+      _fontFamily = fontFamily;
       _keyFontSize = keyFontSize;
       _spaceFontSize = spaceFontSize;
       _fontWeight = fontWeight;
@@ -308,6 +330,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
     await asyncPrefs.setDouble('autoHideDuration', _autoHideDuration);
     await asyncPrefs.setString('layout', _initialKeyboardLayout!.name);
     await asyncPrefs.setBool('useUserLayout', _useUserLayout);
+    await asyncPrefs.setBool('showAltLayout', _showAltLayout);
     await asyncPrefs.setBool('kanataEnabled', _kanataEnabled);
 
     // Appearance settings
@@ -333,7 +356,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
     await asyncPrefs.setDouble('splitWidth', _splitWidth);
 
     // Text settings
-    await asyncPrefs.setString('fontStyle', _fontStyle);
+    await asyncPrefs.setString('fontFamily', _fontFamily);
     await asyncPrefs.setDouble('keyFontSize', _keyFontSize);
     await asyncPrefs.setDouble('spaceFontSize', _spaceFontSize);
     await asyncPrefs.setInt('fontWeight', _fontWeight.index);
@@ -402,6 +425,15 @@ class _MainAppState extends State<MainApp> with TrayListener {
               _fadeIn();
             }
           });
+        case 'updateShowAltLayout':
+          final showAltLayout = call.arguments as bool;
+          setState(() {
+            _showAltLayout = showAltLayout;
+          });
+          if (showAltLayout) {
+            _loadAltLayout();
+          }
+          _fadeIn();
         case 'updateKanataEnabled':
           final kanataEnabled = call.arguments as bool;
           setState(() {
@@ -478,9 +510,9 @@ class _MainAppState extends State<MainApp> with TrayListener {
           setState(() => _splitWidth = splitWidth);
 
         // Text settings
-        case 'updateFontStyle':
-          final fontStyle = call.arguments as String;
-          setState(() => _fontStyle = fontStyle);
+        case 'updateFontFamily':
+          final fontFamily = call.arguments as String;
+          setState(() => _fontFamily = fontFamily);
         case 'updateKeyFontSize':
           final keyFontSize = call.arguments as double;
           setState(() => _keyFontSize = keyFontSize);
@@ -721,7 +753,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
     return MaterialApp(
       title: 'OverKeys',
       theme: ThemeData(
-          fontFamily: _fontStyle,
+          fontFamily: _fontFamily,
           fontFamilyFallback: const ['GeistMono', 'Manrope', 'sans-serif']),
       home: Scaffold(
           backgroundColor: Colors.transparent,
@@ -739,27 +771,28 @@ class _MainAppState extends State<MainApp> with TrayListener {
                   child: KeyboardScreen(
                     keyPressStates: _keyPressStates,
                     layout: _keyboardLayout,
-                    fontStyle: _fontStyle,
-                    keyFontSize: _keyFontSize,
-                    spaceFontSize: _spaceFontSize,
-                    fontWeight: _fontWeight,
-                    keyTextColor: _keyTextColor,
-                    keyTextColorNotPressed: _keyTextColorNotPressed,
+                    showAltLayout: _showAltLayout,
+                    altLayout: _altLayout,
                     keyColorPressed: _keyColorPressed,
                     keyColorNotPressed: _keyColorNotPressed,
-                    keySize: _keySize,
-                    keyBorderRadius: _keyBorderRadius,
-                    keyPadding: _keyPadding,
                     markerColor: _markerColor,
                     markerColorNotPressed: _markerColorNotPressed,
                     markerOffset: _markerOffset,
                     markerWidth: _markerWidth,
                     markerHeight: _markerHeight,
                     markerBorderRadius: _markerBorderRadius,
-                    spaceWidth: _spaceWidth,
                     keymapStyle: _keymapStyle,
-                    splitWidth: _splitWidth,
                     showTopRow: _showTopRow,
+                    keySize: _keySize,
+                    keyBorderRadius: _keyBorderRadius,
+                    keyPadding: _keyPadding,
+                    spaceWidth: _spaceWidth,
+                    splitWidth: _splitWidth,
+                    keyFontSize: _keyFontSize,
+                    spaceFontSize: _spaceFontSize,
+                    fontWeight: _fontWeight,
+                    keyTextColor: _keyTextColor,
+                    keyTextColorNotPressed: _keyTextColorNotPressed,
                   ),
                 ),
               ),

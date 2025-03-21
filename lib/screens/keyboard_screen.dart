@@ -5,53 +5,55 @@ import '../models/mappings.dart';
 class KeyboardScreen extends StatelessWidget {
   final Map<String, bool> keyPressStates;
   final KeyboardLayout layout;
-  final String fontStyle;
-  final double keyFontSize;
-  final double spaceFontSize;
-  final FontWeight fontWeight;
-  final Color keyTextColor;
-  final Color keyTextColorNotPressed;
+  final bool showAltLayout;
+  final KeyboardLayout? altLayout;
   final Color keyColorPressed;
   final Color keyColorNotPressed;
-  final double keySize;
-  final double keyBorderRadius;
-  final double keyPadding;
   final Color markerColor;
   final Color markerColorNotPressed;
   final double markerOffset;
   final double markerWidth;
   final double markerHeight;
   final double markerBorderRadius;
-  final double spaceWidth;
   final String keymapStyle;
-  final double splitWidth;
   final bool showTopRow;
+  final double keySize;
+  final double keyBorderRadius;
+  final double keyPadding;
+  final double spaceWidth;
+  final double splitWidth;
+  final double keyFontSize;
+  final double spaceFontSize;
+  final FontWeight fontWeight;
+  final Color keyTextColor;
+  final Color keyTextColorNotPressed;
 
   const KeyboardScreen(
       {super.key,
       required this.keyPressStates,
       required this.layout,
-      required this.fontStyle,
-      required this.keyFontSize,
-      required this.spaceFontSize,
-      required this.fontWeight,
-      required this.keyTextColor,
-      required this.keyTextColorNotPressed,
+      required this.showAltLayout,
+      required this.altLayout,
       required this.keyColorPressed,
       required this.keyColorNotPressed,
-      required this.keySize,
-      required this.keyBorderRadius,
-      required this.keyPadding,
       required this.markerColor,
       required this.markerColorNotPressed,
       required this.markerOffset,
       required this.markerWidth,
       required this.markerHeight,
       required this.markerBorderRadius,
-      required this.spaceWidth,
       required this.keymapStyle,
+      required this.showTopRow,
+      required this.keySize,
+      required this.keyBorderRadius,
+      required this.keyPadding,
+      required this.spaceWidth,
       required this.splitWidth,
-      required this.showTopRow});
+      required this.keyFontSize,
+      required this.spaceFontSize,
+      required this.fontWeight,
+      required this.keyTextColor,
+      required this.keyTextColorNotPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -113,41 +115,84 @@ class KeyboardScreen extends StatelessWidget {
           color: keyColor,
           borderRadius: BorderRadius.circular(keyBorderRadius),
         ),
-        child: Center(
-          child: key == " "
-              ? Text(
-                  layout.name.toLowerCase(),
+        child: key == " "
+            ? Center(
+                child: Text(
+                  showAltLayout && altLayout != null
+                      ? "${layout.name.toLowerCase()} (${altLayout!.name.toLowerCase()})"
+                      : layout.name.toLowerCase(),
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: textColor,
                     fontSize: spaceFontSize,
                     fontWeight: fontWeight,
                   ),
-                )
-              : Text(
-                  key,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: textColor,
-                    fontSize: key.length > 2 ? keyFontSize * 0.7 : keyFontSize,
-                    fontWeight: fontWeight,
-                  ),
                 ),
-        ),
+              )
+            : showAltLayout && altLayout != null
+                ? Stack(
+                    children: [
+                      // Primary layout key (top left)
+                      Positioned(
+                        top: 4,
+                        left: 8,
+                        child: Text(
+                          key,
+                          textAlign: TextAlign.left,
+                          style: TextStyle(
+                            color: textColor,
+                            fontSize: key.length > 2
+                                ? keyFontSize * 0.6
+                                : keyFontSize * 0.85,
+                            fontWeight: fontWeight,
+                          ),
+                        ),
+                      ),
+                      // Alt layout key (bottom right)
+                      Positioned(
+                        bottom: 4,
+                        right: 8,
+                        child: Text(
+                          _getAltLayoutKey(rowIndex, keyIndex),
+                          textAlign: TextAlign.right,
+                          style: TextStyle(
+                            color: textColor,
+                            fontSize:
+                                _getAltLayoutKey(rowIndex, keyIndex).length > 2
+                                    ? keyFontSize * 0.6
+                                    : keyFontSize * 0.85,
+                            fontWeight: fontWeight,
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
+                : Center(
+                    child: Text(
+                      key,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: textColor,
+                        fontSize:
+                            key.length > 2 ? keyFontSize * 0.7 : keyFontSize,
+                        fontWeight: fontWeight,
+                      ),
+                    ),
+                  ),
       ),
     );
 
     // Tactile Markers
     if (rowIndex == 2 && (keyIndex == 3 || keyIndex == 6)) {
       keyWidget = Stack(
-        alignment: Alignment.bottomCenter,
+        alignment: showAltLayout ? Alignment.center : Alignment.bottomCenter,
         children: [
           keyWidget,
           Positioned(
-            bottom: markerOffset,
+            bottom: showAltLayout ? null : markerOffset,
             child: Container(
-              width: markerWidth,
-              height: markerHeight,
+                width: markerWidth * (showAltLayout ? 0.5 : 1),
+                height: showAltLayout ? markerWidth * 0.5 : markerHeight,
               decoration: BoxDecoration(
                 color: tactMarkerColor,
                 borderRadius: BorderRadius.circular(markerBorderRadius),
@@ -157,7 +202,19 @@ class KeyboardScreen extends StatelessWidget {
         ],
       );
     }
-
     return keyWidget;
+  }
+
+  String _getAltLayoutKey(int rowIndex, int keyIndex) {
+    if (altLayout == null || rowIndex >= altLayout!.keys.length) {
+      return "";
+    }
+
+    List<String> altRow = altLayout!.keys[rowIndex];
+    if (keyIndex >= altRow.length) {
+      return "";
+    }
+
+    return altRow[keyIndex];
   }
 }

@@ -35,6 +35,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
   String _keyboardLayoutName = 'QWERTY';
   bool _showAdvancedSettings = false;
   bool _useUserLayout = false;
+  bool _showAltLayout = false;
   bool _kanataEnabled = false;
 
   // Appearance settings
@@ -58,7 +59,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
   double _splitWidth = 100;
 
   // Text settings
-  String _fontStyle = 'GeistMono';
+  String _fontFamily = 'GeistMono';
   double _keyFontSize = 20;
   double _spaceFontSize = 14;
   FontWeight _fontWeight = FontWeight.w600;
@@ -115,6 +116,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
     bool showAdvancedSettings =
         await asyncPrefs.getBool('showAdvancedSettings') ?? false;
     bool useUserLayout = await asyncPrefs.getBool('useUserLayout') ?? false;
+    bool showAltLayout = await asyncPrefs.getBool('showAltLayout') ?? false;
     bool kanataEnabled = await asyncPrefs.getBool('kanataEnabled') ?? false;
 
     // Appearance settings
@@ -145,7 +147,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
     double splitWidth = await asyncPrefs.getDouble('splitWidth') ?? 100;
 
     // Text settings
-    String fontStyle = await asyncPrefs.getString('fontStyle') ?? 'GeistMono';
+    String fontFamily = await asyncPrefs.getString('fontFamily') ?? 'GeistMono';
     double keyFontSize = await asyncPrefs.getDouble('keyFontSize') ?? 20;
     double spaceFontSize = await asyncPrefs.getDouble('spaceFontSize') ?? 14;
     FontWeight fontWeight = FontWeight
@@ -163,6 +165,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
       _keyboardLayoutName = keyboardLayoutName;
       _showAdvancedSettings = showAdvancedSettings;
       _useUserLayout = useUserLayout;
+      _showAltLayout = showAltLayout;
       _kanataEnabled = kanataEnabled;
 
       // Appearance settings
@@ -186,7 +189,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
       _splitWidth = splitWidth;
 
       // Text settings
-      _fontStyle = fontStyle;
+      _fontFamily = fontFamily;
       _keyFontSize = keyFontSize;
       _spaceFontSize = spaceFontSize;
       _fontWeight = fontWeight;
@@ -203,6 +206,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
     await asyncPrefs.setString('layout', _keyboardLayoutName);
     await asyncPrefs.setBool('showAdvancedSettings', _showAdvancedSettings);
     await asyncPrefs.setBool('useUserLayout', _useUserLayout);
+    await asyncPrefs.setBool('showAltLayout', _showAltLayout);
     await asyncPrefs.setBool('kanataEnabled', _kanataEnabled);
 
     // Appearance settings
@@ -228,7 +232,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
     await asyncPrefs.setDouble('splitWidth', _splitWidth);
 
     // Text settings
-    await asyncPrefs.setString('fontStyle', _fontStyle);
+    await asyncPrefs.setString('fontFamily', _fontFamily);
     await asyncPrefs.setDouble('keyFontSize', _keyFontSize);
     await asyncPrefs.setDouble('spaceFontSize', _spaceFontSize);
     await asyncPrefs.setInt('fontWeight', _fontWeight.index);
@@ -398,9 +402,14 @@ class _PreferencesScreenState extends State<PreferencesScreen>
             }
             _updateMainWindow('updateUseUserLayout', value);
           }),
+          _buildToggleOption('Show alternative layout', _showAltLayout,
+              (value) {
+            setState(() => _showAltLayout = value);
+            _updateMainWindow('updateShowAltLayout', value);
+          }),
           _buildToggleOption('Connect to Kanata', _kanataEnabled,
               subtitle:
-                  'Make sure that Kanata and OverKeys are using the same port.',
+                  'Make sure that Kanata and OverKeys are using the same port. Restart OverKeys if config file changes were made to apply changes.',
               (value) {
             if (value && _useUserLayout) {
               // If turning on kanataEnabled, turn off useUserLayout
@@ -452,11 +461,17 @@ class _PreferencesScreenState extends State<PreferencesScreen>
           setState(() => _markerOffset = value);
           _updateMainWindow('updateMarkerOffset', value);
         }),
-        _buildSliderOption('Marker width', _markerWidth, 0, 20, 20, (value) {
+        _buildSliderOption('Marker width', _markerWidth, 0, 20, 20,
+            subtitle: _showAltLayout
+                ? 'When alternative layout is shown, marker width appear at half the size (width × 0.5)'
+                : null, (value) {
           setState(() => _markerWidth = value);
           _updateMainWindow('updateMarkerWidth', value);
         }),
-        _buildSliderOption('Marker height', _markerHeight, 0, 10, 10, (value) {
+        _buildSliderOption('Marker height', _markerHeight, 0, 10, 10,
+            subtitle: _showAltLayout
+                ? 'When alternative layout is shown, marker height is not used and instead equals the marker width after computation'
+                : null, (value) {
           setState(() => _markerHeight = value);
           _updateMainWindow('updateMarkerHeight', value);
         }),
@@ -527,7 +542,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildSectionTitle('Text Settings'),
-        _buildDropdownOption('Font style', _fontStyle, [
+        _buildDropdownOption('Font style', _fontFamily, [
           'Berkeley Mono',
           'Cascadia Mono',
           'Comic Mono',
@@ -571,8 +586,8 @@ class _PreferencesScreenState extends State<PreferencesScreen>
           'Ubuntu Mono',
           'Victor Mono',
         ], (value) {
-          setState(() => _fontStyle = value!);
-          _updateMainWindow('updateFontStyle', value);
+          setState(() => _fontFamily = value!);
+          _updateMainWindow('updateFontFamily', value);
         },
             subtitle:
                 'Make sure that the font is installed in your system. Falls back to Geist Mono'),
@@ -823,7 +838,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
                         fontWeight: FontWeight.w600,
                         fontSize: 16)),
                 Text(
-                  'Restart OverKeys to apply any changes made to this file',
+                  'Turn related advanced setting off then on again to apply changes',
                   style: TextStyle(
                       color: colorScheme.onSurface.withAlpha(153),
                       fontSize: 14.0),
@@ -866,7 +881,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
 
   Widget _buildSliderOption(String label, double value, double min, double max,
       int divisions, Function(double) onChanged,
-      {String Function(double)? valueDisplayFormatter}) {
+      {String Function(double)? valueDisplayFormatter, String? subtitle}) {
     final colorScheme = ThemeManager.getTheme(_brightness).colorScheme;
     return _buildOptionContainer(
       Column(
@@ -877,6 +892,14 @@ class _PreferencesScreenState extends State<PreferencesScreen>
                   color: colorScheme.onSurface,
                   fontWeight: FontWeight.w600,
                   fontSize: 16)),
+          if (subtitle != null)
+            Text(
+              subtitle,
+              style: TextStyle(
+                  color: colorScheme.onSurface.withAlpha(153), fontSize: 14.0),
+              softWrap: true,
+              overflow: TextOverflow.visible,
+            ),
           Slider(
             value: value,
             min: min,
