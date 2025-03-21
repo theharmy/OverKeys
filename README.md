@@ -38,9 +38,7 @@
 
 ![OverKeys Demo](https://github.com/conventoangelo/OverKeys/blob/main/assets/images/OverKeysDemo.gif)
 
-
-https://github.com/user-attachments/assets/c687a448-52b0-41bc-9b6b-07e61c2d3b31
-
+<https://github.com/user-attachments/assets/c687a448-52b0-41bc-9b6b-07e61c2d3b31>
 
 OverKeys is an open-source on-screen keyboard designed for users to practice alternative keyboard layouts, such as **Canary**, **Colemak**, **Dvorak**, and many more. Built in [**Flutter**](https://flutter.dev/), it allows full customizability, making it perfect for users learning or working with non-traditional layouts.
 
@@ -128,7 +126,8 @@ This project was initially developed to help with system-wide practice of the **
 - **Keymap layouts**: Supports keymap layouts such as staggered, matrix, and split matrix.
 - [**Layer switching (Kanata)**](#layer-switching-through-kanata-tcp): Connect to [Kanata](https://github.com/jtroo/kanata) through TCP to dynamically display the active layer.
 - **User configurations**: Easily add and use custom keyboard layouts through `overkeys_config.json`.
-- **Auto-hide**: The keyboard hides automatically when not in use.
+- **Side-by-side layouts**: Display alternative layouts alongside the default layout, which is useful for showing multiple languages at once. Note that key press highlighting is determined by the `defaultLayout`.
+- **Top row/Number row**: Optional row above the main keyboard that can show numbers or other user-configurated keys.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -181,20 +180,20 @@ To load your own keyboard layout, follow these steps:
 > **Note**: Since OverKeys uses Windows LLHOOK for key detection, this feature is only guaranteed to work with Kanata implementations that also use Windows LLHOOK. Integration has been tested and confirmed working with kanata_gui.exe.
 
 Demos:
+
 <details>
   <summary>With Kanata Debug</summary>
   
-https://github.com/user-attachments/assets/5e7878d8-b51d-447d-946d-6ffeb063701c
+<https://github.com/user-attachments/assets/5e7878d8-b51d-447d-946d-6ffeb063701c>
   
 </details>
 
 <details>
   <summary>With Kanata Shortcut</summary>
   
-https://github.com/user-attachments/assets/ab50455d-52e4-44b5-a409-c90f1e07c15b
+<https://github.com/user-attachments/assets/ab50455d-52e4-44b5-a409-c90f1e07c15b>
   
 </details>
-
 
 1. **Access Configuration**:
 
