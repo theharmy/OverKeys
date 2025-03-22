@@ -1,11 +1,12 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:desktop_multi_window/desktop_multi_window.dart';
-import 'package:window_manager/window_manager.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:flex_color_picker/flex_color_picker.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:window_manager/window_manager.dart';
 import 'package:overkeys/models/user_config.dart';
 import 'package:overkeys/models/keyboard_layouts.dart';
 import 'package:overkeys/utils/theme_manager.dart';
@@ -274,30 +275,16 @@ class _PreferencesScreenState extends State<PreferencesScreen>
           appBar: AppBar(
             toolbarHeight: 100,
             title: Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 80, vertical: 100),
-              child: Text(
-                'Preferences',
-                style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.onSurface,
-                ),
-              ),
+              padding: const EdgeInsets.symmetric(vertical: 100),
+              child: _buildTabBar(),
             ),
+            automaticallyImplyLeading: false,
           ),
           body: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 80.0),
-            child: Column(
-              children: [
-                _buildTabBar(),
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 16.0),
-                    child: _buildCurrentTabContent(),
-                  ),
-                ),
-              ],
+            padding: const EdgeInsets.symmetric(horizontal: 60.0),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(20.0, 0, 16.0, 20.0),
+              child: _buildCurrentTabContent(),
             ),
           ),
         );
@@ -310,6 +297,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
     return Container(
       padding: const EdgeInsets.all(8),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: ['General', 'Appearance', 'Keyboard', 'Text', 'About']
             .map((tab) => _buildTabButton(tab))
             .toList(),
@@ -325,18 +313,24 @@ class _PreferencesScreenState extends State<PreferencesScreen>
       child: ElevatedButton(
         onPressed: () => setState(() => _currentTab = tabName),
         style: ElevatedButton.styleFrom(
-          backgroundColor: isActive ? colorScheme.primary : Colors.transparent,
+          backgroundColor: isActive ? colorScheme.primary : colorScheme.surface,
           foregroundColor:
               isActive ? colorScheme.onPrimary : colorScheme.primary,
-          elevation: 0,
+          elevation: 1,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           side: BorderSide(
             color: colorScheme.primary,
-            width: 2.0,
+            width: 2,
           ),
         ),
-        child: Text(tabName),
+        child: Text(
+          tabName,
+          style: TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.w400,
+          ),
+        ),
       ),
     );
   }
@@ -360,7 +354,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
 
   Widget _buildGeneralTab() {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         _buildSectionTitle('General Settings'),
         _buildToggleOption('Open on system startup', _launchAtStartup, (value) {
@@ -371,16 +365,26 @@ class _PreferencesScreenState extends State<PreferencesScreen>
           setState(() => _autoHideEnabled = value);
           _updateMainWindow('updateAutoHideEnabled', value);
         }),
-        if (_autoHideEnabled)
-          _buildSliderOption(
+        AnimatedCrossFade(
+          duration: const Duration(milliseconds: 300),
+          firstChild: const SizedBox.shrink(),
+          secondChild: _buildSliderOption(
               'Auto-hide duration (seconds)', _autoHideDuration, 0.5, 5.0, 9,
               (value) {
             double roundedValue = (value * 2).round() / 2;
             setState(() => _autoHideDuration = roundedValue);
             _updateMainWindow('updateAutoHideDuration', roundedValue);
           }, valueDisplayFormatter: (value) => value.toStringAsFixed(1)),
+          crossFadeState: _autoHideEnabled
+              ? CrossFadeState.showSecond
+              : CrossFadeState.showFirst,
+          sizeCurve: Curves.easeInOut,
+        ),
         _buildDropdownOption('Layout', _keyboardLayoutName,
-            availableLayouts.map((layout) => (layout.name)).toList(), (value) {
+            availableLayouts.map((layout) => (layout.name)).toList(),
+            subtitle: _autoHideEnabled
+                ? 'OverKeys must remain visible to avoid losing focus when typing in the dropdown. You may turn off auto-hide under General settings.'
+                : null, (value) {
           setState(() => _keyboardLayoutName = value!);
           _updateMainWindow('updateLayout', value);
         }),
@@ -389,53 +393,64 @@ class _PreferencesScreenState extends State<PreferencesScreen>
           setState(() => _showAdvancedSettings = value);
           _savePreferences();
         }),
-        if (_showAdvancedSettings) ...[
-          _buildToggleOption('Use custom layout from config', _useUserLayout,
-              subtitle:
-                  'Sets layout to user-defined defaultUserLayout. Make sure that the layout is saved in the config file.',
-              (value) {
-            if (value && _kanataEnabled) {
-              // If turning on useUserLayout, turn off kanataEnabled
-              setState(() {
-                _useUserLayout = value;
-                _kanataEnabled = false;
-              });
-              _updateMainWindow('updateKanataEnabled', false);
-            } else {
-              setState(() => _useUserLayout = value);
-            }
-            _updateMainWindow('updateUseUserLayout', value);
-          }),
-          _buildToggleOption('Show alternative layout', _showAltLayout,
-              (value) {
-            setState(() => _showAltLayout = value);
-            _updateMainWindow('updateShowAltLayout', value);
-          }),
-          _buildToggleOption('Connect to Kanata', _kanataEnabled,
-              subtitle:
-                  'Make sure that Kanata and OverKeys are using the same port. Restart OverKeys if config file changes were made to apply changes.',
-              (value) {
-            if (value && _useUserLayout) {
-              // If turning on kanataEnabled, turn off useUserLayout
-              setState(() {
-                _kanataEnabled = value;
-                _useUserLayout = false;
-              });
-              _updateMainWindow('updateUseUserLayout', false);
-            } else {
-              setState(() => _kanataEnabled = value);
-            }
-            _updateMainWindow('updateKanataEnabled', value);
-          }),
-          _buildOpenConfigButton(),
-        ],
+        AnimatedCrossFade(
+          duration: const Duration(milliseconds: 300),
+          firstChild: const SizedBox.shrink(),
+          secondChild: Column(
+            children: [
+              _buildToggleOption(
+                  'Use custom layout from config', _useUserLayout,
+                  subtitle:
+                      'Sets layout to user-defined defaultUserLayout. Make sure that the layout is saved in the config file.',
+                  (value) {
+                if (value && _kanataEnabled) {
+                  // If turning on useUserLayout, turn off kanataEnabled
+                  setState(() {
+                    _useUserLayout = value;
+                    _kanataEnabled = false;
+                  });
+                  _updateMainWindow('updateKanataEnabled', false);
+                } else {
+                  setState(() => _useUserLayout = value);
+                }
+                _updateMainWindow('updateUseUserLayout', value);
+              }),
+              _buildToggleOption('Show alternative layout', _showAltLayout,
+                  (value) {
+                setState(() => _showAltLayout = value);
+                _updateMainWindow('updateShowAltLayout', value);
+              }),
+              _buildToggleOption('Connect to Kanata', _kanataEnabled,
+                  subtitle:
+                      'Make sure that Kanata and OverKeys are using the same port. Restart OverKeys if config file changes were made to apply changes.',
+                  (value) {
+                if (value && _useUserLayout) {
+                  // If turning on kanataEnabled, turn off useUserLayout
+                  setState(() {
+                    _kanataEnabled = value;
+                    _useUserLayout = false;
+                  });
+                  _updateMainWindow('updateUseUserLayout', false);
+                } else {
+                  setState(() => _kanataEnabled = value);
+                }
+                _updateMainWindow('updateKanataEnabled', value);
+              }),
+              _buildOpenConfigButton(),
+            ],
+          ),
+          crossFadeState: _showAdvancedSettings
+              ? CrossFadeState.showSecond
+              : CrossFadeState.showFirst,
+          sizeCurve: Curves.easeInOut,
+        ),
       ],
     );
   }
 
   Widget _buildAppearanceTab() {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         _buildSectionTitle('Appearance Settings'),
         _buildSliderOption('Opacity', _opacity, 0.1, 1.0, 18, (value) {
@@ -490,7 +505,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
 
   Widget _buildKeyboardTab() {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         _buildSectionTitle('Keyboard Layout'),
         _buildDropdownOption('Keymap style', _keymapStyle,
@@ -509,11 +524,33 @@ class _PreferencesScreenState extends State<PreferencesScreen>
           setState(() => _showTopRow = value);
           _updateMainWindow('updateShowTopRow', value);
         }),
-        _buildToggleOption('Show grave key', _showGraveKey, (value) {
-          setState(() => _showGraveKey = value);
-          _updateMainWindow('updateShowGraveKey', value);
-        }),
+        AnimatedCrossFade(
+          duration: const Duration(milliseconds: 300),
+          firstChild: const SizedBox.shrink(),
+          secondChild:
+              _buildToggleOption('Show grave key', _showGraveKey, (value) {
+            setState(() => _showGraveKey = value);
+            _updateMainWindow('updateShowGraveKey', value);
+          }),
+          crossFadeState: _showTopRow
+              ? CrossFadeState.showSecond
+              : CrossFadeState.showFirst,
+          sizeCurve: Curves.easeInOut,
+        ),
         _buildSectionTitle('Key Dimensions'),
+        AnimatedCrossFade(
+          duration: const Duration(milliseconds: 300),
+          firstChild: const SizedBox.shrink(),
+          secondChild: _buildSliderOption(
+              'Split width', _splitWidth, 30, 200, 34, (value) {
+            setState(() => _splitWidth = value);
+            _updateMainWindow('updateSplitWidth', value);
+          }),
+          crossFadeState: _keymapStyle == 'Split Matrix'
+              ? CrossFadeState.showSecond
+              : CrossFadeState.showFirst,
+          sizeCurve: Curves.easeInOut,
+        ),
         _buildSliderOption('Key size', _keySize, 40, 60, 40, (value) {
           setState(() => _keySize = value);
           _updateMainWindow('updateKeySize', value);
@@ -536,18 +573,13 @@ class _PreferencesScreenState extends State<PreferencesScreen>
           setState(() => _spaceWidth = value);
           _updateMainWindow('updateSpaceWidth', value);
         }),
-        if (_keymapStyle == 'Split Matrix')
-          _buildSliderOption('Split width', _splitWidth, 30, 200, 34, (value) {
-            setState(() => _splitWidth = value);
-            _updateMainWindow('updateSplitWidth', value);
-          }),
       ],
     );
   }
 
   Widget _buildTextTab() {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         _buildSectionTitle('Text Settings'),
         _buildDropdownOption('Font style', _fontFamily, [
@@ -598,7 +630,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
           _updateMainWindow('updateFontFamily', value);
         },
             subtitle:
-                'Make sure that the font is installed in your system. Falls back to Geist Mono'),
+                'Make sure that the font is installed in your system. Falls back to Geist Mono.${_autoHideEnabled ? ' OverKeys must remain visible to avoid losing focus when typing in the dropdown. You may turn off auto-hide under General settings.' : ''}'),
         _buildSliderOption('Key font size', _keyFontSize, 12, 32, 40, (value) {
           setState(() => _keyFontSize = value);
           _updateMainWindow('updateKeyFontSize', value);
@@ -637,7 +669,10 @@ class _PreferencesScreenState extends State<PreferencesScreen>
               'Bold',
               'ExtraBold',
               'Black'
-            ], (value) {
+            ],
+            subtitle: _autoHideEnabled
+                ? 'OverKeys must remain visible to avoid losing focus when typing in the dropdown. You may turn off auto-hide under General settings.'
+                : null, (value) {
           setState(() {
             switch (value) {
               case 'Thin':
@@ -687,26 +722,59 @@ class _PreferencesScreenState extends State<PreferencesScreen>
   Widget _buildAboutTab() {
     final colorScheme = ThemeManager.getTheme(_brightness).colorScheme;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildSectionTitle('About'),
-        Text('OverKeys',
-            style: TextStyle(
-                color: colorScheme.onSurface,
-                fontSize: 24,
-                fontWeight: FontWeight.bold)),
-        const SizedBox(height: 8),
-        Text('Version 0.2.3-alpha.1',
-            style: TextStyle(color: colorScheme.onSurface.withAlpha(153))),
-        const SizedBox(height: 16),
-        Text(
-            'OverKeys is an open-source, customizable on-screen keyboard for Windows. Learn and practice alternative layouts, personalize appearance, and improve your typing.',
-            style: TextStyle(color: colorScheme.onSurface)),
-        const SizedBox(height: 16),
-        Text('© 2024 Angelo Convento. All rights reserved.',
-            style: TextStyle(color: colorScheme.onSurface.withAlpha(153))),
-      ],
+    return SizedBox(
+      width: double.infinity,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          _buildSectionTitle('About'),
+          const SizedBox(height: 20),
+          Image.asset('assets/images/app_icon.png', width: 120),
+          const SizedBox(height: 20),
+          Text('OverKeys',
+              style: TextStyle(
+                  color: colorScheme.onSurface,
+                  fontSize: 28,
+                  fontWeight: FontWeight.w900)),
+          const SizedBox(height: 20),
+          Text('Version: 0.2.3-alpha.1',
+              style: TextStyle(
+                  color: colorScheme.onSurface,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600)),
+          const SizedBox(height: 10),
+          Text('© 2024 Angelo Convento',
+              style: TextStyle(
+                  color: colorScheme.onSurface.withAlpha(153),
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500)),
+          const SizedBox(height: 20),
+          ElevatedButton.icon(
+            onPressed: () async {
+              await launchUrl(
+                  Uri.parse('https://github.com/conventoangelo/overkeys'),
+                  mode: LaunchMode.externalApplication);
+            },
+            icon: ImageIcon(
+              AssetImage('assets/images/github-mark.png'),
+              size: 20,
+            ),
+            label: Text(
+              'View on GitHub',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            style: ElevatedButton.styleFrom(
+              minimumSize: const Size(200, 50),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -727,6 +795,13 @@ class _PreferencesScreenState extends State<PreferencesScreen>
   Widget _buildToggleOption(String label, bool value, Function(bool) onChanged,
       {String? subtitle}) {
     final colorScheme = ThemeManager.getTheme(_brightness).colorScheme;
+    const WidgetStateProperty<Icon> thumbIcon =
+        WidgetStateProperty<Icon>.fromMap(
+      <WidgetStatesConstraint, Icon>{
+        WidgetState.selected: Icon(Icons.check),
+        WidgetState.any: Icon(Icons.close),
+      },
+    );
     return _buildOptionContainer(
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -754,14 +829,9 @@ class _PreferencesScreenState extends State<PreferencesScreen>
           ),
           const SizedBox(width: 16),
           Switch(
+            thumbIcon: thumbIcon,
             value: value,
             onChanged: onChanged,
-            thumbColor: WidgetStateProperty.resolveWith<Color>((states) {
-              if (states.contains(WidgetState.selected)) {
-                return colorScheme.surface;
-              }
-              return colorScheme.outline;
-            }),
           ),
         ],
       ),
@@ -772,6 +842,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
       Function(String?) onChanged,
       {String? subtitle}) {
     final colorScheme = ThemeManager.getTheme(_brightness).colorScheme;
+    final TextEditingController controller = TextEditingController(text: value);
 
     return _buildOptionContainer(
       Row(
@@ -798,29 +869,35 @@ class _PreferencesScreenState extends State<PreferencesScreen>
               ],
             ),
           ),
-          const SizedBox(width: 16),
-          DropdownButton<String>(
-            value: value,
-            items: options
-                .map((String option) => DropdownMenuItem<String>(
+          const SizedBox(width: 40),
+          DropdownMenu<String>(
+            controller: controller,
+            initialSelection: value,
+            requestFocusOnTap: true,
+            enableFilter: true,
+            width: 210,
+            menuHeight: 300,
+            dropdownMenuEntries: options
+                .map((String option) => DropdownMenuEntry<String>(
                       value: option,
-                      child: Text(
-                        option,
-                        style: TextStyle(
+                      label: option,
+                      style: MenuItemButton.styleFrom(
+                        textStyle: TextStyle(
                           fontFamily: option,
                           fontFamilyFallback: const ['Manrope'],
-                          color: colorScheme.onSurface,
                           fontSize: 15,
                         ),
                       ),
                     ))
                 .toList(),
-            onChanged: onChanged,
-            dropdownColor: colorScheme.surface,
-            style: TextStyle(
+            onSelected: (String? newValue) {
+              if (newValue != null) {
+                onChanged(newValue);
+              }
+            },
+            textStyle: TextStyle(
               fontFamily: value,
               fontFamilyFallback: const ['Manrope'],
-              color: colorScheme.onSurface,
               fontSize: 15,
             ),
           ),
@@ -858,11 +935,17 @@ class _PreferencesScreenState extends State<PreferencesScreen>
           ),
           const SizedBox(width: 16),
           ElevatedButton.icon(
-            icon: Icon(Icons.folder_open, color: colorScheme.primary),
-            label: Text('Open', style: TextStyle(color: colorScheme.primary)),
+            icon: Icon(Icons.file_open, color: colorScheme.primary),
+            label: Text('Open',
+                style: TextStyle(
+                  color: colorScheme.primary,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 16,
+                )),
             style: ElevatedButton.styleFrom(
               backgroundColor: colorScheme.surfaceContainerHighest,
-              elevation: 0,
+              elevation: 2,
+              minimumSize: const Size(100, 45),
               side: BorderSide(color: colorScheme.primary),
             ),
             onPressed: () async {
@@ -872,10 +955,10 @@ class _PreferencesScreenState extends State<PreferencesScreen>
                 final file = File(configPath);
 
                 if (await file.exists()) {
-                  Process.start('explorer.exe', ['/select,', configPath]);
+                  Process.start('cmd.exe', ['/c', 'start', '', configPath]);
                 } else {
                   await configService.saveConfig(UserConfig());
-                  Process.start('explorer.exe', ['/select,', configPath]);
+                  Process.start('cmd.exe', ['/c', 'start', '', configPath]);
                 }
               } catch (e) {
                 debugPrint('Error opening config file: $e');
@@ -901,13 +984,19 @@ class _PreferencesScreenState extends State<PreferencesScreen>
                   fontWeight: FontWeight.w600,
                   fontSize: 16)),
           if (subtitle != null)
-            Text(
-              subtitle,
-              style: TextStyle(
-                  color: colorScheme.onSurface.withAlpha(153), fontSize: 14.0),
-              softWrap: true,
-              overflow: TextOverflow.visible,
-            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 4.0, bottom: 8.0),
+              child: Text(
+                subtitle,
+                style: TextStyle(
+                    color: colorScheme.onSurface.withAlpha(153),
+                    fontSize: 14.0),
+                softWrap: true,
+                overflow: TextOverflow.visible,
+              ),
+            )
+          else
+            const SizedBox(height: 8.0),
           Slider(
             value: value,
             min: min,
@@ -918,7 +1007,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
             max: max,
             onChanged: (value) {
               final Map<String, Function(double)> updates = {
-                'Font size': (v) => _keyFontSize = v,
+                'Key font size': (v) => _keyFontSize = v,
                 'Space font size': (v) => _spaceFontSize = v,
                 'Key size': (v) => _keySize = v,
                 'Key border radius': (v) => _keyBorderRadius = v,
@@ -938,8 +1027,8 @@ class _PreferencesScreenState extends State<PreferencesScreen>
               });
             },
             onChangeEnd: onChanged,
-            activeColor: colorScheme.primary,
-            inactiveColor: colorScheme.outline,
+            // ignore: deprecated_member_use
+            year2023: false,
           ),
         ],
       ),
@@ -987,8 +1076,8 @@ class _PreferencesScreenState extends State<PreferencesScreen>
                           heading: Text(
                             'Select color',
                             style: TextStyle(
-                                color: colorScheme.onSurface,
-                                fontWeight: FontWeight.bold),
+                              color: colorScheme.onSurface,
+                            ),
                           ),
                           showColorName: true,
                           showColorCode: true,
