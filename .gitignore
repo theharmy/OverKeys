@@ -44,3 +44,4 @@ app.*.map.json
 
 # Local build and release script
 build.ps1
+release-notes.md
