@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "OverKeys"
-#define MyAppVersion "0.2.5"
+#define MyAppVersion "0.2.5" ; {x-release-please-version}
 #define MyAppPublisher "Angelo Convento"
 #define MyAppURL "https://github.com/conventoangelo/OverKeys"
 #define MyAppExeName "OverKeys.exe"
@@ -33,7 +33,7 @@ LicenseFile=D:\inno\LICENSE
 ;PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=dialog
 OutputDir=D:\inno-result
-OutputBaseFilename=overkeys
+OutputBaseFilename=overkeys_{#MyAppVersion}_x64_setup
 SetupIconFile=D:\inno\app_icon.ico
 UninstallDisplayIcon={app}\{#MyAppExeName}
 Compression=lzma
