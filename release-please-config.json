@@ -1,36 +1,72 @@
 {
 	"$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
-	"release-type": "dart",
-	"include-component-in-tag": false,
-	"include-v-in-tag": true,
-	"bump-minor-pre-major": true,
-	"bump-patch-for-minor-pre-major": true,
-	"draft": true,
-	"changelog-sections": [
-		{ "type": "feat", "section": "✨ Features", "hidden": false },
-		{ "type": "feature", "section": "✨ Features", "hidden": false },
-		{ "type": "fix", "section": "🐛 Bug Fixes", "hidden": false },
-		{
-			"type": "perf",
-			"section": "⚡ Performance Improvements",
-			"hidden": false
-		},
-		{ "type": "revert", "section": "⏪ Reverts", "hidden": false },
-		{ "type": "docs", "section": "📝 Documentation", "hidden": false },
-		{ "type": "style", "section": "Styles", "hidden": true },
-		{ "type": "chore", "section": "Chores", "hidden": true },
-		{ "type": "refactor", "section": "♻️ Code Refactoring", "hidden": false },
-		{ "type": "test", "section": "Tests", "hidden": true },
-		{ "type": "build", "section": "🏗️ Build System", "hidden": false },
-		{ "type": "ci", "section": "🔄 Continuous Integration", "hidden": false }
-	],
-	"pull-request-title-pattern": "chore: release v${version}",
-	"group-pull-request-title-pattern": "chore: release v${version}",
 	"packages": {
 		".": {
-			"package-name": "conventoangelo/overkeys",
-			"changelog-path": "CHANGELOG.md",
-			"extra-files": ["scripts/compile_exe-inno.iss"]
+			"release-type": "dart",
+			"include-component-in-tag": false,
+			"include-v-in-tag": true,
+			"bump-minor-pre-major": true,
+			"bump-patch-for-minor-pre-major": true,
+			"changelog-sections": [
+				{
+					"type": "feat",
+					"section": "✨ Features",
+					"hidden": false
+				},
+				{
+					"type": "fix",
+					"section": "🐛 Bug Fixes",
+					"hidden": false
+				},
+				{
+					"type": "perf",
+					"section": "⚡ Performance Improvements",
+					"hidden": false
+				},
+				{
+					"type": "chore",
+					"section": "🧹 Miscellaneous Chores",
+					"hidden": false
+				},
+				{
+					"type": "docs",
+					"section": "📖 Documentation",
+					"hidden": false
+				},
+				{
+					"type": "ci",
+					"section": "🚀 CI/CD Pipeline",
+					"hidden": false
+				},
+				{
+					"type": "tests",
+					"section": "🔧 Testing",
+					"hidden": false
+				},
+				{
+					"type": "style",
+					"section": "💅 Code Style",
+					"hidden": false
+				},
+				{
+					"type": "refactor",
+					"section": "🔨 Refactoring",
+					"hidden": false
+				},
+				{
+					"type": "revert",
+					"section": "⏪ Reverts",
+					"hidden": false
+				}
+			],
+			"pull-request-title-pattern": "chore: release v${version}",
+			"group-pull-request-title-pattern": "chore: release v${version}",
+			"extra-files": [
+				{
+					"path": "scripts/compile_exe-inno.iss",
+					"type": "generic"
+				}
+			]
 		}
 	}
 }
