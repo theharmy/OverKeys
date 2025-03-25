@@ -10,7 +10,11 @@
 		{ "type": "feat", "section": "✨ Features", "hidden": false },
 		{ "type": "feature", "section": "✨ Features", "hidden": false },
 		{ "type": "fix", "section": "🐛 Bug Fixes", "hidden": false },
-		{ "type": "perf", "section": "⚡ Performance Improvements", "hidden": false },
+		{
+			"type": "perf",
+			"section": "⚡ Performance Improvements",
+			"hidden": false
+		},
 		{ "type": "revert", "section": "⏪ Reverts", "hidden": false },
 		{ "type": "docs", "section": "📝 Documentation", "hidden": false },
 		{ "type": "style", "section": "Styles", "hidden": true },
@@ -20,6 +24,8 @@
 		{ "type": "build", "section": "🏗️ Build System", "hidden": false },
 		{ "type": "ci", "section": "🔄 Continuous Integration", "hidden": false }
 	],
+	"pull-request-title-pattern": "chore: release v${version}",
+	"group-pull-request-title-pattern": "chore: release v${version}",
 	"packages": {
 		".": {
 			"package-name": "conventoangelo/overkeys",
