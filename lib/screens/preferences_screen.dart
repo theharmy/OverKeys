@@ -36,7 +36,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
   bool _autoHideEnabled = false;
   double _autoHideDuration = 2.0;
   String _keyboardLayoutName = 'QWERTY';
-  bool _showAdvancedSettings = false;
+  bool _enableAdvancedSettings = false;
   bool _useUserLayout = false;
   bool _showAltLayout = false;
   bool _kanataEnabled = false;
@@ -127,8 +127,8 @@ class _PreferencesScreenState extends State<PreferencesScreen>
         await asyncPrefs.getDouble('autoHideDuration') ?? 2.0;
     String keyboardLayoutName =
         await asyncPrefs.getString('layout') ?? 'QWERTY';
-    bool showAdvancedSettings =
-        await asyncPrefs.getBool('showAdvancedSettings') ?? false;
+    bool enableAdvancedSettings =
+        await asyncPrefs.getBool('enableAdvancedSettings') ?? false;
     bool useUserLayout = await asyncPrefs.getBool('useUserLayout') ?? false;
     bool showAltLayout = await asyncPrefs.getBool('showAltLayout') ?? false;
     bool kanataEnabled = await asyncPrefs.getBool('kanataEnabled') ?? false;
@@ -178,7 +178,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
       _autoHideEnabled = autoHideEnabled;
       _autoHideDuration = autoHideDuration;
       _keyboardLayoutName = keyboardLayoutName;
-      _showAdvancedSettings = showAdvancedSettings;
+      _enableAdvancedSettings = enableAdvancedSettings;
       _useUserLayout = useUserLayout;
       _showAltLayout = showAltLayout;
       _kanataEnabled = kanataEnabled;
@@ -220,7 +220,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
     await asyncPrefs.setBool('autoHideEnabled', _autoHideEnabled);
     await asyncPrefs.setDouble('autoHideDuration', _autoHideDuration);
     await asyncPrefs.setString('layout', _keyboardLayoutName);
-    await asyncPrefs.setBool('showAdvancedSettings', _showAdvancedSettings);
+    await asyncPrefs.setBool('enableAdvancedSettings', _enableAdvancedSettings);
     await asyncPrefs.setBool('useUserLayout', _useUserLayout);
     await asyncPrefs.setBool('showAltLayout', _showAltLayout);
     await asyncPrefs.setBool('kanataEnabled', _kanataEnabled);
@@ -397,10 +397,10 @@ class _PreferencesScreenState extends State<PreferencesScreen>
           setState(() => _keyboardLayoutName = value!);
           _updateMainWindow('updateLayout', value);
         }),
-        _buildToggleOption('Show advanced settings', _showAdvancedSettings,
+        _buildToggleOption('Turn on advanced settings', _enableAdvancedSettings,
             (value) {
-          setState(() => _showAdvancedSettings = value);
-          _savePreferences();
+          setState(() => _enableAdvancedSettings = value);
+          _updateMainWindow('updateEnableAdvancedSettings', value);
         }),
         AnimatedCrossFade(
           duration: const Duration(milliseconds: 300),
@@ -413,7 +413,6 @@ class _PreferencesScreenState extends State<PreferencesScreen>
                       'Sets layout to user-defined defaultUserLayout. Make sure that the layout is saved in the config file.',
                   (value) {
                 if (value && _kanataEnabled) {
-                  // If turning on useUserLayout, turn off kanataEnabled
                   setState(() {
                     _useUserLayout = value;
                     _kanataEnabled = false;
@@ -434,7 +433,6 @@ class _PreferencesScreenState extends State<PreferencesScreen>
                       'Make sure that Kanata and OverKeys are using the same port. Restart OverKeys if config file changes were made to apply changes.',
                   (value) {
                 if (value && _useUserLayout) {
-                  // If turning on kanataEnabled, turn off useUserLayout
                   setState(() {
                     _kanataEnabled = value;
                     _useUserLayout = false;
@@ -448,7 +446,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
               _buildOpenConfigButton(),
             ],
           ),
-          crossFadeState: _showAdvancedSettings
+          crossFadeState: _enableAdvancedSettings
               ? CrossFadeState.showSecond
               : CrossFadeState.showFirst,
           sizeCurve: Curves.easeInOut,

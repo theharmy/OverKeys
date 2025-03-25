@@ -48,9 +48,11 @@ class _MainAppState extends State<MainApp> with TrayListener {
   double _autoHideDuration = 2.0;
   KeyboardLayout _keyboardLayout = qwerty;
   KeyboardLayout? _initialKeyboardLayout;
+  bool _enableAdvancedSettings = false;
   bool _useUserLayout = false;
   KeyboardLayout? _altLayout;
   bool _showAltLayout = false;
+  bool _previousShowAltLayout = false;
   bool _kanataEnabled = false;
 
   // Appearance settings
@@ -98,7 +100,6 @@ class _MainAppState extends State<MainApp> with TrayListener {
     _initStartupSetting();
     await _loadKanataConfig();
     _setupKanataLayerChangeHandler();
-
     // Delayed initialization tasks
     Future.delayed(const Duration(seconds: 2), () {
       if (_useUserLayout) {
@@ -148,14 +149,8 @@ class _MainAppState extends State<MainApp> with TrayListener {
   Future<void> _handleStartupToggle(bool enable) async {
     if (enable) {
       await launchAtStartup.enable();
-      if (kDebugMode) {
-        print('On system startup: Enabled');
-      }
     } else {
       await launchAtStartup.disable();
-      if (kDebugMode) {
-        print('On system startup: Disabled');
-      }
     }
     await _initStartupSetting();
   }
@@ -240,6 +235,8 @@ class _MainAppState extends State<MainApp> with TrayListener {
         await asyncPrefs.getDouble('autoHideDuration') ?? 2.0;
     String keyboardLayoutName =
         await asyncPrefs.getString('layout') ?? 'QWERTY';
+    bool enableAdvancedSettings =
+        await asyncPrefs.getBool('enableAdvancedSettings') ?? false;
     bool useUserLayout = await asyncPrefs.getBool('useUserLayout') ?? false;
     bool showAltLayout = await asyncPrefs.getBool('showAltLayout') ?? false;
     bool kanataEnabled = await asyncPrefs.getBool('kanataEnabled') ?? false;
@@ -290,6 +287,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
       _keyboardLayout = availableLayouts
           .firstWhere((layout) => layout.name == keyboardLayoutName);
       _initialKeyboardLayout = _keyboardLayout;
+      _enableAdvancedSettings = enableAdvancedSettings;
       _useUserLayout = useUserLayout;
       _showAltLayout = showAltLayout;
       _altLayout = _keyboardLayout;
@@ -331,6 +329,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
     await asyncPrefs.setBool('autoHideEnabled', _autoHideEnabled);
     await asyncPrefs.setDouble('autoHideDuration', _autoHideDuration);
     await asyncPrefs.setString('layout', _initialKeyboardLayout!.name);
+    await asyncPrefs.setBool('enableAdvancedSettings', _enableAdvancedSettings);
     await asyncPrefs.setBool('useUserLayout', _useUserLayout);
     await asyncPrefs.setBool('showAltLayout', _showAltLayout);
     await asyncPrefs.setBool('kanataEnabled', _kanataEnabled);
@@ -408,6 +407,61 @@ class _MainAppState extends State<MainApp> with TrayListener {
             }
           });
           _fadeIn();
+        case 'updateEnableAdvancedSettings':
+          final enableAdvancedSettings = call.arguments as bool;
+          setState(() => _enableAdvancedSettings = enableAdvancedSettings);
+          if (!enableAdvancedSettings) {
+            _previousShowAltLayout = _showAltLayout;
+            if (_kanataEnabled) {
+              _kanataService.disconnect();
+              if (_initialKeyboardLayout != null) {
+                setState(() {
+                  _keyboardLayout = _initialKeyboardLayout!;
+                });
+                if (kDebugMode) {
+                  print('Kanata disconnected and reverted to initial layout');
+                }
+              }
+            }
+            if (_useUserLayout &&
+                !_kanataEnabled &&
+                _initialKeyboardLayout != null) {
+              setState(() {
+                _keyboardLayout = _initialKeyboardLayout!;
+              });
+              if (kDebugMode) {
+                print('Reverted to initial layout');
+              }
+            }
+            if (_showAltLayout) {
+              setState(() {
+                _showAltLayout = false;
+              });
+            }
+            _fadeIn();
+          } else {
+            if (_kanataEnabled) {
+              _loadKanataConfig().then((_) {
+                _kanataService.connect();
+                if (kDebugMode) {
+                  print('Reconnected to Kanata service');
+                }
+              });
+            }
+            if (_useUserLayout && !_kanataEnabled) {
+              _loadUserLayout();
+              if (kDebugMode) {
+                print('Loading user layout after enabling advanced settings');
+              }
+            }
+            if (_previousShowAltLayout) {
+              setState(() {
+                _showAltLayout = true;
+              });
+              _loadAltLayout();
+            }
+          }
+
         case 'updateUseUserLayout':
           final useUserLayout = call.arguments as bool;
           setState(() {
@@ -415,7 +469,6 @@ class _MainAppState extends State<MainApp> with TrayListener {
             if (useUserLayout) {
               _loadUserLayout();
             } else {
-              // Revert back to the initial layout when turning off user layout
               setState(() {
                 if (_initialKeyboardLayout != null && !_kanataEnabled) {
                   _keyboardLayout = _initialKeyboardLayout!;
@@ -639,9 +692,6 @@ class _MainAppState extends State<MainApp> with TrayListener {
         checked: !_ignoreMouseEvents,
         onClick: (menuItem) {
           setState(() {
-            if (kDebugMode) {
-              print('Mouse Events Toggled');
-            }
             _ignoreMouseEvents = !_ignoreMouseEvents;
             windowManager.setIgnoreMouseEvents(_ignoreMouseEvents);
             if (!_ignoreMouseEvents) {
@@ -669,9 +719,6 @@ class _MainAppState extends State<MainApp> with TrayListener {
         disabled: !_ignoreMouseEvents,
         onClick: (menuItem) {
           setState(() {
-            if (kDebugMode) {
-              print('Auto Hide Toggled');
-            }
             _autoHideEnabled = !_autoHideEnabled;
             if (_autoHideEnabled) {
               _resetAutoHideTimer();
