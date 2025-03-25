@@ -11,9 +11,11 @@
     <br />
     <a href="https://github.com/conventoangelo/OverKeys/releases">Download Release</a>
     ·
-    <a href="https://github.com/conventoangelo/OverKeys/issues/new?labels=bug&template=bug-report---.md">Report Bug</a>
+    <a href="https://github.com/conventoangelo/OverKeys/issues/new?template=bug_report.md">Report Bug</a>
     ·
-    <a href="https://github.com/conventoangelo/OverKeys/issues/new?labels=enhancement&template=feature-request---.md">Request Feature</a>
+    <a href="https://github.com/conventoangelo/OverKeys/issues/new?template=feature_request.md">Request a Feature</a>
+    ·
+    <a href="https://github.com/conventoangelo/OverKeys/discussions/new?category=q-a">Ask a Question</a>
   </p>
 </div>
 
