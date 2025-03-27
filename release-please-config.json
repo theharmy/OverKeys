@@ -3,6 +3,7 @@
 	"packages": {
 		".": {
 			"package-name": "overkeys",
+			"initial-version": "0.2.6",
 			"changelog-path": "CHANGELOG.md",
 			"release-type": "dart",
 			"always-update": true,
@@ -30,37 +31,37 @@
 				{
 					"type": "chore",
 					"section": "🧹 Miscellaneous Chores",
-					"hidden": false
+					"hidden": true
 				},
 				{
 					"type": "docs",
 					"section": "📚 Documentation",
-					"hidden": false
+					"hidden": true
 				},
 				{
 					"type": "ci",
 					"section": "⚙️ CI/CD Pipeline",
-					"hidden": false
+					"hidden": true
 				},
 				{
 					"type": "tests",
 					"section": "🔧 Testing",
-					"hidden": false
+					"hidden": true
 				},
 				{
 					"type": "style",
 					"section": "💅 Code Style",
-					"hidden": false
+					"hidden": true
 				},
 				{
 					"type": "refactor",
 					"section": "🔨 Refactoring",
-					"hidden": false
+					"hidden": true
 				},
 				{
 					"type": "revert",
 					"section": "⏪ Reverts",
-					"hidden": false
+					"hidden": true
 				}
 			],
 			"pull-request-title-pattern": "chore: release v${version}",
