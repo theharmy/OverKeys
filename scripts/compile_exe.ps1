@@ -16,5 +16,3 @@ Copy-Item -Path "scripts\x64\*" -Destination "D:\inno" -Recurse
 Remove-Item "D:\inno-result" -Force  -Recurse -ErrorAction SilentlyContinue
 New-Item -ItemType Directory -Force -Path "D:\inno-result"
 iscc .\scripts\compile_exe-inno.iss
-
-Write-Output '✅ Generated Windows exe installer!'
