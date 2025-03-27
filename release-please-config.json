@@ -65,7 +65,13 @@
 			],
 			"pull-request-title-pattern": "chore: release v${version}",
 			"group-pull-request-title-pattern": "chore: release v${version}",
-			"pull-request-header": "🤖 chore: release v${version}"
+			"pull-request-header": "🤖 New release prepared",
+			"extra-files": [
+				{
+					"path": "scripts/compile_exe-inno.iss",
+					"type": "generic"
+				}
+			]
 		}
 	}
 }
