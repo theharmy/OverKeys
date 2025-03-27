@@ -24,7 +24,7 @@
 				},
 				{
 					"type": "perf",
-					"section": "⚡ Performance Improvements",
+					"section": "🚀 Performance Improvements",
 					"hidden": false
 				},
 				{
@@ -34,12 +34,12 @@
 				},
 				{
 					"type": "docs",
-					"section": "📖 Documentation",
+					"section": "📚 Documentation",
 					"hidden": false
 				},
 				{
 					"type": "ci",
-					"section": "🚀 CI/CD Pipeline",
+					"section": "⚙️ CI/CD Pipeline",
 					"hidden": false
 				},
 				{
