@@ -169,7 +169,7 @@ Complete documentation for OverKeys is available in the [docs](docs/index.md) fo
 
 ### User Guide
 
-- [Basic Usage](/docs/user-guide/basic-configuration.md)
+- [Basic Usage](/docs/user-guide/basic-usage.md)
 - [Preferences](/docs/user-guide/preferences.md)
 
 ### Advanced Features
