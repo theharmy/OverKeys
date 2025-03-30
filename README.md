@@ -9,7 +9,7 @@
     A customizable, open-source on-screen keyboard visualizer for alternative layouts!
     <br />
     <br />
-    <a href="https://github.com/conventoangelo/OverKeys/releases">Download Release</a>
+    <a href="#getting-started">Install Now</a>
     ·
     <a href="https://github.com/conventoangelo/OverKeys/issues/new?template=bug_report.md">Report Bug</a>
     ·
