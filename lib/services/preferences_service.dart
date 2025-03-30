@@ -4,83 +4,83 @@ import 'package:hotkey_manager/hotkey_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PreferencesService {
-  final SharedPreferencesAsync asyncPrefs = SharedPreferencesAsync();
+  final SharedPreferencesAsync _prefs = SharedPreferencesAsync();
 
   // General settings
   Future<bool> getLaunchAtStartup() async =>
-      await asyncPrefs.getBool('launchAtStartup') ?? false;
+      await _prefs.getBool('launchAtStartup') ?? false;
   Future<bool> getAutoHideEnabled() async =>
-      await asyncPrefs.getBool('autoHideEnabled') ?? false;
+      await _prefs.getBool('autoHideEnabled') ?? false;
   Future<double> getAutoHideDuration() async =>
-      await asyncPrefs.getDouble('autoHideDuration') ?? 2.0;
+      await _prefs.getDouble('autoHideDuration') ?? 2.0;
   Future<String> getKeyboardLayoutName() async =>
-      await asyncPrefs.getString('layout') ?? 'QWERTY';
+      await _prefs.getString('layout') ?? 'QWERTY';
   Future<bool> getEnableAdvancedSettings() async =>
-      await asyncPrefs.getBool('enableAdvancedSettings') ?? false;
+      await _prefs.getBool('enableAdvancedSettings') ?? false;
   Future<bool> getUseUserLayout() async =>
-      await asyncPrefs.getBool('useUserLayout') ?? false;
+      await _prefs.getBool('useUserLayout') ?? false;
   Future<bool> getShowAltLayout() async =>
-      await asyncPrefs.getBool('showAltLayout') ?? false;
+      await _prefs.getBool('showAltLayout') ?? false;
   Future<bool> getKanataEnabled() async =>
-      await asyncPrefs.getBool('kanataEnabled') ?? false;
+      await _prefs.getBool('kanataEnabled') ?? false;
 
   // Appearance settings
   Future<double> getOpacity() async =>
-      await asyncPrefs.getDouble('opacity') ?? 0.6;
+      await _prefs.getDouble('opacity') ?? 0.6;
   Future<Color> getKeyColorPressed() async =>
-      Color(await asyncPrefs.getInt('keyColorPressed') ?? 0xFF1E1E1E);
+      Color(await _prefs.getInt('keyColorPressed') ?? 0xFF1E1E1E);
   Future<Color> getKeyColorNotPressed() async =>
-      Color(await asyncPrefs.getInt('keyColorNotPressed') ?? 0xFF77ABFF);
+      Color(await _prefs.getInt('keyColorNotPressed') ?? 0xFF77ABFF);
   Future<Color> getMarkerColor() async =>
-      Color(await asyncPrefs.getInt('markerColor') ?? 0xFFFFFFFF);
+      Color(await _prefs.getInt('markerColor') ?? 0xFFFFFFFF);
   Future<Color> getMarkerColorNotPressed() async =>
-      Color(await asyncPrefs.getInt('markerColorNotPressed') ?? 0xFF000000);
+      Color(await _prefs.getInt('markerColorNotPressed') ?? 0xFF000000);
   Future<double> getMarkerOffset() async =>
-      await asyncPrefs.getDouble('markerOffset') ?? 10;
+      await _prefs.getDouble('markerOffset') ?? 10;
   Future<double> getMarkerWidth() async =>
-      await asyncPrefs.getDouble('markerWidth') ?? 10;
+      await _prefs.getDouble('markerWidth') ?? 10;
   Future<double> getMarkerHeight() async =>
-      await asyncPrefs.getDouble('markerHeight') ?? 2;
+      await _prefs.getDouble('markerHeight') ?? 2;
   Future<double> getMarkerBorderRadius() async =>
-      await asyncPrefs.getDouble('markerBorderRadius') ?? 10;
+      await _prefs.getDouble('markerBorderRadius') ?? 10;
 
   // Keyboard settings
   Future<String> getKeymapStyle() async =>
-      await asyncPrefs.getString('keymapStyle') ?? 'Staggered';
+      await _prefs.getString('keymapStyle') ?? 'Staggered';
   Future<bool> getShowTopRow() async =>
-      await asyncPrefs.getBool('showTopRow') ?? false;
+      await _prefs.getBool('showTopRow') ?? false;
   Future<bool> getShowGraveKey() async =>
-      await asyncPrefs.getBool('showGraveKey') ?? false;
+      await _prefs.getBool('showGraveKey') ?? false;
   Future<double> getKeySize() async =>
-      await asyncPrefs.getDouble('keySize') ?? 48;
+      await _prefs.getDouble('keySize') ?? 48;
   Future<double> getKeyBorderRadius() async =>
-      await asyncPrefs.getDouble('keyBorderRadius') ?? 12;
+      await _prefs.getDouble('keyBorderRadius') ?? 12;
   Future<double> getKeyPadding() async =>
-      await asyncPrefs.getDouble('keyPadding') ?? 3;
+      await _prefs.getDouble('keyPadding') ?? 3;
   Future<double> getSpaceWidth() async =>
-      await asyncPrefs.getDouble('spaceWidth') ?? 320;
+      await _prefs.getDouble('spaceWidth') ?? 320;
   Future<double> getSplitWidth() async =>
-      await asyncPrefs.getDouble('splitWidth') ?? 100;
+      await _prefs.getDouble('splitWidth') ?? 100;
 
   // Text settings
   Future<String> getFontFamily() async =>
-      await asyncPrefs.getString('fontFamily') ?? 'GeistMono';
+      await _prefs.getString('fontFamily') ?? 'GeistMono';
   Future<double> getKeyFontSize() async =>
-      await asyncPrefs.getDouble('keyFontSize') ?? 20;
+      await _prefs.getDouble('keyFontSize') ?? 20;
   Future<double> getSpaceFontSize() async =>
-      await asyncPrefs.getDouble('spaceFontSize') ?? 14;
+      await _prefs.getDouble('spaceFontSize') ?? 14;
   Future<FontWeight> getFontWeight() async => FontWeight
-      .values[await asyncPrefs.getInt('fontWeight') ?? FontWeight.w500.index];
+      .values[await _prefs.getInt('fontWeight') ?? FontWeight.w500.index];
   Future<Color> getKeyTextColor() async =>
-      Color(await asyncPrefs.getInt('keyTextColor') ?? 0xFFFFFFFF);
+      Color(await _prefs.getInt('keyTextColor') ?? 0xFFFFFFFF);
   Future<Color> getKeyTextColorNotPressed() async =>
-      Color(await asyncPrefs.getInt('keyTextColorNotPressed') ?? 0xFF000000);
+      Color(await _prefs.getInt('keyTextColorNotPressed') ?? 0xFF000000);
 
   // HotKey settings
   Future<bool> getHotKeysEnabled() async =>
-      await asyncPrefs.getBool('enableHotKeys') ?? false;
+      await _prefs.getBool('enableHotKeys') ?? false;
   Future<HotKey?> getVisibilityHotKey() async {
-    final json = await asyncPrefs.getString('visibilityHotKey');
+    final json = await _prefs.getString('visibilityHotKey');
     try {
       return HotKey.fromJson(jsonDecode(json!));
     } catch (e) {
@@ -91,7 +91,7 @@ class PreferencesService {
     }
   }
   Future<HotKey?> getAutoHideHotKey() async {
-    final json = await asyncPrefs.getString('autoHideHotKey');
+    final json = await _prefs.getString('autoHideHotKey');
     try {
       return HotKey.fromJson(jsonDecode(json!));
     } catch (e) {
@@ -104,78 +104,77 @@ class PreferencesService {
 
   // Save methods
   Future<void> setLaunchAtStartup(bool value) async =>
-      await asyncPrefs.setBool('launchAtStartup', value);
+      await _prefs.setBool('launchAtStartup', value);
   Future<void> setAutoHideEnabled(bool value) async =>
-      await asyncPrefs.setBool('autoHideEnabled', value);
+      await _prefs.setBool('autoHideEnabled', value);
   Future<void> setAutoHideDuration(double value) async =>
-      await asyncPrefs.setDouble('autoHideDuration', value);
+      await _prefs.setDouble('autoHideDuration', value);
   Future<void> setKeyboardLayoutName(String value) async =>
-      await asyncPrefs.setString('layout', value);
+      await _prefs.setString('layout', value);
   Future<void> setEnableAdvancedSettings(bool value) async =>
-      await asyncPrefs.setBool('enableAdvancedSettings', value);
+      await _prefs.setBool('enableAdvancedSettings', value);
   Future<void> setUseUserLayout(bool value) async =>
-      await asyncPrefs.setBool('useUserLayout', value);
+      await _prefs.setBool('useUserLayout', value);
   Future<void> setShowAltLayout(bool value) async =>
-      await asyncPrefs.setBool('showAltLayout', value);
+      await _prefs.setBool('showAltLayout', value);
   Future<void> setKanataEnabled(bool value) async =>
-      await asyncPrefs.setBool('kanataEnabled', value);
+      await _prefs.setBool('kanataEnabled', value);
 
   Future<void> setOpacity(double value) async =>
-      await asyncPrefs.setDouble('opacity', value);
+      await _prefs.setDouble('opacity', value);
   Future<void> setKeyColorPressed(Color value) async =>
-      await asyncPrefs.setInt('keyColorPressed', value.toARGB32());
+      await _prefs.setInt('keyColorPressed', value.toARGB32());
   Future<void> setKeyColorNotPressed(Color value) async =>
-      await asyncPrefs.setInt('keyColorNotPressed', value.toARGB32());
+      await _prefs.setInt('keyColorNotPressed', value.toARGB32());
   Future<void> setMarkerColor(Color value) async =>
-      await asyncPrefs.setInt('markerColor', value.toARGB32());
+      await _prefs.setInt('markerColor', value.toARGB32());
   Future<void> setMarkerColorNotPressed(Color value) async =>
-      await asyncPrefs.setInt('markerColorNotPressed', value.toARGB32());
+      await _prefs.setInt('markerColorNotPressed', value.toARGB32());
   Future<void> setMarkerOffset(double value) async =>
-      await asyncPrefs.setDouble('markerOffset', value);
+      await _prefs.setDouble('markerOffset', value);
   Future<void> setMarkerWidth(double value) async =>
-      await asyncPrefs.setDouble('markerWidth', value);
+      await _prefs.setDouble('markerWidth', value);
   Future<void> setMarkerHeight(double value) async =>
-      await asyncPrefs.setDouble('markerHeight', value);
+      await _prefs.setDouble('markerHeight', value);
   Future<void> setMarkerBorderRadius(double value) async =>
-      await asyncPrefs.setDouble('markerBorderRadius', value);
+      await _prefs.setDouble('markerBorderRadius', value);
 
   Future<void> setKeymapStyle(String value) async =>
-      await asyncPrefs.setString('keymapStyle', value);
+      await _prefs.setString('keymapStyle', value);
   Future<void> setShowTopRow(bool value) async =>
-      await asyncPrefs.setBool('showTopRow', value);
+      await _prefs.setBool('showTopRow', value);
   Future<void> setShowGraveKey(bool value) async =>
-      await asyncPrefs.setBool('showGraveKey', value);
+      await _prefs.setBool('showGraveKey', value);
   Future<void> setKeySize(double value) async =>
-      await asyncPrefs.setDouble('keySize', value);
+      await _prefs.setDouble('keySize', value);
   Future<void> setKeyBorderRadius(double value) async =>
-      await asyncPrefs.setDouble('keyBorderRadius', value);
+      await _prefs.setDouble('keyBorderRadius', value);
   Future<void> setKeyPadding(double value) async =>
-      await asyncPrefs.setDouble('keyPadding', value);
+      await _prefs.setDouble('keyPadding', value);
   Future<void> setSpaceWidth(double value) async =>
-      await asyncPrefs.setDouble('spaceWidth', value);
+      await _prefs.setDouble('spaceWidth', value);
   Future<void> setSplitWidth(double value) async =>
-      await asyncPrefs.setDouble('splitWidth', value);
+      await _prefs.setDouble('splitWidth', value);
 
   Future<void> setFontFamily(String value) async =>
-      await asyncPrefs.setString('fontFamily', value);
+      await _prefs.setString('fontFamily', value);
   Future<void> setKeyFontSize(double value) async =>
-      await asyncPrefs.setDouble('keyFontSize', value);
+      await _prefs.setDouble('keyFontSize', value);
   Future<void> setSpaceFontSize(double value) async =>
-      await asyncPrefs.setDouble('spaceFontSize', value);
+      await _prefs.setDouble('spaceFontSize', value);
   Future<void> setFontWeight(FontWeight value) async =>
-      await asyncPrefs.setInt('fontWeight', value.index);
+      await _prefs.setInt('fontWeight', value.index);
   Future<void> setKeyTextColor(Color value) async =>
-      await asyncPrefs.setInt('keyTextColor', value.toARGB32());
+      await _prefs.setInt('keyTextColor', value.toARGB32());
   Future<void> setKeyTextColorNotPressed(Color value) async =>
-      await asyncPrefs.setInt('keyTextColorNotPressed', value.toARGB32());
+      await _prefs.setInt('keyTextColorNotPressed', value.toARGB32());
 
   Future<void> setHotKeysEnabled(bool value) async =>
-      await asyncPrefs.setBool('enableHotKeys', value);
-  Future<void> setVisibilityHotKey(HotKey value) async => await asyncPrefs
-      .setString('visibilityHotKey', jsonEncode(value.toJson()));
-
+      await _prefs.setBool('enableHotKeys', value);
+  Future<void> setVisibilityHotKey(HotKey value) async => 
+      await _prefs.setString('visibilityHotKey', jsonEncode(value.toJson()));
   Future<void> setAutoHideHotKey(HotKey value) async =>
-      await asyncPrefs.setString('autoHideHotKey', jsonEncode(value.toJson()));
+      await _prefs.setString('autoHideHotKey', jsonEncode(value.toJson()));
 
   Future<Map<String, dynamic>> loadAllPreferences() async {
     return {
@@ -269,54 +268,5 @@ class PreferencesService {
     await setHotKeysEnabled(prefs['hotKeysEnabled']);
     await setVisibilityHotKey(prefs['visibilityHotKey']);
     await setAutoHideHotKey(prefs['autoHideHotKey']);
-  }
-}
-
-class SharedPreferencesAsync {
-  SharedPreferences? _prefs;
-
-  Future<SharedPreferences> get _instance async {
-    _prefs ??= await SharedPreferences.getInstance();
-    return _prefs!;
-  }
-
-  Future<bool?> getBool(String key) async {
-    final prefs = await _instance;
-    return prefs.containsKey(key) ? prefs.getBool(key) : null;
-  }
-
-  Future<int?> getInt(String key) async {
-    final prefs = await _instance;
-    return prefs.containsKey(key) ? prefs.getInt(key) : null;
-  }
-
-  Future<double?> getDouble(String key) async {
-    final prefs = await _instance;
-    return prefs.containsKey(key) ? prefs.getDouble(key) : null;
-  }
-
-  Future<String?> getString(String key) async {
-    final prefs = await _instance;
-    return prefs.containsKey(key) ? prefs.getString(key) : null;
-  }
-
-  Future<bool> setBool(String key, bool value) async {
-    final prefs = await _instance;
-    return prefs.setBool(key, value);
-  }
-
-  Future<bool> setInt(String key, int value) async {
-    final prefs = await _instance;
-    return prefs.setInt(key, value);
-  }
-
-  Future<bool> setDouble(String key, double value) async {
-    final prefs = await _instance;
-    return prefs.setDouble(key, value);
-  }
-
-  Future<bool> setString(String key, String value) async {
-    final prefs = await _instance;
-    return prefs.setString(key, value);
   }
 }
