@@ -178,7 +178,7 @@ Complete documentation for OverKeys is available in the [docs](docs/index.md) fo
 - [Custom Layouts](/docs/advanced/custom-layouts.md)
 - [Alternative Layouts](/docs/advanced/alternative-layouts.md)
 - [Kanata Integration](/docs/advanced/kanata-integration.md)
-- [Supported Keys](/docs/reference/supported-keys.md)
+- [Supported Keys](/docs/advanced/supported-keys.md)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
