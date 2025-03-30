@@ -1,4 +1,6 @@
-import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:flutter/services.dart';
+import 'package:hotkey_manager/hotkey_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PreferencesService {
@@ -74,6 +76,32 @@ class PreferencesService {
   Future<Color> getKeyTextColorNotPressed() async =>
       Color(await asyncPrefs.getInt('keyTextColorNotPressed') ?? 0xFF000000);
 
+  // HotKey settings
+  Future<bool> getHotKeysEnabled() async =>
+      await asyncPrefs.getBool('enableHotKeys') ?? false;
+  Future<HotKey?> getVisibilityHotKey() async {
+    final json = await asyncPrefs.getString('visibilityHotKey');
+    try {
+      return HotKey.fromJson(jsonDecode(json!));
+    } catch (e) {
+      return HotKey(
+        key: PhysicalKeyboardKey.keyQ,
+        modifiers: [HotKeyModifier.alt, HotKeyModifier.control],
+      );
+    }
+  }
+  Future<HotKey?> getAutoHideHotKey() async {
+    final json = await asyncPrefs.getString('autoHideHotKey');
+    try {
+      return HotKey.fromJson(jsonDecode(json!));
+    } catch (e) {
+      return HotKey(
+        key: PhysicalKeyboardKey.keyW,
+        modifiers: [HotKeyModifier.alt, HotKeyModifier.control],
+      );
+    }
+  }
+
   // Save methods
   Future<void> setLaunchAtStartup(bool value) async =>
       await asyncPrefs.setBool('launchAtStartup', value);
@@ -141,6 +169,14 @@ class PreferencesService {
   Future<void> setKeyTextColorNotPressed(Color value) async =>
       await asyncPrefs.setInt('keyTextColorNotPressed', value.toARGB32());
 
+  Future<void> setHotKeysEnabled(bool value) async =>
+      await asyncPrefs.setBool('enableHotKeys', value);
+  Future<void> setVisibilityHotKey(HotKey value) async => await asyncPrefs
+      .setString('visibilityHotKey', jsonEncode(value.toJson()));
+
+  Future<void> setAutoHideHotKey(HotKey value) async =>
+      await asyncPrefs.setString('autoHideHotKey', jsonEncode(value.toJson()));
+
   Future<Map<String, dynamic>> loadAllPreferences() async {
     return {
       // General settings
@@ -181,6 +217,11 @@ class PreferencesService {
       'fontWeight': await getFontWeight(),
       'keyTextColor': await getKeyTextColor(),
       'keyTextColorNotPressed': await getKeyTextColorNotPressed(),
+
+      // HotKey settings
+      'hotKeysEnabled': await getHotKeysEnabled(),
+      'visibilityHotKey': await getVisibilityHotKey(),
+      'autoHideHotKey': await getAutoHideHotKey(),
     };
   }
 
@@ -223,6 +264,11 @@ class PreferencesService {
     await setFontWeight(prefs['fontWeight']);
     await setKeyTextColor(prefs['keyTextColor']);
     await setKeyTextColorNotPressed(prefs['keyTextColorNotPressed']);
+
+    // HotKey settings
+    await setHotKeysEnabled(prefs['hotKeysEnabled']);
+    await setVisibilityHotKey(prefs['visibilityHotKey']);
+    await setAutoHideHotKey(prefs['autoHideHotKey']);
   }
 }
 

@@ -5,6 +5,8 @@ import 'dart:isolate';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:desktop_multi_window/desktop_multi_window.dart';
+import 'package:flutter/services.dart';
+import 'package:hotkey_manager/hotkey_manager.dart';
 import 'package:launch_at_startup/launch_at_startup.dart';
 import 'package:tray_manager/tray_manager.dart';
 import 'package:window_manager/window_manager.dart';
@@ -37,6 +39,8 @@ class _MainAppState extends State<MainApp> with TrayListener {
 
   // Window state
   bool _isWindowVisible = true;
+  bool _forceHide = false;
+  bool autoHideBeforeForceHide = false;
   bool _ignoreMouseEvents = true;
   Timer? _autoHideTimer;
   bool autoHideBeforeMove = false;
@@ -85,6 +89,17 @@ class _MainAppState extends State<MainApp> with TrayListener {
   Color _keyTextColor = Colors.white;
   Color _keyTextColorNotPressed = Colors.black;
 
+  // HotKey settings
+  bool _hotKeysEnabled = true;
+  HotKey _visibilityHotKey = HotKey(
+    key: PhysicalKeyboardKey.keyQ,
+    modifiers: [HotKeyModifier.alt, HotKeyModifier.control],
+  );
+  HotKey _autoHideHotKey = HotKey(
+    key: PhysicalKeyboardKey.keyW,
+    modifiers: [HotKeyModifier.alt, HotKeyModifier.control],
+  );
+
   @override
   void initState() {
     super.initState();
@@ -96,29 +111,27 @@ class _MainAppState extends State<MainApp> with TrayListener {
     trayManager.addListener(this);
     _setupTray();
     _setupKeyListener();
+    _setupHotKeys();
     _setupMethodHandler();
-    _initStartupSetting();
-    await _loadKanataConfig();
+    _initStartup();
     _setupKanataLayerChangeHandler();
-    Future.delayed(const Duration(seconds: 2), () {
-      if (_enableAdvancedSettings) {
-        if (_useUserLayout) {
-          _loadUserLayout();
-        }
-        if (_showAltLayout) {
-          _loadAltLayout();
-        }
-        if (_kanataEnabled) {
-          _kanataService.connect();
-        }
+    if (_enableAdvancedSettings) {
+      if (_useUserLayout) {
+        _loadUserLayout();
       }
-      if (_showTopRow) {
-        _adjustWindowSize();
+      if (_showAltLayout) {
+        _loadAltLayout();
       }
-      if (_autoHideEnabled) {
-        _resetAutoHideTimer();
+      if (_kanataEnabled) {
+        _useKanata();
       }
-    });
+    }
+    if (_showTopRow) {
+      _adjustWindowSize();
+    }
+    if (_autoHideEnabled) {
+      _resetAutoHideTimer();
+    }
   }
 
   @override
@@ -131,9 +144,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
     super.dispose();
   }
 
-  // Preference handling methods
   Future<void> _loadAllPreferences() async {
-    // Load all preferences at once
     final prefs = await _prefsService.loadAllPreferences();
 
     setState(() {
@@ -151,6 +162,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
 
       // Appearance settings
       _opacity = prefs['opacity'];
+      _lastOpacity = prefs['opacity'];
       _keyColorPressed = prefs['keyColorPressed'];
       _keyColorNotPressed = prefs['keyColorNotPressed'];
       _markerColor = prefs['markerColor'];
@@ -177,6 +189,11 @@ class _MainAppState extends State<MainApp> with TrayListener {
       _fontWeight = prefs['fontWeight'];
       _keyTextColor = prefs['keyTextColor'];
       _keyTextColorNotPressed = prefs['keyTextColorNotPressed'];
+
+      // HotKey settings
+      _hotKeysEnabled = prefs['hotKeysEnabled'];
+      _visibilityHotKey = prefs['visibilityHotKey'];
+      _autoHideHotKey = prefs['autoHideHotKey'];
     });
   }
 
@@ -220,12 +237,16 @@ class _MainAppState extends State<MainApp> with TrayListener {
       'fontWeight': _fontWeight,
       'keyTextColor': _keyTextColor,
       'keyTextColorNotPressed': _keyTextColorNotPressed,
+
+      // HotKey settings
+      'hotKeysEnabled': _hotKeysEnabled,
+      'visibilityHotKey': _visibilityHotKey,
+      'autoHideHotKey': _autoHideHotKey
     };
 
     await _prefsService.saveAllPreferences(prefs);
   }
 
-  // Kanata service related methods
   void _setupKanataLayerChangeHandler() {
     _kanataService.onLayerChange = (newLayout, isDefaultUserLayout) {
       setState(() {
@@ -238,36 +259,27 @@ class _MainAppState extends State<MainApp> with TrayListener {
 
   void _updateAutoHideBasedOnLayer(bool isDefaultUserLayout) {
     if (!isDefaultUserLayout && _autoHideEnabled) {
-      // Disable auto-hide for non-default layers
       _autoHideEnabled = false;
       _autoHideTimer?.cancel();
       autoHideBeforeMove = true;
     } else if (isDefaultUserLayout && autoHideBeforeMove) {
-      // Re-enable auto-hide when returning to default layer if it was enabled before
       _autoHideEnabled = true;
       _resetAutoHideTimer();
       autoHideBeforeMove = false;
     }
   }
 
-  Future<void> _loadKanataConfig() async {
+  Future<void> _useKanata() async {
     final configService = ConfigService();
     final config = await configService.loadConfig();
 
     if (_kanataEnabled && _enableAdvancedSettings) {
       _kanataService.updateSettings(
           config.kanataHost, config.kanataPort, config.userLayouts);
-
-      final defaultLayout = await configService.getUserLayout();
-      setState(() {
-        if (defaultLayout != null) {
-          _keyboardLayout = defaultLayout;
-        }
-      });
+      _kanataService.connect();
     }
   }
 
-  // Keyboard layout methods
   Future<void> _loadUserLayout() async {
     if (!_useUserLayout) return;
 
@@ -279,9 +291,6 @@ class _MainAppState extends State<MainApp> with TrayListener {
         setState(() {
           _keyboardLayout = userLayout;
         });
-        if (kDebugMode) {
-          print('Loaded user layout: ${userLayout.name}');
-        }
         _fadeIn();
       }
     }
@@ -296,14 +305,10 @@ class _MainAppState extends State<MainApp> with TrayListener {
       setState(() {
         _altLayout = altLayout;
       });
-      if (kDebugMode) {
-        print('Loaded alt layout: ${altLayout.name}');
-      }
     }
   }
 
-  // Startup related methods
-  Future<void> _initStartupSetting() async {
+  Future<void> _initStartup() async {
     _launchAtStartup = await launchAtStartup.isEnabled();
     setState(() {});
   }
@@ -314,10 +319,9 @@ class _MainAppState extends State<MainApp> with TrayListener {
     } else {
       await launchAtStartup.disable();
     }
-    await _initStartupSetting();
+    await _initStartup();
   }
 
-  // Window management methods
   Future<void> _adjustWindowSize() async {
     _fadeIn();
     double height = _showTopRow
@@ -349,7 +353,6 @@ class _MainAppState extends State<MainApp> with TrayListener {
     _resetAutoHideTimer();
   }
 
-  // Key handling and auto-hide methods
   void _setupKeyListener() {
     ReceivePort receivePort = ReceivePort();
     Isolate.spawn(setHook, receivePort.sendPort)
@@ -366,18 +369,13 @@ class _MainAppState extends State<MainApp> with TrayListener {
   void _handleKeyEvent(dynamic message) {
     if (message is! List) return;
 
-    // Session event (session unlock)
     if (message[0] is String) {
       if (message[0] == 'session_unlock') {
         setState(() => _keyPressStates.clear());
-        if (kDebugMode) {
-          print('All key press states cleared due to session unlock');
-        }
       }
       return;
     }
 
-    // Regular key events
     if (message[0] is! int) return;
 
     int keyCode = message[0];
@@ -414,7 +412,27 @@ class _MainAppState extends State<MainApp> with TrayListener {
     }
   }
 
-  // System tray methods
+  void _toggleAutoHide(bool enable) {
+    setState(() {
+      _autoHideEnabled = enable;
+      if (_autoHideEnabled) {
+        _resetAutoHideTimer();
+      } else {
+        _autoHideTimer?.cancel();
+        if (!_isWindowVisible) {
+          _fadeIn();
+        }
+      }
+    });
+    DesktopMultiWindow.getAllSubWindowIds().then((windowIds) {
+      for (final id in windowIds) {
+        DesktopMultiWindow.invokeMethod(
+            id, 'updateAutoHideFromMainWindow', _autoHideEnabled);
+      }
+    });
+    _setupTray();
+  }
+
   Future<void> _setupTray() async {
     String iconPath = Platform.isWindows
         ? 'assets/images/app_icon.ico'
@@ -444,7 +462,6 @@ class _MainAppState extends State<MainApp> with TrayListener {
               }
             }
           });
-          _fadeIn();
         },
       ),
       MenuItem.separator(),
@@ -454,17 +471,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
         checked: _autoHideEnabled,
         disabled: !_ignoreMouseEvents,
         onClick: (menuItem) {
-          setState(() {
-            _autoHideEnabled = !_autoHideEnabled;
-            if (_autoHideEnabled) {
-              _resetAutoHideTimer();
-            } else {
-              _autoHideTimer?.cancel();
-              if (!_isWindowVisible) {
-                _fadeIn();
-              }
-            }
-          });
+          _toggleAutoHide(!_autoHideEnabled);
         },
       ),
       MenuItem.separator(),
@@ -479,9 +486,6 @@ class _MainAppState extends State<MainApp> with TrayListener {
         key: 'preferences',
         label: 'Preferences',
         onClick: (menuItem) {
-          if (kDebugMode) {
-            print('Preferences Window Opened');
-          }
           _showPreferences();
         },
       ),
@@ -493,16 +497,55 @@ class _MainAppState extends State<MainApp> with TrayListener {
     ]));
   }
 
+  Future<void> _setupHotKeys() async {
+    await hotKeyManager.unregisterAll();
+
+    if (!_hotKeysEnabled) return;
+
+    await hotKeyManager.register(
+      _autoHideHotKey,
+      keyDownHandler: (hotKey) {
+        if (kDebugMode) {
+          print(
+              'Auto-hide hotkey triggered: ${hotKey.toJson()} - toggling to ${!_autoHideEnabled}');
+        }
+        _toggleAutoHide(!_autoHideEnabled);
+      },
+    );
+    await hotKeyManager.register(
+      _visibilityHotKey,
+      keyDownHandler: (hotKey) {
+        if (kDebugMode) {
+          print(
+              'Visibility hotkey triggered: ${hotKey.toJson()} - toggling force hide to ${!_forceHide}');
+        }
+        setState(() {
+          _forceHide = !_forceHide;
+          if (_autoHideEnabled && _forceHide) {
+            autoHideBeforeForceHide = _autoHideEnabled;
+            _autoHideEnabled = false;
+            _autoHideTimer?.cancel();
+            if (_isWindowVisible) {
+              _fadeOut();
+            }
+          } else if (autoHideBeforeForceHide && !_forceHide) {
+            _autoHideEnabled = autoHideBeforeForceHide;
+            autoHideBeforeForceHide = false;
+            if (_autoHideEnabled) {
+              _fadeIn();
+              _resetAutoHideTimer();
+            }
+          } else {
+            onTrayIconMouseDown();
+          }
+        });
+      },
+    );
+  }
+
   @override
   void onTrayMenuItemClick(MenuItem menuItem) {
-    if (menuItem.key == 'toggle_auto_hide') {
-      DesktopMultiWindow.getAllSubWindowIds().then((windowIds) {
-        for (final id in windowIds) {
-          DesktopMultiWindow.invokeMethod(
-              id, 'updateAutoHideFromMainWindow', _autoHideEnabled);
-        }
-      });
-    } else if (menuItem.key == 'exit') {
+    if (menuItem.key == 'exit') {
       DesktopMultiWindow.getAllSubWindowIds().then((windowIds) async {
         for (final id in windowIds) {
           await WindowController.fromWindowId(id).close();
@@ -518,7 +561,6 @@ class _MainAppState extends State<MainApp> with TrayListener {
       });
       return;
     }
-    _setupTray();
   }
 
   @override
@@ -535,7 +577,6 @@ class _MainAppState extends State<MainApp> with TrayListener {
     trayManager.popUpContextMenu();
   }
 
-  // UI related methods
   Future<void> _showPreferences() async {
     try {
       await DesktopMultiWindow.createWindow(jsonEncode({
@@ -548,7 +589,6 @@ class _MainAppState extends State<MainApp> with TrayListener {
     }
   }
 
-  // Method handler for inter-window communication
   void _setupMethodHandler() {
     DesktopMultiWindow.setMethodHandler((call, fromWindowId) async {
       switch (call.method) {
@@ -561,18 +601,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
           });
         case 'updateAutoHideEnabled':
           final autoHideEnabled = call.arguments as bool;
-          setState(() {
-            _autoHideEnabled = autoHideEnabled;
-            if (_autoHideEnabled) {
-              _resetAutoHideTimer();
-            } else {
-              _autoHideTimer?.cancel();
-              if (!_isWindowVisible) {
-                _fadeIn();
-              }
-            }
-          });
-          _setupTray();
+          _toggleAutoHide(autoHideEnabled);
         case 'updateAutoHideDuration':
           final autoHideDuration = call.arguments as double;
           setState(() => _autoHideDuration = autoHideDuration);
@@ -600,9 +629,6 @@ class _MainAppState extends State<MainApp> with TrayListener {
                 setState(() {
                   _keyboardLayout = _initialKeyboardLayout!;
                 });
-                if (kDebugMode) {
-                  print('Kanata disconnected and reverted to initial layout');
-                }
               }
             }
             if (_useUserLayout &&
@@ -611,9 +637,6 @@ class _MainAppState extends State<MainApp> with TrayListener {
               setState(() {
                 _keyboardLayout = _initialKeyboardLayout!;
               });
-              if (kDebugMode) {
-                print('Reverted to initial layout');
-              }
             }
             if (_showAltLayout) {
               setState(() {
@@ -623,18 +646,10 @@ class _MainAppState extends State<MainApp> with TrayListener {
             _fadeIn();
           } else {
             if (_kanataEnabled) {
-              _loadKanataConfig().then((_) {
-                _kanataService.connect();
-                if (kDebugMode) {
-                  print('Reconnected to Kanata service');
-                }
-              });
+              _useKanata();
             }
             if (_useUserLayout && !_kanataEnabled) {
               _loadUserLayout();
-              if (kDebugMode) {
-                print('Loading user layout after enabling advanced settings');
-              }
             }
             if (_previousShowAltLayout || _showAltLayout) {
               setState(() {
@@ -654,10 +669,6 @@ class _MainAppState extends State<MainApp> with TrayListener {
               setState(() {
                 if (_initialKeyboardLayout != null && !_kanataEnabled) {
                   _keyboardLayout = _initialKeyboardLayout!;
-                  if (kDebugMode) {
-                    print(
-                        'Reverted to initial layout: ${_initialKeyboardLayout!.name}');
-                  }
                 }
               });
               _fadeIn();
@@ -678,9 +689,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
             if (kanataEnabled && !_kanataEnabled) {
               _initialKeyboardLayout = _keyboardLayout;
               _kanataEnabled = true;
-              _loadKanataConfig().then((_) {
-                _kanataService.connect();
-              });
+              _useKanata();
             } else if (!kanataEnabled && _kanataEnabled) {
               _kanataEnabled = false;
               _kanataService.disconnect();
@@ -770,6 +779,26 @@ class _MainAppState extends State<MainApp> with TrayListener {
           final keyTextColorNotPressed = call.arguments as int;
           setState(
               () => _keyTextColorNotPressed = Color(keyTextColorNotPressed));
+
+        // HotKey settings
+        case 'updateHotKeysEnabled':
+          final hotKeysEnabled = call.arguments as bool;
+          setState(() {
+            _hotKeysEnabled = hotKeysEnabled;
+            _setupHotKeys();
+          });
+        case 'updateVisibilityHotKey':
+          final hotKeyJson = call.arguments as String;
+          final newHotKey = HotKey.fromJson(jsonDecode(hotKeyJson));
+          await hotKeyManager.unregister(_visibilityHotKey);
+          setState(() => _visibilityHotKey = newHotKey);
+          await _setupHotKeys();
+        case 'updateAutoHideHotKey':
+          final hotKeyJson = call.arguments as String;
+          final newHotKey = HotKey.fromJson(jsonDecode(hotKeyJson));
+          await hotKeyManager.unregister(_autoHideHotKey);
+          setState(() => _autoHideHotKey = newHotKey);
+          await _setupHotKeys();
 
         default:
           throw UnimplementedError('Unimplemented method ${call.method}');

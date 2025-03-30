@@ -1,16 +1,21 @@
 import 'dart:async';
+import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:desktop_multi_window/desktop_multi_window.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:hotkey_manager/hotkey_manager.dart';
+import 'package:overkeys/widgets/tabs/hotkeys_tab.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:overkeys/utils/theme_manager.dart';
 import 'package:overkeys/services/preferences_service.dart';
-import 'package:overkeys/widgets/preferences/general_tab.dart';
-import 'package:overkeys/widgets/preferences/appearance_tab.dart';
-import 'package:overkeys/widgets/preferences/keyboard_tab.dart';
-import 'package:overkeys/widgets/preferences/text_tab.dart';
-import 'package:overkeys/widgets/preferences/about_tab.dart';
+import 'package:overkeys/widgets/tabs/general_tab.dart';
+import 'package:overkeys/widgets/tabs/appearance_tab.dart';
+import 'package:overkeys/widgets/tabs/keyboard_tab.dart';
+import 'package:overkeys/widgets/tabs/text_tab.dart';
+import 'package:overkeys/widgets/tabs/about_tab.dart';
 
 class PreferencesScreen extends StatefulWidget {
   const PreferencesScreen({super.key, required this.windowController});
@@ -68,6 +73,17 @@ class _PreferencesScreenState extends State<PreferencesScreen>
   FontWeight _fontWeight = FontWeight.w600;
   Color _keyTextColor = Colors.white;
   Color _keyTextColorNotPressed = Colors.black;
+
+  // HotKey settings
+  bool _hotKeysEnabled = true;
+  HotKey _visibilityHotKey = HotKey(
+    key: PhysicalKeyboardKey.keyQ,
+    modifiers: [HotKeyModifier.alt, HotKeyModifier.control],
+  );
+  HotKey _autoHideHotKey = HotKey(
+    key: PhysicalKeyboardKey.keyW,
+    modifiers: [HotKeyModifier.alt, HotKeyModifier.control],
+  );
 
   @override
   void initState() {
@@ -160,6 +176,11 @@ class _PreferencesScreenState extends State<PreferencesScreen>
       _fontWeight = prefs['fontWeight'];
       _keyTextColor = prefs['keyTextColor'];
       _keyTextColorNotPressed = prefs['keyTextColorNotPressed'];
+
+      // HotKey settings
+      _hotKeysEnabled = prefs['hotKeysEnabled'];
+      _visibilityHotKey = prefs['visibilityHotKey'];
+      _autoHideHotKey = prefs['autoHideHotKey'];
     });
   }
 
@@ -203,6 +224,11 @@ class _PreferencesScreenState extends State<PreferencesScreen>
       'fontWeight': _fontWeight,
       'keyTextColor': _keyTextColor,
       'keyTextColorNotPressed': _keyTextColorNotPressed,
+
+      // HotKey settings
+      'hotKeysEnabled': _hotKeysEnabled,
+      'visibilityHotKey': _visibilityHotKey,
+      'autoHideHotKey': _autoHideHotKey,
     };
 
     await _prefsService.saveAllPreferences(prefs);
@@ -213,6 +239,8 @@ class _PreferencesScreenState extends State<PreferencesScreen>
       value = value.toARGB32();
     } else if (value is FontWeight) {
       value = value.index;
+    } else if (value is HotKey) {
+      value = jsonEncode(value.toJson());
     }
     await DesktopMultiWindow.invokeMethod(0, method, value);
     _savePreferences();
@@ -260,9 +288,14 @@ class _PreferencesScreenState extends State<PreferencesScreen>
       padding: const EdgeInsets.all(8),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: ['General', 'Appearance', 'Keyboard', 'Text', 'About']
-            .map((tab) => _buildTabButton(tab))
-            .toList(),
+        children: [
+          'General',
+          'Appearance',
+          'Keyboard',
+          'Text',
+          'About',
+          'Hotkeys'
+        ].map((tab) => _buildTabButton(tab)).toList(),
       ),
     );
   }
@@ -470,6 +503,24 @@ class _PreferencesScreenState extends State<PreferencesScreen>
         );
       case 'About':
         return AboutTab(appVersion: _appVersion);
+      case 'Hotkeys':
+        return HotKeysTab(
+          hotKeysEnabled: _hotKeysEnabled,
+          visibilityHotKey: _visibilityHotKey,
+          autoHideHotKey: _autoHideHotKey,
+          updateHotKeysEnabled: (value) {
+            setState(() => _hotKeysEnabled = value);
+            _updateMainWindow('updateHotKeysEnabled', value);
+          },
+          updateVisibilityHotKey: (value) {
+            setState(() => _visibilityHotKey = value);
+            _updateMainWindow('updateVisibilityHotKey', value);
+          },
+          updateAutoHideHotKey: (value) {
+            setState(() => _autoHideHotKey = value);
+            _updateMainWindow('updateAutoHideHotKey', value);
+          },
+        );
       default:
         return const SizedBox.shrink();
     }
