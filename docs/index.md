@@ -14,8 +14,8 @@ Welcome to the OverKeys documentation! This guide will help you get started with
 
 ## Advanced Features
 
-* [Custom Layouts](advanced/custom-layout.md) - Create and use your own keyboard layouts
-* [Alternative Layout Toggle](advanced/alt-layout.md) - Quickly switch between different layouts
+* [Custom Layouts](advanced/custom-layouts.md) - Create and use your own keyboard layouts
+* [Alternative Layout Toggle](advanced/alternative-layouts.md) - Quickly switch between different layouts
 * [Kanata Integration](advanced/kanata-integration.md) - Connect OverKeys with Kanata for advanced functionality
 * [Supported Keys Reference](advanced/supported-keys.md) - Complete list of keys you can use in custom layouts
 
@@ -27,10 +27,10 @@ Welcome to the OverKeys documentation! This guide will help you get started with
 
 ## Common Tasks
 
-* [Creating a custom layout](advanced/custom-layout.md#creating-custom-layouts)
-* [Setting up alternative layout switching](advanced/alt-layout.md)
+* [Creating a custom layout](advanced/custom-layouts.md#creating-custom-layouts)
+* [Setting up alternative layout switching](advanced/alternative-layouts.md)
 * [Finding key names for custom layouts](advanced/supported-keys.md)
-* [Troubleshooting custom layouts](advanced/custom-layout.md#troubleshooting)
+* [Troubleshooting custom layouts](advanced/custom-layouts.md#troubleshooting)
 
 ## Support
 
