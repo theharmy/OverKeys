@@ -166,7 +166,6 @@ Complete documentation for OverKeys is available in the [docs](docs/index.md) fo
 ### Getting Started (Docs)
 
 - [Installation Guide](/docs/getting-started/installation.md)
-- [Quick Start](/docs/getting-started/quick-start.md)
 
 ### User Guide
 
