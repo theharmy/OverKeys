@@ -130,6 +130,7 @@ Following these recommendations will help ensure your custom layout displays cor
 - Custom layouts are loaded when OverKeys starts or when you toggle the setting.
 - If the Kanata integration is enabled, your custom layout will be used as the base layout/layer, and Kanata will control layer switching.
 - Custom layouts can be used simultaneously with the alternative layout feature.
+- Custom layouts with names identical to the natively supported layouts will override the native ones.
 
 ## Troubleshooting
 
