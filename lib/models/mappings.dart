@@ -41,6 +41,8 @@ class Mappings {
     '␣': ' ',
     '⎵': ' ',
     '␠': ' ',
+    'SPC': ' ',
+    'SPACE': ' ',
     '⎋': 'Escape',
     'ESC': 'Escape',
     '⇪': 'CapsLock',

@@ -1,14 +1,16 @@
 # Preferences
 
 OverKeys offers extensive customization options through its Preferences window.
-OverKeys preferences are organized into six tabs:
+OverKeys preferences are organized into eight tabs:
 
 1. **[General](#general-tab)** - Basic application settings
-2. **[Appearance](#appearance-tab)** - Visual customization options
-3. **[Keyboard](#keyboard-tab)** - Layout and key configuration
-4. **[Text](#text-tab)** - Font and text styling options
-5. **[Hotkeys](#hotkeys-tab)** - Keyboard shortcuts for controlling OverKeys
-6. **[About](#about-tab)** - Application information and version details
+2. **[Keyboard](#keyboard-tab)** - Layout and key configuration
+3. **[Text](#text-tab)** - Font and text styling options
+4. **[Markers](#markers-tab)** - Tactile marker customization
+5. **[Colors](#colors-tab)** - Visual color customization options
+6. **[Hotkeys](#hotkeys-tab)** - Keyboard shortcuts for controlling OverKeys
+7. **[Advanced](#advanced-tab)** - Additional configuration options
+8. **[About](#about-tab)** - Application information and version details
 
 ## Accessing Preferences
 
@@ -24,25 +26,8 @@ The General tab contains basic configuration options:
 - **Launch at startup**: Start OverKeys automatically when your system boots
 - **Auto-hide**: Automatically hide the keyboard after a period of inactivity
 - **Auto-hide duration**: Set how many seconds of inactivity before hiding (0.5-5.0 seconds)
+- **Opacity**: Control the overall transparency of the keyboard overlay (10-100%)
 - **Keyboard layout**: Select the keyboard layout (QWERTY, etc.)
-- **Enable advanced settings**: Unlock additional customization options
-- **Use user layout**: Use a custom keyboard layout configuration defined in `overkeys_config.json`
-- **Show alternative layout**: Display another layout alongside the main one
-- **Kanata integration**: Enable integration with Kanata keyboard software
-
-## Appearance Tab
-
-Controls the visual aspects of the keyboard:
-
-- **Keyboard opacity**: Adjust the transparency of the keyboard
-- **Key color (pressed)**: Set the color of keys when pressed
-- **Key color (not pressed)**: Set the color of keys when not pressed
-- **Marker color (pressed)**: Set the color of tactile markers when pressed
-- **Marker color (not pressed)**: Set the color of tactile markers when not pressed
-- **Marker offset**: Adjust the positioning of tactile markers
-- **Marker width**: Set the width of tactile markers
-- **Marker height**: Set the height of tactile markers
-- **Marker border radius**: Adjust the rounded corners of tactile markers
 
 ## Keyboard Tab
 
@@ -56,15 +41,34 @@ Configure the keyboard layout and physical appearance:
 - **Key padding**: Set the spacing between keys
 - **Space width**: Adjust the width of the spacebar
 - **Split width**: Set the gap width for split keyboard layouts
+- **Last row split width**: Set the gap width of the last row for split keyboard layouts
 
 ## Text Tab
 
 Customize the text appearance on keys:
 
 - **Font family**: Choose the typeface used for key labels
+- **Font weight**: Adjust how bold the text appears
 - **Key font size**: Set the text size for regular keys
 - **Space font size**: Set the text size for the spacebar
-- **Font weight**: Adjust how bold the text appears
+
+## Markers Tab
+
+Configure the tactile markers on home row keys:
+
+- **Marker offset**: Adjust the positioning of tactile markers
+- **Marker width**: Set the width of tactile markers
+- **Marker height**: Set the height of tactile markers
+- **Marker border radius**: Adjust the rounded corners of tactile markers
+
+## Colors Tab
+
+Controls the visual colors of the keyboard:
+
+- **Key color (pressed)**: Set the color of keys when pressed
+- **Key color (not pressed)**: Set the color of keys when not pressed
+- **Marker color (pressed)**: Set the color of tactile markers when pressed
+- **Marker color (not pressed)**: Set the color of tactile markers when not pressed
 - **Key text color (pressed)**: Set the text color when keys are pressed
 - **Key text color (not pressed)**: Set the text color when keys are not pressed
 
@@ -75,6 +79,16 @@ Configure keyboard shortcuts for controlling OverKeys:
 - **Enable hotkeys**: Turn keyboard shortcuts on or off
 - **Visibility hotkey**: Set a shortcut to force show/hide the keyboard (regardless if auto-hide is on/off)
 - **Auto-hide hotkey**: Set a shortcut to toggle the auto-hide feature
+
+## Advanced Tab
+
+Access additional configuration options:
+
+- **Enable advanced settings**: Unlock additional customization options
+- **Use user layout**: Use a custom keyboard layout configuration defined in `overkeys_config.json`
+- **Show alternative layout**: Display another layout alongside the main one
+- **Use 6-column layout**: Enable 6-column matrix layout (when applicable)
+- **Kanata integration**: Enable integration with Kanata keyboard software
 
 ## About Tab
 
