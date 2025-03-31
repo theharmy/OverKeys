@@ -25,7 +25,7 @@ class MainApp extends StatefulWidget {
   State<MainApp> createState() => _MainAppState();
 }
 
-class _MainAppState extends State<MainApp> with TrayListener {
+class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
   static const double _defaultWindowWidth = 1000;
   static const double _defaultWindowHeight = 330;
   static const double _defaultTopRowExtraHeight = 80;
@@ -109,6 +109,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
   Future<void> _initialize() async {
     await _loadAllPreferences();
     trayManager.addListener(this);
+    windowManager.addListener(this);
     _setupTray();
     _setupKeyListener();
     _setupHotKeys();
@@ -136,6 +137,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
 
   @override
   void dispose() {
+    windowManager.removeListener(this);
     trayManager.removeListener(this);
     unhook();
     _autoHideTimer?.cancel();
@@ -340,15 +342,12 @@ class _MainAppState extends State<MainApp> with TrayListener {
       _opacity = 0.0;
       _isWindowVisible = false;
     });
-    windowManager.blur();
   }
 
   void _fadeIn() {
-    windowManager.blur().then((_) {
-      setState(() {
-        _isWindowVisible = true;
-        _opacity = _lastOpacity;
-      });
+    setState(() {
+      _isWindowVisible = true;
+      _opacity = _lastOpacity;
     });
     _resetAutoHideTimer();
   }
@@ -430,6 +429,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
             id, 'updateAutoHideFromMainWindow', _autoHideEnabled);
       }
     });
+    _saveAllPreferences();
     _setupTray();
   }
 
@@ -520,24 +520,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
               'Visibility hotkey triggered: ${hotKey.toJson()} - toggling force hide to ${!_forceHide}');
         }
         setState(() {
-          _forceHide = !_forceHide;
-          if (_autoHideEnabled && _forceHide) {
-            autoHideBeforeForceHide = _autoHideEnabled;
-            _autoHideEnabled = false;
-            _autoHideTimer?.cancel();
-            if (_isWindowVisible) {
-              _fadeOut();
-            }
-          } else if (autoHideBeforeForceHide && !_forceHide) {
-            _autoHideEnabled = autoHideBeforeForceHide;
-            autoHideBeforeForceHide = false;
-            if (_autoHideEnabled) {
-              _fadeIn();
-              _resetAutoHideTimer();
-            }
-          } else {
-            onTrayIconMouseDown();
-          }
+          onTrayIconMouseDown();
         });
       },
     );
@@ -565,26 +548,73 @@ class _MainAppState extends State<MainApp> with TrayListener {
 
   @override
   void onTrayIconMouseDown() {
-    if (_isWindowVisible) {
-      _fadeOut();
+    _forceHide = !_forceHide;
+    if (_autoHideEnabled && _forceHide) {
+      autoHideBeforeForceHide = _autoHideEnabled;
+      _autoHideEnabled = false;
+      _autoHideTimer?.cancel();
+      if (_isWindowVisible) {
+        _fadeOut();
+      }
+    } else if (autoHideBeforeForceHide && !_forceHide) {
+      _autoHideEnabled = autoHideBeforeForceHide;
+      autoHideBeforeForceHide = false;
+      if (_autoHideEnabled) {
+        _fadeIn();
+        _resetAutoHideTimer();
+      }
     } else {
-      _fadeIn();
+      if (_isWindowVisible) {
+        _fadeOut();
+      } else {
+        _fadeIn();
+      }
     }
   }
 
   @override
   void onTrayIconRightMouseDown() {
-    trayManager.popUpContextMenu();
+    trayManager.popUpContextMenu(
+      // ignore: deprecated_member_use
+      bringAppToFront: true,
+    );
+  }
+
+  @override
+  void onWindowFocus() {
+    windowManager.blur();
   }
 
   Future<void> _showPreferences() async {
     try {
+      List<int> windowIds = await DesktopMultiWindow.getAllSubWindowIds();
+      for (int id in windowIds) {
+        Map<String, dynamic>? windowData;
+        try {
+          String? dataString =
+              await DesktopMultiWindow.invokeMethod(id, 'getWindowType');
+          if (dataString != null) {
+            windowData = jsonDecode(dataString);
+            if (windowData != null && windowData['type'] == 'preferences') {
+              await WindowController.fromWindowId(id).show();
+              await DesktopMultiWindow.invokeMethod(id, 'requestFocus');
+              return;
+            }
+          }
+        } catch (e) {
+          if (kDebugMode) {
+            print('Error getting window data: $e');
+          }
+        }
+      }
+
       await DesktopMultiWindow.createWindow(jsonEncode({
+        'type': 'preferences',
         'name': 'preferences',
       }));
     } catch (e) {
       if (kDebugMode) {
-        print('Error creating preferences window: $e');
+        print('Error handling preferences window: $e');
       }
     }
   }
