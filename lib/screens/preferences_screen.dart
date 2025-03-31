@@ -53,6 +53,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
   double _keyPadding = 3;
   double _spaceWidth = 320;
   double _splitWidth = 100;
+  double _lastRowSplitWidth = 100;
 
   // Text settings
   String _fontFamily = 'GeistMono';
@@ -78,6 +79,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
   bool _enableAdvancedSettings = false;
   bool _useUserLayout = false;
   bool _showAltLayout = false;
+  bool _use6ColLayout = false;
   bool _kanataEnabled = false;
 
   // HotKey settings
@@ -168,6 +170,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
       _keyPadding = prefs['keyPadding'];
       _spaceWidth = prefs['spaceWidth'];
       _splitWidth = prefs['splitWidth'];
+      _lastRowSplitWidth = prefs['lastRowSplitWidth'];
 
       // Text settings
       _fontFamily = prefs['fontFamily'];
@@ -193,6 +196,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
       _enableAdvancedSettings = prefs['enableAdvancedSettings'];
       _useUserLayout = prefs['useUserLayout'];
       _showAltLayout = prefs['showAltLayout'];
+      _use6ColLayout = prefs['use6ColLayout'];
       _kanataEnabled = prefs['kanataEnabled'];
 
       // HotKey settings
@@ -220,6 +224,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
       'keyPadding': _keyPadding,
       'spaceWidth': _spaceWidth,
       'splitWidth': _splitWidth,
+      'lastRowSplitWidth': _lastRowSplitWidth,
 
       // Text settings
       'fontFamily': _fontFamily,
@@ -245,6 +250,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
       'enableAdvancedSettings': _enableAdvancedSettings,
       'useUserLayout': _useUserLayout,
       'showAltLayout': _showAltLayout,
+      'use6ColLayout': _use6ColLayout,
       'kanataEnabled': _kanataEnabled,
 
       // HotKey settings
@@ -286,9 +292,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
         return Scaffold(
           body: Row(
             children: [
-              // Permanent drawer
               _buildNavigationPanel(context),
-              // Main content area
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -323,7 +327,6 @@ class _PreferencesScreenState extends State<PreferencesScreen>
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Logo
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 20.0),
             child: Image.asset(
@@ -451,6 +454,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
           keyPadding: _keyPadding,
           spaceWidth: _spaceWidth,
           splitWidth: _splitWidth,
+          lastRowSplitWidth: _lastRowSplitWidth,
           updateKeymapStyle: (value) {
             setState(() => _keymapStyle = value);
             _updateMainWindow('updateKeymapStyle', value);
@@ -482,6 +486,10 @@ class _PreferencesScreenState extends State<PreferencesScreen>
           updateSplitWidth: (value) {
             setState(() => _splitWidth = value);
             _updateMainWindow('updateSplitWidth', value);
+          },
+          updateLastRowSplitWidth: (value) {
+            setState(() => _lastRowSplitWidth = value);
+            _updateMainWindow('updateLastRowSplitWidth', value);
           },
         );
       case 'Text':
@@ -569,6 +577,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
           enableAdvancedSettings: _enableAdvancedSettings,
           useUserLayout: _useUserLayout,
           showAltLayout: _showAltLayout,
+          use6ColLayout: _use6ColLayout,
           kanataEnabled: _kanataEnabled,
           updateEnableAdvancedSettings: (value) {
             setState(() => _enableAdvancedSettings = value);
@@ -585,6 +594,10 @@ class _PreferencesScreenState extends State<PreferencesScreen>
           updateShowAltLayout: (value) {
             setState(() => _showAltLayout = value);
             _updateMainWindow('updateShowAltLayout', value);
+          },
+          updateUse6ColLayout: (value) {
+            setState(() => _use6ColLayout = value);
+            _updateMainWindow('updateUse6ColLayout', value);
           },
           updateKanataEnabled: (value) {
             setState(() => _kanataEnabled = value);

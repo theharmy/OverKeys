@@ -59,6 +59,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
   double _keyPadding = 3;
   double _spaceWidth = 320;
   double _splitWidth = 100;
+  double _lastRowSplitWidth = 100;
 
   // Text settings
   String _fontFamily = 'GeistMono';
@@ -86,6 +87,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
   bool _showAltLayout = false;
   bool _previousShowAltLayout = false;
   KeyboardLayout _altLayout = qwerty;
+  bool _use6ColLayout = false;
   bool _kanataEnabled = false;
 
   // HotKey settings
@@ -173,6 +175,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
       _keyPadding = prefs['keyPadding'];
       _spaceWidth = prefs['spaceWidth'];
       _splitWidth = prefs['splitWidth'];
+      _lastRowSplitWidth = prefs['lastRowSplitWidth'];
 
       // Text settings
       _fontFamily = prefs['fontFamily'];
@@ -199,6 +202,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
       _useUserLayout = prefs['useUserLayout'];
       _showAltLayout = prefs['showAltLayout'];
       _altLayout = _keyboardLayout;
+      _use6ColLayout = prefs['use6ColLayout'];
       _kanataEnabled = prefs['kanataEnabled'];
 
       // HotKey settings
@@ -211,12 +215,12 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
   Future<void> _saveAllPreferences() async {
     final prefs = {
       // General settings
-      'launchAtStartup': _launchAtStartup, 
+      'launchAtStartup': _launchAtStartup,
       'autoHideEnabled': _autoHideEnabled,
       'autoHideDuration': _autoHideDuration,
       'opacity': _opacity,
       'keyboardLayoutName': _initialKeyboardLayout!.name,
-      
+
       // Keyboard settings
       'keymapStyle': _keymapStyle,
       'showTopRow': _showTopRow,
@@ -226,6 +230,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
       'keyPadding': _keyPadding,
       'spaceWidth': _spaceWidth,
       'splitWidth': _splitWidth,
+      'lastRowSplitWidth': _lastRowSplitWidth,
 
       // Text settings
       'fontFamily': _fontFamily,
@@ -251,6 +256,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
       'enableAdvancedSettings': _enableAdvancedSettings,
       'useUserLayout': _useUserLayout,
       'showAltLayout': _showAltLayout,
+      'use6ColLayout': _use6ColLayout,
       'kanataEnabled': _kanataEnabled,
 
       // HotKey settings
@@ -694,6 +700,9 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
         case 'updateSplitWidth':
           final splitWidth = call.arguments as double;
           setState(() => _splitWidth = splitWidth);
+        case 'updateLastRowSplitWidth':
+          final lastRowSplitWidth = call.arguments as double;
+          setState(() => _lastRowSplitWidth = lastRowSplitWidth);
 
         // Text settings
         case 'updateFontFamily':
@@ -741,7 +750,8 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
           setState(() => _keyTextColor = Color(keyTextColor));
         case 'updateKeyTextColorNotPressed':
           final keyTextColorNotPressed = call.arguments as int;
-          setState(() => _keyTextColorNotPressed = Color(keyTextColorNotPressed));
+          setState(
+              () => _keyTextColorNotPressed = Color(keyTextColorNotPressed));
 
         // Advanced settings
         case 'updateEnableAdvancedSettings':
@@ -807,6 +817,12 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
           if (showAltLayout) {
             _loadAltLayout();
           }
+          _fadeIn();
+        case 'updateUse6ColLayout':
+          final use6ColLayout = call.arguments as bool;
+          setState(() {
+            _use6ColLayout = use6ColLayout;
+          });
           _fadeIn();
         case 'updateKanataEnabled':
           final kanataEnabled = call.arguments as bool;
@@ -877,6 +893,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
                     layout: _keyboardLayout,
                     showAltLayout: _enableAdvancedSettings && _showAltLayout,
                     altLayout: _altLayout,
+                    use6ColLayout: _use6ColLayout,
                     keyColorPressed: _keyColorPressed,
                     keyColorNotPressed: _keyColorNotPressed,
                     markerColor: _markerColor,
@@ -893,6 +910,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
                     keyPadding: _keyPadding,
                     spaceWidth: _spaceWidth,
                     splitWidth: _splitWidth,
+                    lastRowSplitWidth: _lastRowSplitWidth,
                     keyFontSize: _keyFontSize,
                     spaceFontSize: _spaceFontSize,
                     fontWeight: _fontWeight,

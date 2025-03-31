@@ -33,6 +33,8 @@ class PreferencesService {
       await _prefs.getDouble('spaceWidth') ?? 320;
   Future<double> getSplitWidth() async =>
       await _prefs.getDouble('splitWidth') ?? 100;
+  Future<double> getLastRowSplitWidth() async =>
+      await _prefs.getDouble('lastRowSplitWidth') ?? 100;
 
   // Text settings
   Future<String> getFontFamily() async =>
@@ -75,6 +77,8 @@ class PreferencesService {
       await _prefs.getBool('useUserLayout') ?? false;
   Future<bool> getShowAltLayout() async =>
       await _prefs.getBool('showAltLayout') ?? false;
+      Future<bool> getUse6ColLayout() async =>
+      await _prefs.getBool('use6ColLayout') ?? false;
   Future<bool> getKanataEnabled() async =>
       await _prefs.getBool('kanataEnabled') ?? false;
 
@@ -105,7 +109,6 @@ class PreferencesService {
     }
   }
 
-  // Save methods follow same category order
   // General settings
   Future<void> setLaunchAtStartup(bool value) async =>
       await _prefs.setBool('launchAtStartup', value);
@@ -135,6 +138,8 @@ class PreferencesService {
       await _prefs.setDouble('spaceWidth', value);
   Future<void> setSplitWidth(double value) async =>
       await _prefs.setDouble('splitWidth', value);
+  Future<void> setLastRowSplitWidth(double value) async =>
+      await _prefs.setDouble('lastRowSplitWidth', value);
 
   // Text settings
   Future<void> setFontFamily(String value) async =>
@@ -177,6 +182,8 @@ class PreferencesService {
       await _prefs.setBool('useUserLayout', value);
   Future<void> setShowAltLayout(bool value) async =>
       await _prefs.setBool('showAltLayout', value);
+  Future<void> setUse6ColLayout(bool value) async =>
+      await _prefs.setBool('use6ColLayout', value);
   Future<void> setKanataEnabled(bool value) async =>
       await _prefs.setBool('kanataEnabled', value);
 
@@ -206,6 +213,7 @@ class PreferencesService {
       'keyPadding': await getKeyPadding(),
       'spaceWidth': await getSpaceWidth(),
       'splitWidth': await getSplitWidth(),
+      'lastRowSplitWidth': await getLastRowSplitWidth(),
 
       // Text settings
       'fontFamily': await getFontFamily(),
@@ -231,6 +239,7 @@ class PreferencesService {
       'enableAdvancedSettings': await getEnableAdvancedSettings(),
       'useUserLayout': await getUseUserLayout(),
       'showAltLayout': await getShowAltLayout(),
+      'use6ColLayout': await getUse6ColLayout(),
       'kanataEnabled': await getKanataEnabled(),
 
       // HotKey settings
@@ -257,6 +266,7 @@ class PreferencesService {
     await setKeyPadding(prefs['keyPadding']);
     await setSpaceWidth(prefs['spaceWidth']);
     await setSplitWidth(prefs['splitWidth']);
+    await setLastRowSplitWidth(prefs['lastRowSplitWidth']);
 
     // Text settings
     await setFontFamily(prefs['fontFamily']);
@@ -282,6 +292,7 @@ class PreferencesService {
     await setEnableAdvancedSettings(prefs['enableAdvancedSettings']);
     await setUseUserLayout(prefs['useUserLayout']);
     await setShowAltLayout(prefs['showAltLayout']);
+    await setUse6ColLayout(prefs['use6ColLayout']);
     await setKanataEnabled(prefs['kanataEnabled']);
 
     // HotKey settings
