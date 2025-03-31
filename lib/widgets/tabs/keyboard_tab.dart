@@ -44,28 +44,25 @@ class KeyboardTab extends StatefulWidget {
 }
 
 class _KeyboardTabState extends State<KeyboardTab> {
-  late double _localSpaceWidth;
   late double _localKeySize;
   late double _localKeyBorderRadius;
   late double _localKeyPadding;
+  late double _localSpaceWidth;
   late double _localSplitWidth;
 
   @override
   void initState() {
     super.initState();
-    _localSpaceWidth = widget.spaceWidth;
     _localKeySize = widget.keySize;
     _localKeyBorderRadius = widget.keyBorderRadius;
     _localKeyPadding = widget.keyPadding;
+    _localSpaceWidth = widget.spaceWidth;
     _localSplitWidth = widget.splitWidth;
   }
 
   @override
   void didUpdateWidget(KeyboardTab oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.spaceWidth != widget.spaceWidth) {
-      _localSpaceWidth = widget.spaceWidth;
-    }
     if (oldWidget.keySize != widget.keySize) {
       _localKeySize = widget.keySize;
     }
@@ -74,6 +71,9 @@ class _KeyboardTabState extends State<KeyboardTab> {
     }
     if (oldWidget.keyPadding != widget.keyPadding) {
       _localKeyPadding = widget.keyPadding;
+    }
+    if (oldWidget.spaceWidth != widget.spaceWidth) {
+      _localSpaceWidth = widget.spaceWidth;
     }
     if (oldWidget.splitWidth != widget.splitWidth) {
       _localSplitWidth = widget.splitWidth;
@@ -90,8 +90,11 @@ class _KeyboardTabState extends State<KeyboardTab> {
           value: widget.keymapStyle,
           options: ['Staggered', 'Matrix', 'Split Matrix'],
           onChanged: (value) {
-            if (value == 'Split Matrix' && _localSpaceWidth > 300) {
-              setState(() => _localSpaceWidth = 220.0);
+            if (value == 'Split Matrix') {
+              if (_localSpaceWidth > 300) {
+                setState(() => _localSpaceWidth = 220);
+                widget.updateSpaceWidth(220);
+              }
             }
             widget.updateKeymapStyle(value!);
           },
