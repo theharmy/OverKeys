@@ -21,8 +21,8 @@ When enabled, OverKeys will display your primary layout with functional key high
 2. Right-click the OverKeys icon in the system tray
 3. Select **Preferences**
 4. Go to the **General** tab
-5. Check the **Enable advanced settings** option
-6. Check the **Show alternative layout** option
+5. Toggle the **Enable advanced settings** option
+6. Toggle the **Show alternative layout** option
 7. Restart OverKeys if needed
 
 ### Using Configuration File
@@ -35,15 +35,15 @@ For more advanced customization, you can edit the `overkeys_config.json` file di
 4. Click **Open Config**
 5. In the JSON file, set the `altLayout` field to your preferred alternative layout name:
 
-   ```json
-   {
-       "kanataHost": "127.0.0.1",
-       "kanataPort": 4039,
-       "userLayouts": [...],
-       "defaultUserLayout": "Symbol",
-       "altLayout": "MyAltLayout"
-   }
-   ```
+    ```json
+    {
+        "kanataHost": "127.0.0.1",
+        "kanataPort": 4039,
+        "userLayouts": [...],
+        "defaultUserLayout": "Symbol",
+        "altLayout": "MyAltLayout"
+    }
+    ```
 
 6. Save the file and restart OverKeys
 

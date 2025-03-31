@@ -19,8 +19,8 @@ When enabled, OverKeys will load and display your custom layout from the configu
 2. Right-click the OverKeys icon in the system tray
 3. Select **Preferences**
 4. Go to the **General** tab
-5. Check the **Enable advanced settings** option
-6. Check the **Use custom layout from config** option
+5. Toggle the **Enable advanced settings** option
+6. Toggle the **Use custom layout from config** option
 7. Restart OverKeys if needed
 
 ### Using Configuration File
@@ -35,22 +35,37 @@ For more detailed customization, you can edit the `overkeys_config.json` file di
 
     ```json
     {
-        "kanataHost": "127.0.0.1",
-        "kanataPort": 4039,
-        "userLayouts": [
-            {
-                "name": "MyCustomLayout",
-                "keys": [
-                    ["`", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "=", "BSPC"],
-                    ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "[", "]"],
-                    ["A", "S", "D", "F", "G", "H", "J", "K", "L", ";", "'"],
-                    ["Z", "X", "C", "V", "B", "N", "M", ",", ".", "/"],
-                    [" "]
-                ]
-            }
-        ],
-        "defaultUserLayout": "MyCustomLayout",
-        "altLayout": "Arabic"
+    "kanataHost": "127.0.0.1",
+    "kanataPort": 4039,
+    "userLayouts": [
+        {
+            "name": "MyCustomLayout",
+            "keys": [
+                [
+                    "`",
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                    "6",
+                    "7",
+                    "8",
+                    "9",
+                    "0",
+                    "-",
+                    "=",
+                    "BSPC"
+                ],
+                ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "[", "]"],
+                ["A", "S", "D", "F", "G", "H", "J", "K", "L", ";", "'"],
+                ["Z", "X", "C", "V", "B", "N", "M", ",", ".", "/"],
+                [" "]
+            ]
+        }
+    ],
+    "defaultUserLayout": "MyCustomLayout",
+    "altLayout": "Arabic"
     }
     ```
 
@@ -102,14 +117,14 @@ You can then set this layout as your default by updating the `defaultUserLayout`
 
     ```json
     {
-        "name": "Compact4x4",
-        "keys": [
-            [""], // Mandatory top row, just turn off show top row setting
-            ["1", "2", "3", "A"],
-            ["4", "5", "6", "B"],
-            ["7", "8", "9", "C"],
-            ["*", "0", "#", "D"]
-        ]
+    "name": "Compact4x4",
+    "keys": [
+        [""], // Mandatory top row, just turn off show top row setting
+        ["1", "2", "3", "A"],
+        ["4", "5", "6", "B"],
+        ["7", "8", "9", "C"],
+        ["*", "0", "#", "D"]
+    ]
     }
     ```
 
