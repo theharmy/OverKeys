@@ -1,44 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:overkeys/widgets/options/options.dart';
 
-class AppearanceTab extends StatefulWidget {
-  final double opacity;
-  final Color keyColorPressed;
-  final Color keyColorNotPressed;
-  final Color markerColor;
-  final Color markerColorNotPressed;
+class MarkersTab extends StatefulWidget {
   final double markerOffset;
   final double markerWidth;
   final double markerHeight;
   final double markerBorderRadius;
   final bool showAltLayout;
-  final Function(double) updateOpacity;
-  final Function(Color) updateKeyColorPressed;
-  final Function(Color) updateKeyColorNotPressed;
-  final Function(Color) updateMarkerColor;
-  final Function(Color) updateMarkerColorNotPressed;
   final Function(double) updateMarkerOffset;
   final Function(double) updateMarkerWidth;
   final Function(double) updateMarkerHeight;
   final Function(double) updateMarkerBorderRadius;
 
-  const AppearanceTab({
+  const MarkersTab({
     super.key,
-    required this.opacity,
-    required this.keyColorPressed,
-    required this.keyColorNotPressed,
-    required this.markerColor,
-    required this.markerColorNotPressed,
     required this.markerOffset,
     required this.markerWidth,
     required this.markerHeight,
     required this.markerBorderRadius,
     required this.showAltLayout,
-    required this.updateOpacity,
-    required this.updateKeyColorPressed,
-    required this.updateKeyColorNotPressed,
-    required this.updateMarkerColor,
-    required this.updateMarkerColorNotPressed,
     required this.updateMarkerOffset,
     required this.updateMarkerWidth,
     required this.updateMarkerHeight,
@@ -46,11 +26,10 @@ class AppearanceTab extends StatefulWidget {
   });
 
   @override
-  State<AppearanceTab> createState() => _AppearanceTabState();
+  State<MarkersTab> createState() => _MarkersTabState();
 }
 
-class _AppearanceTabState extends State<AppearanceTab> {
-  late double _localOpacity;
+class _MarkersTabState extends State<MarkersTab> {
   late double _localMarkerOffset;
   late double _localMarkerWidth;
   late double _localMarkerHeight;
@@ -59,8 +38,6 @@ class _AppearanceTabState extends State<AppearanceTab> {
   @override
   void initState() {
     super.initState();
-    // Ensure opacity is within valid range
-    _localOpacity = widget.opacity.clamp(0.1, 1.0);
     _localMarkerOffset = widget.markerOffset;
     _localMarkerWidth = widget.markerWidth;
     _localMarkerHeight = widget.markerHeight;
@@ -68,12 +45,8 @@ class _AppearanceTabState extends State<AppearanceTab> {
   }
 
   @override
-  void didUpdateWidget(AppearanceTab oldWidget) {
+  void didUpdateWidget(MarkersTab oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.opacity != widget.opacity) {
-      // Ensure opacity is within valid range when updated
-      _localOpacity = widget.opacity.clamp(0.1, 1.0);
-    }
     if (oldWidget.markerOffset != widget.markerOffset) {
       _localMarkerOffset = widget.markerOffset;
     }
@@ -93,37 +66,6 @@ class _AppearanceTabState extends State<AppearanceTab> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        SliderOption(
-          label: 'Opacity',
-          value: _localOpacity,
-          min: 0.1,
-          max: 1.0,
-          divisions: 18,
-          onChanged: (value) {
-            setState(() => _localOpacity = value);
-          },
-          onChangeEnd: widget.updateOpacity,
-        ),
-        ColorOption(
-          label: 'Key color (pressed)',
-          currentColor: widget.keyColorPressed,
-          onColorChanged: widget.updateKeyColorPressed,
-        ),
-        ColorOption(
-          label: 'Key color (not pressed)',
-          currentColor: widget.keyColorNotPressed,
-          onColorChanged: widget.updateKeyColorNotPressed,
-        ),
-        ColorOption(
-          label: 'Marker color (pressed)',
-          currentColor: widget.markerColor,
-          onColorChanged: widget.updateMarkerColor,
-        ),
-        ColorOption(
-          label: 'Marker color (not pressed)',
-          currentColor: widget.markerColorNotPressed,
-          onColorChanged: widget.updateMarkerColorNotPressed,
-        ),
         SliderOption(
           label: 'Marker offset',
           value: _localMarkerOffset,
