@@ -4,7 +4,7 @@
 	"packages": {
 		".": {
 			"package-name": "overkeys",
-			"initial-version": "0.2.6",
+			"initial-version": "0.2.7",
 			"changelog-path": "CHANGELOG.md",
 			"release-type": "dart",
 			"always-update": true,
