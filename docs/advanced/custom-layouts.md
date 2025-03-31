@@ -1,4 +1,4 @@
-# Custom Layout
+# Custom Layouts
 
 The custom layout feature in OverKeys allows you to use your own keyboard layouts defined in a configuration file. This is particularly useful for users who need:
 

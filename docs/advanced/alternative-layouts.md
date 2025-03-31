@@ -1,4 +1,4 @@
-# Alternative Layout
+# Alternative Layouts
 
 The alternative layout feature in OverKeys allows you to display two keyboard layouts side-by-side simultaneously. This is particularly useful for users who are:
 
