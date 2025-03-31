@@ -126,10 +126,10 @@ This project was initially developed to help with system-wide practice of the **
 - **Customizable styles**: Change colors, fonts, sizes, offsets, and key styles
 - **Always on top**: Keep the keyboard visible above all windows
 - **Auto-hide**: The keyboard hides automatically when not in use
-- **Keymap layouts**: Supports staggered, matrix, and split matrix layouts
+- **Keymap layouts**: Supports staggered, matrix, and split matrix (5-col and [6-col](/docs/advanced/6-column-layouts.md)) layouts
 - **Layer switching (Kanata)**: Connect to [Kanata](https://github.com/jtroo/kanata) through TCP to dynamically display the active layer
-- **User configurations**: Add and use custom keyboard layouts through configuration files
-- **Side-by-side layouts**: Display alternative layouts alongside the default layout
+- **User configurations**: Add and use [custom keyboard layouts](/docs/advanced/custom-layouts.md) through configuration files
+- **Side-by-side layouts**: Display [alternative layouts](/docs/advanced/alternative-layouts.md) alongside the default layout
 - **Top row/Number row**: Optional row above the main keyboard for numbers or user-configured keys
 
 For complete feature details, see the [documentation](docs/index.md).
@@ -176,6 +176,7 @@ Complete documentation for OverKeys is available in the [docs](docs/index.md) fo
 
 - [Custom Layouts](/docs/advanced/custom-layouts.md)
 - [Alternative Layouts](/docs/advanced/alternative-layouts.md)
+- [6-Column Layouts](/docs/advanced/6-column-layouts.md)
 - [Kanata Integration](/docs/advanced/kanata-integration.md)
 - [Supported Keys](/docs/advanced/supported-keys.md)
 
