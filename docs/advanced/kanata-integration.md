@@ -6,7 +6,11 @@ OverKeys provides integration with [Kanata](https://github.com/jtroo/kanata), al
 
 Kanata is a keyboard remapper that supports advanced features like layers, tap-hold, and leader keys. The integration between OverKeys and Kanata enables OverKeys to display the active layer from Kanata, making it easier to visualize which keys are available in your current layer.
 
-![Kanata Demo](https://github.com/user-attachments/assets/5e7878d8-b51d-447d-946d-6ffeb063701c)
+### OverKeys with Kanata Integration Demos
+
+<https://github.com/user-attachments/assets/5e7878d8-b51d-447d-946d-6ffeb063701c>
+
+<https://github.com/user-attachments/assets/c687a448-52b0-41bc-9b6b-07e61c2d3b31>
 
 ## Setup Instructions
 
