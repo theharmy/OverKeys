@@ -392,6 +392,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
   }
 
   void _fadeIn() {
+    if (_forceHide) return;
     setState(() {
       _isWindowVisible = true;
       _opacity = _lastOpacity;
