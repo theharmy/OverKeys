@@ -44,15 +44,15 @@ This document lists all keys supported by OverKeys for use in custom layouts. Us
 
 ## Editing Keys
 
-| Key         | Aliases                                         |
-| ----------- | ----------------------------------------------- |
-| `Backspace` | `BSPC`, `BS`, `BKSP`, `BKS`, `⌫`, `␈`           |
-| `Enter`     | `ENT`, `RETURN`, `RET`, `⏎`, `↵`, `↩`, `⌤`, `␤` |
-| `Tab`       | `TAB`, `⭾`, `↹`                                 |
-| `Space`     | ` ` (space character), `␣`, `⎵`, `␠`            |
-| `Delete`    | `DEL`, `DELETE`, `⌦`, `␡`                       |
-| `Insert`    | `INS`, `INSERT`, `⎀`                            |
-| `Escape`    | `ESC`, `⎋`                                      |
+| Key         | Aliases                                              |
+| ----------- | ---------------------------------------------------- |
+| `Backspace` | `BSPC`, `BS`, `BKSP`, `BKS`, `⌫`, `␈`                |
+| `Enter`     | `ENT`, `RETURN`, `RET`, `⏎`, `↵`, `↩`, `⌤`, `␤`      |
+| `Tab`       | `TAB`, `⭾`, `↹`                                      |
+| `Space`     | ` ` (space character), `␣`, `⎵`, `␠`, `SPC`, `SPACE` |
+| `Delete`    | `DEL`, `DELETE`, `⌦`, `␡`                            |
+| `Insert`    | `INS`, `INSERT`, `⎀`                                 |
+| `Escape`    | `ESC`, `⎋`                                           |
 
 ## Modifier Keys
 
