@@ -112,19 +112,5 @@ This document lists all keys supported by OverKeys for use in custom layouts. Us
 
 ## Implementation Notes
 
-1. When defining your custom layout, use the key name or any of its valid aliases.
-2. The standard format in your layout configuration is:
-
-   ```json
-   "keys": [
-     ["`", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "=", "BSPC"],
-     ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "[", "]"],
-     ["A", "S", "D", "F", "G", "H", "J", "K", "L", ";", "'"],
-     ["Z", "X", "C", "V", "B", "N", "M", ",", ".", "/"],
-     [" "]
-   ]
-   ```
-
-3. Keys are case-sensitive in the configuration. Most key names start with uppercase letters.
-4. While Unicode symbols are supported for many keys, it's recommended to use the standard key names for better compatibility and readability.
-5. When using the space character `" "` in your layout, be aware that it will inherit all the properties of the spacebar including its layout name. If you want to avoid this behavior, use one of the alternative aliases like `SPC`, `␣`, `⎵`, etc. instead.
+1. For now, modifier keys default to their left-side versions. For example, using `SHIFT` will only be triggered by the Left Shift key.
+2. When using the space character `" "` in your layout, be aware that it will inherit all the properties of the spacebar including its layout name. If you want to avoid this behavior, use one of the alternative aliases like `SPC`, `␣`, `⎵`, etc. instead.
