@@ -72,6 +72,15 @@ Controls the visual colors of the keyboard:
 - **Key text color (pressed)**: Set the text color when keys are pressed
 - **Key text color (not pressed)**: Set the text color when keys are not pressed
 
+## Animations Tab
+
+Customize keyboard animation settings:
+
+- **Enable animations**: Turn key press animations on or off
+- **Animation style**: Choose between Depress, Raise, Grow, or Shrink animations
+- **Animation duration**: Set how long animations last (50-300ms)
+- **Animation scale**: Adjust the intensity of animations (1.0-5.0x)
+
 ## Hotkeys Tab
 
 Configure keyboard shortcuts for controlling OverKeys:
