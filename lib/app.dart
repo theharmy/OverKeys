@@ -114,6 +114,8 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
   bool _customFontEnabled = false;
   bool _use6ColLayout = false;
   bool _kanataEnabled = false;
+  bool _keyboardFollowsMouse = false;
+  Timer? _mouseCheckTimer;
 
   // Services
   final PreferencesService _prefsService = PreferencesService();
@@ -155,6 +157,9 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
       if (_kanataEnabled) {
         _useKanata();
       }
+      if (_keyboardFollowsMouse) {
+        _startMouseTracking();
+      }
     }
     if (_showTopRow) {
       _adjustWindowSize();
@@ -171,9 +176,22 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
     unhook();
     _autoHideTimer?.cancel();
     _overlayTimer?.cancel();
+    _mouseCheckTimer?.cancel();
     _kanataService.dispose();
     _saveAllPreferences();
     super.dispose();
+  }
+
+  void _startMouseTracking() {
+    _mouseCheckTimer?.cancel();
+    if (_keyboardFollowsMouse && _advancedSettingsEnabled) {
+      _mouseCheckTimer = Timer.periodic(const Duration(milliseconds: 500),
+          (_) => windowManager.setAlignment(Alignment.bottomCenter));
+    }
+  }
+
+  void _stopMouseTracking() {
+    _mouseCheckTimer?.cancel();
   }
 
   Future<void> _loadAllPreferences() async {
@@ -243,6 +261,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
       _customFontEnabled = prefs['customFontEnabled'];
       _use6ColLayout = prefs['use6ColLayout'];
       _kanataEnabled = prefs['kanataEnabled'];
+      _keyboardFollowsMouse = prefs['keyboardFollowsMouse'] ?? false;
     });
   }
 
@@ -307,6 +326,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
       'customFontEnabled': _customFontEnabled,
       'use6ColLayout': _use6ColLayout,
       'kanataEnabled': _kanataEnabled,
+      'keyboardFollowsMouse': _keyboardFollowsMouse,
     };
 
     await _prefsService.saveAllPreferences(prefs);
@@ -414,6 +434,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
   }
 
   void _fadeOut() {
+    if (!_isWindowVisible) return;
     setState(() {
       _lastOpacity = _opacity;
       _opacity = 0.0;
@@ -422,7 +443,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
   }
 
   void _fadeIn() {
-    if (_forceHide) return;
+    if (_forceHide || _isWindowVisible) return;
     setState(() {
       _isWindowVisible = true;
       _opacity = _lastOpacity;
@@ -431,7 +452,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
   }
 
   void _setupKeyListener() {
-    ReceivePort receivePort = ReceivePort();
+    final receivePort = ReceivePort();
     Isolate.spawn(setHook, receivePort.sendPort)
         .then((_) {})
         .catchError((error) {
@@ -455,10 +476,10 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
 
     if (message[0] is! int) return;
 
-    int keyCode = message[0];
-    bool isPressed = message[1];
-    bool isShiftDown = message[2];
-    String key = getKeyFromKeyCodeShift(keyCode, isShiftDown);
+    final keyCode = message[0] as int;
+    final isPressed = message[1] as bool;
+    final isShiftDown = message[2] as bool;
+    final key = getKeyFromKeyCodeShift(keyCode, isShiftDown);
 
     if (kDebugMode) {
       print(
@@ -476,12 +497,12 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
   }
 
   void _resetAutoHideTimer() {
+    if (!_autoHideEnabled) return;
+
     _autoHideTimer?.cancel();
-    if (_autoHideEnabled) {
-      _autoHideTimer = Timer(
-          Duration(milliseconds: (_autoHideDuration * 1000).round()),
-          _handleAutoHide);
-    }
+    _autoHideTimer = Timer(
+        Duration(milliseconds: (_autoHideDuration * 1000).round()),
+        _handleAutoHide);
   }
 
   void _handleAutoHide() {
@@ -530,11 +551,13 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
   }
 
   Future<void> _setupTray() async {
-    String iconPath = Platform.isWindows
+    final String iconPath = Platform.isWindows
         ? 'assets/images/app_icon.ico'
         : 'assets/images/app_icon.png';
-    await trayManager.setIcon(iconPath);
-    trayManager.setToolTip('OverKeys');
+    await Future.wait([
+      trayManager.setIcon(iconPath),
+      trayManager.setToolTip('OverKeys'),
+    ]);
     trayManager.setContextMenu(Menu(items: [
       MenuItem.checkbox(
         key: 'toggle_mouse_events',
@@ -883,9 +906,15 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
               if (_customFontEnabled) {
                 _fontFamily = _initialFontFamily;
               }
+              if (_keyboardFollowsMouse) {
+                _stopMouseTracking();
+              }
             } else {
               if (_initialShowAltLayout || _showAltLayout) {
                 _showAltLayout = true;
+              }
+              if (_keyboardFollowsMouse) {
+                _startMouseTracking();
               }
             }
           });
@@ -962,6 +991,17 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
               }
             }
           });
+        case 'updateKeyboardFollowsMouse':
+          final keyboardFollowsMouse = call.arguments as bool;
+          setState(() {
+            _keyboardFollowsMouse = keyboardFollowsMouse;
+            if (keyboardFollowsMouse && _advancedSettingsEnabled) {
+              _startMouseTracking();
+              windowManager.setAlignment(Alignment.bottomCenter);
+            } else {
+              _stopMouseTracking();
+            }
+          });
 
         default:
           throw UnimplementedError('Unimplemented method ${call.method}');
@@ -986,9 +1026,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
               duration: _fadeDuration,
               child: GestureDetector(
                 behavior: HitTestBehavior.translucent,
-                onPanStart: (details) {
-                  windowManager.startDragging();
-                },
+                onPanStart: (_) => windowManager.startDragging(),
                 child: Container(
                   color: Colors.transparent,
                   child: Center(
