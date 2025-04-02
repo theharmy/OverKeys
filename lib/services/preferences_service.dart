@@ -108,12 +108,14 @@ class PreferencesService {
   }
 
   // Advanced settings
-  Future<bool> getEnableAdvancedSettings() async =>
-      await _prefs.getBool('enableAdvancedSettings') ?? false;
+  Future<bool> getAdvancedSettingsEnabled() async =>
+      await _prefs.getBool('advancedSettingsEnabled') ?? false;
   Future<bool> getUseUserLayout() async =>
       await _prefs.getBool('useUserLayout') ?? false;
   Future<bool> getShowAltLayout() async =>
       await _prefs.getBool('showAltLayout') ?? false;
+  Future<bool> getCustomFontEnabled() async =>
+      await _prefs.getBool('customFontEnabled') ?? false;
   Future<bool> getUse6ColLayout() async =>
       await _prefs.getBool('use6ColLayout') ?? false;
   Future<bool> getKanataEnabled() async =>
@@ -204,12 +206,14 @@ class PreferencesService {
       await _prefs.setString('autoHideHotKey', jsonEncode(value.toJson()));
 
   // Advanced settings
-  Future<void> setEnableAdvancedSettings(bool value) async =>
-      await _prefs.setBool('enableAdvancedSettings', value);
+  Future<void> setAdvancedSettingsEnabled(bool value) async =>
+      await _prefs.setBool('advancedSettingsEnabled', value);
   Future<void> setUseUserLayout(bool value) async =>
       await _prefs.setBool('useUserLayout', value);
   Future<void> setShowAltLayout(bool value) async =>
       await _prefs.setBool('showAltLayout', value);
+  Future<void> setCustomFontEnabled(bool value) async =>
+      await _prefs.setBool('customFontEnabled', value);
   Future<void> setUse6ColLayout(bool value) async =>
       await _prefs.setBool('use6ColLayout', value);
   Future<void> setKanataEnabled(bool value) async =>
@@ -267,9 +271,10 @@ class PreferencesService {
       'autoHideHotKey': await getAutoHideHotKey(),
 
       // Advanced settings
-      'enableAdvancedSettings': await getEnableAdvancedSettings(),
+      'advancedSettingsEnabled': await getAdvancedSettingsEnabled(),
       'useUserLayout': await getUseUserLayout(),
       'showAltLayout': await getShowAltLayout(),
+      'customFontEnabled': await getCustomFontEnabled(),
       'use6ColLayout': await getUse6ColLayout(),
       'kanataEnabled': await getKanataEnabled(),
     };
@@ -326,9 +331,10 @@ class PreferencesService {
     await setAutoHideHotKey(prefs['autoHideHotKey']);
 
     // Advanced settings
-    await setEnableAdvancedSettings(prefs['enableAdvancedSettings']);
+    await setAdvancedSettingsEnabled(prefs['advancedSettingsEnabled']);
     await setUseUserLayout(prefs['useUserLayout']);
     await setShowAltLayout(prefs['showAltLayout']);
+    await setCustomFontEnabled(prefs['customFontEnabled']);
     await setUse6ColLayout(prefs['use6ColLayout']);
     await setKanataEnabled(prefs['kanataEnabled']);
   }
