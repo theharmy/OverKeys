@@ -31,5 +31,7 @@ By default, OverKeys comes with the following keyboard shortcuts:
 
 - **Ctrl+Alt+Q**: Toggles the visibility of the keyboard
 - **Ctrl+Alt+W**: Toggles Auto Hide mode
+- **Ctrl+Alt+E**: Toggles Move mode for repositioning the keyboard
+- **Ctrl+Alt+R**: Opens the Preferences window
 
 These shortcuts can be customized in the Preferences window.

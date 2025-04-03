@@ -110,4 +110,5 @@ When configured properly:
 - If layer switching doesn't work, ensure both applications are running
 - Check that they're using the same host and port
 - Verify your layer configurations in `overkeys_config.json` have no errors
+- Try disabling and re-enabling the Kanata integration toggle in Preferences
 - Restart both applications if needed

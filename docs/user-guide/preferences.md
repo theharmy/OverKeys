@@ -1,16 +1,18 @@
 # Preferences
 
 OverKeys offers extensive customization options through its Preferences window.
-OverKeys preferences are organized into eight tabs:
+OverKeys preferences are organized into ten tabs:
 
 1. **[General](#general-tab)** - Basic application settings
 2. **[Keyboard](#keyboard-tab)** - Layout and key configuration
 3. **[Text](#text-tab)** - Font and text styling options
 4. **[Markers](#markers-tab)** - Tactile marker customization
 5. **[Colors](#colors-tab)** - Visual color customization options
-6. **[Hotkeys](#hotkeys-tab)** - Keyboard shortcuts for controlling OverKeys
-7. **[Advanced](#advanced-tab)** - Additional configuration options
-8. **[About](#about-tab)** - Application information and version details
+6. **[Animations](#animations-tab)** - Key animation settings
+7. **[Hotkeys](#hotkeys-tab)** - Keyboard shortcuts for controlling OverKeys
+8. **[Learn](./learning-mode.md)** - Add guide color to keys for learning proper touch typing
+9. **[Advanced](#advanced-tab)** - Additional configuration options
+10. **[About](#about-tab)** - Application information and version details
 
 ## Accessing Preferences
 
@@ -71,6 +73,8 @@ Controls the visual colors of the keyboard:
 - **Marker color (not pressed)**: Set the color of tactile markers when not pressed
 - **Key text color (pressed)**: Set the text color when keys are pressed
 - **Key text color (not pressed)**: Set the text color when keys are not pressed
+- **Key border color (pressed)**: Set the color of borders around keys when pressed
+- **Key border color (not pressed)**: Set the color of borders around keys when not pressed
 
 ## Animations Tab
 
@@ -88,6 +92,18 @@ Configure keyboard shortcuts for controlling OverKeys:
 - **Enable hotkeys**: Turn keyboard shortcuts on or off
 - **Visibility hotkey**: Set a shortcut to force show/hide the keyboard (regardless if auto-hide is on/off)
 - **Auto-hide hotkey**: Set a shortcut to toggle the auto-hide feature
+- **Move hotkey**: Set a shortcut to toggle the ability to move the keyboard
+- **Preferences hotkey**: Set a shortcut to quickly open the preferences window
+
+## Learn Tab
+
+Configure learning mode settings to help with touch typing:
+
+- **Enable Learning Mode**: Color-code keys based on proper finger positions for touch typing
+- **Finger color customization**: Set specific colors for each finger:
+  - Left hand: Pinky, Ring, Middle, and Index finger colors
+  - Right hand: Pinky, Ring, Middle, and Index finger colors
+- **Reset color configuration**: Restore all finger colors to their default values
 
 ## Advanced Tab
 
