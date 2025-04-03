@@ -109,10 +109,10 @@ Configure learning mode settings to help with touch typing:
 
 Access additional configuration options:
 
-- **Enable advanced settings**: Unlock additional customization options
-- **Use user layout**: Use a custom keyboard layout configuration defined in `overkeys_config.json`
+- **Enable advanced settings**: Unlock additional functionalities and customization options
+- **Use user layout**: Use a custom keyboard layout
 - **Show alternative layout**: Display another layout alongside the main one
-- **Use 6-column layout**: Enable 6-column matrix layout (when applicable)
+- **Use 6-column layout**: Enable 6-column split matrix layout
 - **Kanata integration**: Enable integration with Kanata keyboard software
 
 ## About Tab

@@ -7,7 +7,7 @@ The alternative layout feature in OverKeys allows you to display two keyboard la
 - Comparing different layouts during transition
 - Teaching or demonstrating keyboard layouts to others
 
-## How It Works
+## Overview
 
 When enabled, OverKeys will display your primary layout with functional key highlighting alongside a secondary reference layout. Note that key press highlighting only works on the default layout; the alternative layout serves as a visual reference only.
 
@@ -27,8 +27,6 @@ When enabled, OverKeys will display your primary layout with functional key high
 
 ### Using Configuration File
 
-For more advanced customization, you can edit the `overkeys_config.json` file directly:
-
 1. Right-click the OverKeys tray icon
 2. Select **Preferences**
 3. Go to the **General** tab
@@ -37,24 +35,19 @@ For more advanced customization, you can edit the `overkeys_config.json` file di
 
     ```json
     {
-        "kanataHost": "127.0.0.1",
-        "kanataPort": 4039,
-        "userLayouts": [...],
-        "defaultUserLayout": "Symbol",
         "altLayout": "MyAltLayout"
     }
     ```
 
-6. Save the file and restart OverKeys
+6. Save the file
+7. Toggle the **Show alternative layout** option off then on again to apply changes
 
 ## Default Alternative Layouts
 
-OverKeys comes with several alternative layouts (found under `userLayouts` of the `overkeys_config.json`34 pre-configured, including:
+OverKeys comes with two alternative layouts (found under `userLayouts` of the `overkeys_config.json`) pre-configured, including:
 
 - Arabic
 - Russian
-- Symbol
-- Extend
 
 You can select any of these or use any of the built-in keyboard layouts as your alternative layout.
 
@@ -86,12 +79,10 @@ Then update the `altLayout` field to reference your custom layout:
 
 ## Implementation Notes
 
-- The alternative layout takes effect immediately upon enabling and doesn't require manual layer switching.
 - If you're using Kanata for layer switching, the alternative layout will remain visible across all layers.
 
 ## Troubleshooting
 
-- If the alternative layout doesn't appear after enabling it, try restarting OverKeys.
 - If your custom alternative layout isn't displaying correctly, verify the JSON format in your configuration file.
 - Remember that key press highlighting only works for the primary layout, not the alternative layout.
 - When creating custom layouts, ensure the structure matches the expected format with arrays for each keyboard row.

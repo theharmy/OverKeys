@@ -5,7 +5,7 @@ Welcome to the OverKeys documentation! This guide will help you get started with
 ## Getting Started
 
 - [Installation](getting-started/installation.md) - Install and set up OverKeys on your Windows machine
-- [Basic Usage](user-guide/basic-usage.md) - Learn how to use OverKeys's core features
+- [Basic Usage](getting-started/basic-usage.md) - Learn how to use OverKeys's core features
 
 ## User Guide
 

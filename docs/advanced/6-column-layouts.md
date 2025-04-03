@@ -21,8 +21,6 @@ The 6-column layout feature in OverKeys allows you to visualize 6-column split m
 
 ### Using Configuration File
 
-For more advanced customization, you can edit the `overkeys_config.json` file directly:
-
 1. Right-click the OverKeys tray icon
 2. Select **Preferences**
 3. Go to the **General** tab
@@ -50,11 +48,12 @@ For more advanced customization, you can edit the `overkeys_config.json` file di
     }
     ```
 
-6. Save the file and restart OverKeys
+6. Save the file
+7. Toggle the **Use custom layout from config** option off then on again to apply change
 
 ## Implementation Notes
 
-- Each row must contain exactly 12 keys (except for the mandatory top row and bottom row)
+- Each row must contain exactly 12 keys for proper display (except for the bottom row and the top row when hidden via settings)
 - The bottom row will automatically be split into two sections (one for each half of the keyboard), regardless of how many keys are defined
 
 For more details on working with custom layouts, see [Custom Layouts](custom-layouts.md).

@@ -43,9 +43,9 @@
 
 <https://github.com/user-attachments/assets/c687a448-52b0-41bc-9b6b-07e61c2d3b31>
 
-OverKeys is an open-source on-screen keyboard designed for users to practice alternative keyboard layouts, such as **Canary**, **Colemak**, **Dvorak**, and many more. Built in [**Flutter**](https://flutter.dev/), it allows full customizability, making it perfect for users learning or working with non-traditional layouts.
+OverKeys is an open-source on-screen keyboard visualizer designed for users to practice alternative keyboard layouts, such as **Canary**, **Colemak**, **Dvorak**, and many more. Built in [**Flutter**](https://flutter.dev/), it allows full customizability, making it perfect for users learning or working with non-traditional layouts.
 
-This project was initially developed to help with system-wide practice of the **Canary layout**, but has since evolved to support multiple layouts and customization options.
+This project was initially developed to help with system-wide practice of the **Canary layout**, but has since evolved to support multiple layouts, layer switching integration, and customization options.
 
 ### Samples
 
@@ -127,7 +127,7 @@ This project was initially developed to help with system-wide practice of the **
 - **Always on top**: Keep the keyboard visible above all windows
 - **Auto-hide**: The keyboard hides automatically when not in use
 - **Keymap layouts**: Supports staggered, matrix, and split matrix (5-col and [6-col](/docs/advanced/6-column-layouts.md)) layouts
-- **Layer switching (Kanata)**: Connect to [Kanata](https://github.com/jtroo/kanata) through TCP to dynamically display the active layer
+- **[Layer switching (Kanata)](./docs/advanced/kanata-integration.md)**: Connect to [Kanata](https://github.com/jtroo/kanata) through TCP to dynamically display the active layer
 - **User configurations**: Add and use [custom keyboard layouts](/docs/advanced/custom-layouts.md) through configuration files
 - **Side-by-side layouts**: Display [alternative layouts](/docs/advanced/alternative-layouts.md) alongside the default layout
 - **Top row/Number row**: Optional row above the main keyboard for numbers or user-configured keys
@@ -166,11 +166,13 @@ Complete documentation for OverKeys is available in the [docs](docs/index.md) fo
 ### Getting Started (Docs)
 
 - [Installation Guide](/docs/getting-started/installation.md)
+- [Basic Usage](/docs/getting-started/basic-usage.md)
 
 ### User Guide
 
-- [Basic Usage](/docs/user-guide/basic-usage.md)
 - [Preferences](/docs/user-guide/preferences.md)
+- [Learning Mode](/docs/user-guide/learning-mode.md) - Use the specialized color scheme for learning new layouts
+- [Supported Layouts](#features) - View the list of built-in keyboard layouts
 
 ### Advanced Features
 

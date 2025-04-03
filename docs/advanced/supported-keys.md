@@ -1,6 +1,6 @@
 # Supported Keys Reference
 
-This document lists all keys supported by OverKeys for use in custom layouts. Use these key names when defining your keyboard layouts in the configuration file.
+This document lists all keys supported by OverKeys for use in custom layouts. Use these key names or their alias when defining your keyboard layouts in the configuration file.
 
 ## Alphabetic Keys
 
@@ -10,18 +10,18 @@ This document lists all keys supported by OverKeys for use in custom layouts. Us
 
 ## Numeric Keys
 
-| Key | Alias | Shift Symbol |
-| --- | ----- | ------------ |
-| `0` |       | `)`          |
-| `1` |       | `!`          |
-| `2` |       | `@`          |
-| `3` |       | `#`          |
-| `4` |       | `$`          |
-| `5` |       | `%`          |
-| `6` |       | `^`          |
-| `7` |       | `&`          |
-| `8` |       | `*`          |
-| `9` |       | `(`          |
+| Key | Description |
+| --- | ----------- |
+| `0` | Number 0    |
+| `1` | Number 1    |
+| `2` | Number 2    |
+| `3` | Number 3    |
+| `4` | Number 4    |
+| `5` | Number 5    |
+| `6` | Number 6    |
+| `7` | Number 7    |
+| `8` | Number 8    |
+| `9` | Number 9    |
 
 ## Function Keys
 
@@ -96,21 +96,42 @@ This document lists all keys supported by OverKeys for use in custom layouts. Us
 
 ## Punctuation and Symbol Keys
 
-| Key     | Shift Symbol |
-| ------- | ------------ |
-| `,`     | `<`          |
-| `.`     | `>`          |
-| `;`     | `:`          |
-| `/`     | `?`          |
-| `[`     | `{`          |
-| `]`     | `}`          |
-| `\\`    | `\|`         |
-| `` ` `` | `~`          |
-| `'`     | `"`          |
-| `=`     | `+`          |
-| `-`     | `_`          |
+| Key     | Description       |
+| ------- | ----------------- |
+| `,`     | Comma             |
+| `<`     | Less Than         |
+| `.`     | Period            |
+| `>`     | Greater Than      |
+| `;`     | Semicolon         |
+| `:`     | Colon             |
+| `/`     | Slash             |
+| `?`     | Question Mark     |
+| `[`     | Left Bracket      |
+| `{`     | Left Brace        |
+| `]`     | Right Bracket     |
+| `}`     | Right Brace       |
+| `\\`    | Backslash         |
+| `\|`    | Pipe              |
+| `` ` `` | Backtick          |
+| `~`     | Tilde             |
+| `'`     | Apostrophe        |
+| `"`     | Quote             |
+| `=`     | Equals            |
+| `+`     | Plus              |
+| `-`     | Hyphen            |
+| `_`     | Underscore        |
+| `!`     | Exclamation Mark  |
+| `@`     | At Symbol         |
+| `#`     | Hash/Pound        |
+| `$`     | Dollar Sign       |
+| `%`     | Percent           |
+| `^`     | Caret             |
+| `&`     | Ampersand         |
+| `*`     | Asterisk          |
+| `(`     | Left Parenthesis  |
+| `)`     | Right Parenthesis |
 
 ## Implementation Notes
 
 1. For now, modifier keys default to their left-side versions. For example, using `SHIFT` will only be triggered by the Left Shift key.
-2. When using the space character `" "` in your layout, be aware that it will inherit all the properties of the spacebar including its layout name. If you want to avoid this behavior, use one of the alternative aliases like `SPC`, `␣`, `⎵`, etc. instead.
+2. When using the space character `" "` in your layout, be aware that it will inherit all the properties of the spacebar including its width and having the layout name printed on it. If you want to avoid this behavior, use one of the alternative aliases like `Space`, `SPACE`, `SPC`, `␠`, `␣`, `⎵`, instead.

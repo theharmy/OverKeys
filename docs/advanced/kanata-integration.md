@@ -17,9 +17,10 @@ Kanata is a keyboard remapper that supports advanced features like layers, tap-h
 ### Configuring OverKeys
 
 1. Right-click the OverKeys icon in the system tray
-2. Select **Preferences** > **General** tab
-3. Click **Open Config** to edit the configuration file
-4. Modify the `overkeys_config.json` file:
+2. Select **Preferences**
+3. Go to the **General** tab
+4. Click **Open Config** to edit the configuration file
+5. Modify the `overkeys_config.json` file:
 
    ```json
    {
@@ -30,8 +31,8 @@ Kanata is a keyboard remapper that supports advanced features like layers, tap-h
    }
    ```
 
-5. Save the file and return to Preferences
-6. Toggle on **Connect to Kanata**
+6. Save the file
+7. Toggle the **Connect to Kanata** option off then on again to apply changes
 
 ### Configuring Kanata
 
@@ -97,13 +98,13 @@ When configured properly:
 2. OverKeys will automatically detect layer changes in Kanata
 3. When you switch layers in Kanata, OverKeys will update to show the active layer
 
-![Kanata Shortcut Demo](https://github.com/user-attachments/assets/ab50455d-52e4-44b5-a409-c90f1e07c15b)
+<https://github.com/user-attachments/assets/ab50455d-52e4-44b5-a409-c90f1e07c15b>
 
 ## Implementation Notes
 
 - The Kanata integration works across all configured layers
 - Layer visualization is immediate when switching with Kanata shortcuts
-- When you switch to a layer other than your default/base layer (defined by `defaultUserLayout`), OverKeys will temporarily suspend its auto-hide feature, keeping the visualization visible for easier reference
+- When you switch to a layer other than your default/base layer (defined by `defaultUserLayout`), OverKeys will temporarily suspend its auto-hide feature, keeping the non-default layer visible for easier reference
 
 ## Troubleshooting
 
@@ -111,4 +112,3 @@ When configured properly:
 - Check that they're using the same host and port
 - Verify your layer configurations in `overkeys_config.json` have no errors
 - Try disabling and re-enabling the Kanata integration toggle in Preferences
-- Restart both applications if needed
