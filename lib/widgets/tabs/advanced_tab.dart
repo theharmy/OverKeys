@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:overkeys/widgets/options/options.dart';
 import 'package:overkeys/services/config_service.dart';
 import 'package:overkeys/models/user_config.dart';
@@ -102,7 +103,7 @@ class AdvancedTab extends StatelessWidget {
                 label: 'Keyboard follows mouse',
                 value: keyboardFollowsMouse,
                 subtitle:
-                    'EXPERIMENTAL: Keyboard will follow your mouse cursor across monitors. Note: This will override manual position adjustments.',
+                    'EXPERIMENTAL: Keyboard will follow your mouse cursor across monitors. Note: This will override manual position adjustments. Also causes focus issues',
                 onChanged: updateKeyboardFollowsMouse,
               ),
               _buildOpenConfigButton(context),
@@ -134,7 +135,7 @@ class AdvancedTab extends StatelessWidget {
                         fontWeight: FontWeight.w600,
                         fontSize: 16)),
                 Text(
-                  'Turn related advanced setting off then on again to apply changes. If still not working, restart OverKeys.',
+                  'Turn related advanced setting off then on again to apply changes.',
                   style: TextStyle(
                       color: colorScheme.onSurface.withAlpha(153),
                       fontSize: 14.0),
@@ -146,7 +147,8 @@ class AdvancedTab extends StatelessWidget {
           ),
           const SizedBox(width: 16),
           ElevatedButton.icon(
-            icon: Icon(Icons.file_open, color: colorScheme.primary),
+            icon: Icon(LucideIcons.fileJson2,
+                color: colorScheme.primary, size: 24),
             label: Text('Open',
                 style: TextStyle(
                   color: colorScheme.primary,
