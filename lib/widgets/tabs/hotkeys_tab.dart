@@ -76,7 +76,7 @@ class _HotKeysTabState extends State<HotKeysTab> {
         ),
         HotKeyOption(
           label: 'Open Preferences',
-          subtitle: 'Show/focus the preferences window (may be delayed)',
+          subtitle: 'Show/focus the preferences window',
           formattedHotKey: _formatHotKey(widget.preferencesHotKey),
           onChangePressed: () => _showRecordHotKeyDialog(
             context,
