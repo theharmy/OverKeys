@@ -360,6 +360,8 @@ class KeyboardScreen extends StatelessWidget {
       keyIndex -= 1;
     }
     switch (keyIndex) {
+      case -1:
+        return pinkyLeftColor;
       case 0:
         return pinkyLeftColor;
       case 1:
