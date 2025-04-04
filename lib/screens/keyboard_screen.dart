@@ -295,7 +295,12 @@ class KeyboardScreen extends StatelessWidget {
           keyWidget,
           Positioned(
             bottom: showAltLayout ? null : markerOffset,
-            child: Container(
+            child: AnimatedContainer(
+              duration: Duration(
+                  milliseconds:
+                      animationEnabled ? animationDuration.toInt() : 20),
+              curve: Curves.easeInOutCubic,
+              transform: _getMarkerAnimationTransform(isPressed),
               width: markerWidth * (showAltLayout ? 0.5 : 1),
               height: showAltLayout ? markerWidth * 0.5 : markerHeight,
               decoration: BoxDecoration(
@@ -314,7 +319,6 @@ class KeyboardScreen extends StatelessWidget {
     if (!animationEnabled || !isPressed) {
       return Matrix4.identity();
     }
-
     switch (animationStyle.toLowerCase()) {
       case 'depress':
         return Matrix4.translationValues(0, 2 * animationScale, 0); // Move down
@@ -323,22 +327,72 @@ class KeyboardScreen extends StatelessWidget {
       case 'grow':
         final scaleValue = 1 + 0.05 * animationScale;
         return Matrix4.identity()
+          ..scale(scaleValue)
           ..translate(
-            keySize * (1 - scaleValue) / 2,
-            keySize * (1 - scaleValue) / 2,
-          )
-          ..scale(scaleValue); // Grow from center
+            -keySize * (scaleValue - 1) / (2 * scaleValue),
+            -keySize * (scaleValue - 1) / (2 * scaleValue),
+          );
       case 'shrink':
         final scaleValue = 1 - 0.05 * animationScale;
         return Matrix4.identity()
+          ..scale(scaleValue)
           ..translate(
-            keySize * (1 - scaleValue) / 2,
-            keySize * (1 - scaleValue) / 2,
-          )
-          ..scale(scaleValue); // Shrink from center
+            keySize * (1 - scaleValue) / (2 * scaleValue),
+            keySize * (1 - scaleValue) / (2 * scaleValue),
+          );
       default:
         return Matrix4.translationValues(
             0, 2 * animationScale, 0); // Default animation
+    }
+  }
+
+  Matrix4 _getMarkerAnimationTransform(bool isPressed) {
+    if (!animationEnabled || !isPressed) {
+      return Matrix4.identity();
+    }
+    switch (animationStyle.toLowerCase()) {
+      case 'depress':
+        return Matrix4.translationValues(0, 2 * animationScale, 0);
+      case 'raise':
+        return Matrix4.translationValues(0, -2 * animationScale, 0);
+      case 'grow':
+        final scaleValue = 1 + 0.05 * animationScale;
+        if (showAltLayout) {
+          return Matrix4.identity()
+            ..scale(scaleValue)
+            ..translate(
+              -markerWidth * (scaleValue - 1) / (2 * scaleValue),
+              -markerWidth * (scaleValue - 1) / (2 * scaleValue),
+            );
+        } else {
+          return Matrix4.identity()
+            ..scale(scaleValue)
+            ..translate(
+              -markerWidth * (scaleValue - 1) / (2 * scaleValue),
+              -markerHeight * (scaleValue - 1) / (2 * scaleValue) +
+                  0.8 * animationScale,
+            );
+        }
+      case 'shrink':
+        final scaleValue = 1 - 0.05 * animationScale;
+        if (showAltLayout) {
+          return Matrix4.identity()
+            ..scale(scaleValue)
+            ..translate(
+              markerWidth * (1 - scaleValue) / (2 * scaleValue),
+              markerWidth * (1 - scaleValue) / (2 * scaleValue),
+            );
+        } else {
+          return Matrix4.identity()
+            ..scale(scaleValue)
+            ..translate(
+              markerWidth * (1 - scaleValue) / (2 * scaleValue),
+              markerHeight * (1 - scaleValue) / (2 * scaleValue) -
+                  0.8 * animationScale,
+            );
+        }
+      default:
+        return Matrix4.translationValues(0, 2 * animationScale, 0);
     }
   }
 
@@ -346,12 +400,10 @@ class KeyboardScreen extends StatelessWidget {
     if (altLayout == null || rowIndex >= altLayout!.keys.length) {
       return "";
     }
-
     List<String> altRow = altLayout!.keys[rowIndex];
     if (keyIndex >= altRow.length) {
       return "";
     }
-
     return altRow[keyIndex];
   }
 
