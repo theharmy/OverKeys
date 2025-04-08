@@ -46,6 +46,7 @@ class KeyboardScreen extends StatelessWidget {
   final KeyboardLayout? altLayout;
   final bool use6ColLayout;
   final Map<String, bool> keyPressStates;
+  final Map<String, String>? customShiftMappings;
 
   const KeyboardScreen({
     super.key,
@@ -92,6 +93,7 @@ class KeyboardScreen extends StatelessWidget {
     required this.altLayout,
     required this.use6ColLayout,
     required this.keyPressStates,
+    this.customShiftMappings,
   });
 
   @override
@@ -181,6 +183,16 @@ class KeyboardScreen extends StatelessWidget {
 
   Widget buildKeys(int rowIndex, String key, int keyIndex,
       {bool isLastKeyFirstRow = false}) {
+    bool isShiftPressed = (keyPressStates["LShift"] ?? false) ||
+        (keyPressStates["RShift"] ?? false);
+    if (isShiftPressed) {
+      if (customShiftMappings != null &&
+          customShiftMappings!.containsKey(key)) {
+        key = customShiftMappings![key]!;
+      } else {
+        key = Mappings.getShiftedSymbol(key) ?? key;
+      }
+    }
     String keyStateKey = Mappings.getKeyForSymbol(key);
     bool isPressed = keyPressStates[keyStateKey] ?? false;
 
@@ -404,7 +416,18 @@ class KeyboardScreen extends StatelessWidget {
     if (keyIndex >= altRow.length) {
       return "";
     }
-    return altRow[keyIndex];
+    String altKey = altRow[keyIndex];
+    bool isShiftPressed = (keyPressStates["LShift"] ?? false) ||
+        (keyPressStates["RShift"] ?? false);
+    if (isShiftPressed) {
+      if (customShiftMappings != null &&
+          customShiftMappings!.containsKey(altKey)) {
+        altKey = customShiftMappings![altKey]!;
+      } else {
+        altKey = Mappings.getShiftedSymbol(altKey) ?? altKey;
+      }
+    }
+    return altKey;
   }
 
   Color getFingerColor(int rowIndex, int keyIndex) {
