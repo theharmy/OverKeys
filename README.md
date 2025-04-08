@@ -131,6 +131,8 @@ This project was initially developed to help with system-wide practice of the **
 - **User configurations**: Add and use [custom keyboard layouts](/docs/advanced/custom-layouts.md) through configuration files
 - **Side-by-side layouts**: Display [alternative layouts](/docs/advanced/alternative-layouts.md) alongside the default layout
 - **Top row/Number row**: Optional row above the main keyboard for numbers or user-configured keys
+- **[Learning Mode](/docs/user-guide/learning-mode.md)**: Color-code keys based on proper finger positions for touch typing
+- **[Reactive Shift Mapping](/docs/advanced/shift-mappings.md)**: Display alternate key symbols when Shift key is pressed
 
 For complete feature details, see the [documentation](docs/index.md).
 
@@ -171,8 +173,8 @@ Complete documentation for OverKeys is available in the [docs](docs/index.md) fo
 ### User Guide
 
 - [Preferences](/docs/user-guide/preferences.md)
-- [Learning Mode](/docs/user-guide/learning-mode.md) - Use the specialized color scheme for learning new layouts
-- [Supported Layouts](#features) - View the list of built-in keyboard layouts
+- [Learning Mode](/docs/user-guide/learning-mode.md)
+- [Supported Layouts](#features)
 
 ### Advanced Features
 
@@ -180,6 +182,7 @@ Complete documentation for OverKeys is available in the [docs](docs/index.md) fo
 - [Alternative Layouts](/docs/advanced/alternative-layouts.md)
 - [6-Column Layouts](/docs/advanced/6-column-layouts.md)
 - [Kanata Integration](/docs/advanced/kanata-integration.md)
+- [Shift Mappings](/docs/advanced/shift-mappings.md)
 - [Supported Keys](/docs/advanced/supported-keys.md)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>

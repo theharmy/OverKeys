@@ -19,6 +19,7 @@ Welcome to the OverKeys documentation! This guide will help you get started with
 - [Alternative Layout Toggle](advanced/alternative-layouts.md) - Quickly switch between different layouts
 - [6-Column Layouts](advanced/6-column-layouts.md) - Set up OverKeys for a 6-column split matrix keyboard
 - [Kanata Integration](advanced/kanata-integration.md) - Connect OverKeys with Kanata for advanced functionality
+- [Shift Mappings](advanced/shift-mappings.md) - Customize shift-key behavior for specific characters
 - [Supported Keys Reference](advanced/supported-keys.md) - Complete list of keys you can use in custom layouts
 
 ## Additional Resources
