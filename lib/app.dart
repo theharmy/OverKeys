@@ -743,6 +743,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
     } else {
       _fadeIn();
     }
+    windowManager.blur();
   }
 
   @override
