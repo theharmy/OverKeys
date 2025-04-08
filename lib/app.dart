@@ -1115,6 +1115,9 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
             }
           });
 
+        case 'closePreferencesWindow':
+          await WindowController.fromWindowId(fromWindowId).close();
+          break;
         default:
           throw UnimplementedError('Unimplemented method ${call.method}');
       }

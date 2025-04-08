@@ -357,6 +357,11 @@ class _PreferencesScreenState extends State<PreferencesScreen>
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = ThemeManager.getTheme(_brightness);
+    final FocusNode keyboardFocusNode = FocusNode();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      keyboardFocusNode.requestFocus();
+    });
 
     return MaterialApp(
       theme: theme,
@@ -369,25 +374,34 @@ class _PreferencesScreenState extends State<PreferencesScreen>
         Locale('en', ''),
       ],
       home: Builder(builder: (context) {
-        return Scaffold(
-          body: Row(
-            children: [
-              _buildNavigationPanel(context),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: SingleChildScrollView(
-                        padding:
-                            const EdgeInsets.fromLTRB(20.0, 40.0, 20.0, 20.0),
-                        child: _buildCurrentTabContent(),
+        return KeyboardListener(
+          focusNode: keyboardFocusNode,
+          onKeyEvent: (KeyEvent keyEvent) {
+            if (keyEvent is KeyDownEvent &&
+                keyEvent.logicalKey == LogicalKeyboardKey.escape) {
+              DesktopMultiWindow.invokeMethod(0, 'closePreferencesWindow');
+            }
+          },
+          child: Scaffold(
+            body: Row(
+              children: [
+                _buildNavigationPanel(context),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: SingleChildScrollView(
+                          padding:
+                              const EdgeInsets.fromLTRB(20.0, 40.0, 20.0, 20.0),
+                          child: _buildCurrentTabContent(),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       }),
