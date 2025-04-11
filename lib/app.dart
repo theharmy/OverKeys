@@ -180,24 +180,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
     _setupMethodHandler();
     _initStartup();
     _setupKanataLayerChangeHandler();
-    _loadCustomShiftMappings();
-    if (_advancedSettingsEnabled) {
-      if (_useUserLayout) {
-        _loadUserLayout();
-      }
-      if (_showAltLayout) {
-        _loadAltLayout();
-      }
-      if (_customFontEnabled) {
-        _loadCustomFont();
-      }
-      if (_kanataEnabled) {
-        _useKanata();
-      }
-      if (_keyboardFollowsMouse) {
-        _startMouseTracking();
-      }
-    }
+    _loadConfiguration();
     if (_showTopRow) {
       _adjustWindowSize();
     }
@@ -241,8 +224,8 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
       _autoHideDuration = prefs['autoHideDuration'];
       _opacity = prefs['opacity'];
       _lastOpacity = prefs['opacity'];
-      _keyboardLayout = availableLayouts
-          .firstWhere((layout) => layout.name == prefs['keyboardLayoutName']);
+      _keyboardLayout =
+          availableLayouts.firstWhere((layout) => layout.name == prefs['keyboardLayoutName']);
       _initialKeyboardLayout = _keyboardLayout;
 
       // Keyboard settings
@@ -411,6 +394,27 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
     await _prefsService.saveAllPreferences(prefs);
   }
 
+  Future<void> _loadConfiguration() async {
+    await _loadCustomShiftMappings();
+    if (_advancedSettingsEnabled) {
+      if (_useUserLayout) {
+        await _loadUserLayout();
+      }
+      if (_showAltLayout) {
+        await _loadAltLayout();
+      }
+      if (_customFontEnabled) {
+        await _loadCustomFont();
+      }
+      if (_kanataEnabled) {
+        await _useKanata();
+      }
+      if (_keyboardFollowsMouse) {
+        _startMouseTracking();
+      }
+    }
+  }
+
   Future<void> _loadCustomShiftMappings() async {
     final configService = ConfigService();
     final mappings = await configService.getCustomShiftMappings();
@@ -483,7 +487,6 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
 
     if (config.customFont.isNotEmpty) {
       setState(() {
-        _initialFontFamily = _fontFamily;
         _fontFamily = config.customFont;
       });
     }
@@ -505,12 +508,10 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
 
   Future<void> _adjustWindowSize() async {
     _fadeIn();
-    double height = _showTopRow
-        ? _defaultWindowHeight + _defaultTopRowExtraHeight
-        : _defaultWindowHeight;
-    double width = _showTopRow
-        ? _defaultWindowWidth + _defaultTopRowExtraWidth
-        : _defaultWindowWidth;
+    double height =
+        _showTopRow ? _defaultWindowHeight + _defaultTopRowExtraHeight : _defaultWindowHeight;
+    double width =
+        _showTopRow ? _defaultWindowWidth + _defaultTopRowExtraWidth : _defaultWindowWidth;
     await windowManager.setSize(Size(width, height));
     await windowManager.setAlignment(Alignment.bottomCenter);
   }
@@ -535,9 +536,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
 
   void _setupKeyListener() {
     final receivePort = ReceivePort();
-    Isolate.spawn(setHook, receivePort.sendPort)
-        .then((_) {})
-        .catchError((error) {
+    Isolate.spawn(setHook, receivePort.sendPort).then((_) {}).catchError((error) {
       if (kDebugMode) {
         print('Error spawning Isolate: $error');
       }
@@ -582,9 +581,8 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
     if (!_autoHideEnabled) return;
 
     _autoHideTimer?.cancel();
-    _autoHideTimer = Timer(
-        Duration(milliseconds: (_autoHideDuration * 1000).round()),
-        _handleAutoHide);
+    _autoHideTimer =
+        Timer(Duration(milliseconds: (_autoHideDuration * 1000).round()), _handleAutoHide);
   }
 
   void _handleAutoHide() {
@@ -605,15 +603,11 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
         }
       }
     });
-    _showOverlay(
-        _autoHideEnabled ? 'Auto-hide Enabled' : 'Auto-hide Disabled',
-        _autoHideEnabled
-            ? const Icon(LucideIcons.timerReset)
-            : const Icon(LucideIcons.timerOff));
+    _showOverlay(_autoHideEnabled ? 'Auto-hide Enabled' : 'Auto-hide Disabled',
+        _autoHideEnabled ? const Icon(LucideIcons.timerReset) : const Icon(LucideIcons.timerOff));
     DesktopMultiWindow.getAllSubWindowIds().then((windowIds) {
       for (final id in windowIds) {
-        DesktopMultiWindow.invokeMethod(
-            id, 'updateAutoHideFromMainWindow', _autoHideEnabled);
+        DesktopMultiWindow.invokeMethod(id, 'updateAutoHideFromMainWindow', _autoHideEnabled);
       }
     });
     _saveAllPreferences();
@@ -621,21 +615,19 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
   }
 
   void _adjustOpacity(bool increase) {
-    final newOpacity = increase 
-        ? (_opacity + _opacityStep).clamp(_minOpacity, _maxOpacity) 
+    final newOpacity = increase
+        ? (_opacity + _opacityStep).clamp(_minOpacity, _maxOpacity)
         : (_opacity - _opacityStep).clamp(_minOpacity, _maxOpacity);
-    
+
     if (newOpacity != _opacity) {
       setState(() {
         _opacity = newOpacity;
         _lastOpacity = newOpacity;
       });
-      
-      _showOverlay(
-        'Opacity: ${(_opacity * 100).round()}%', 
-        increase ? const Icon(LucideIcons.plusCircle) : const Icon(LucideIcons.minusCircle)
-      );
-      
+
+      _showOverlay('Opacity: ${(_opacity * 100).round()}%',
+          increase ? const Icon(LucideIcons.plusCircle) : const Icon(LucideIcons.minusCircle));
+
       _saveAllPreferences();
       DesktopMultiWindow.getAllSubWindowIds().then((windowIds) {
         for (final id in windowIds) {
@@ -657,10 +649,31 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
     });
   }
 
+  String _formatHotkey(HotKey hotkey, bool enabled) {
+    if (!_hotKeysEnabled || !enabled) return '';
+
+    final modifiers = hotkey.modifiers?.map((m) {
+      switch (m) {
+        case HotKeyModifier.alt:
+          return '⌥';
+        case HotKeyModifier.control:
+          return '⌃';
+        case HotKeyModifier.shift:
+          return '⇧';
+        case HotKeyModifier.meta:
+          return '⊞';
+        default:
+          return '';
+      }
+    }).join('');
+
+    final keyName = hotkey.key.keyLabel;
+    return modifiers!.isNotEmpty ? '$modifiers$keyName' : keyName;
+  }
+
   Future<void> _setupTray() async {
-    final String iconPath = Platform.isWindows
-        ? 'assets/images/app_icon.ico'
-        : 'assets/images/app_icon.png';
+    final String iconPath =
+        Platform.isWindows ? 'assets/images/app_icon.ico' : 'assets/images/app_icon.png';
     await Future.wait([
       trayManager.setIcon(iconPath),
       trayManager.setToolTip('OverKeys'),
@@ -668,7 +681,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
     trayManager.setContextMenu(Menu(items: [
       MenuItem.checkbox(
         key: 'toggle_mouse_events',
-        label: 'Move',
+        label: 'Move\t${_formatHotkey(_toggleMoveHotKey, _enableToggleMoveHotKey)}',
         checked: !_ignoreMouseEvents,
         onClick: (menuItem) {
           setState(() {
@@ -686,7 +699,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
       MenuItem.separator(),
       MenuItem.checkbox(
         key: 'toggle_auto_hide',
-        label: 'Auto Hide',
+        label: 'Auto Hide\t${_formatHotkey(_autoHideHotKey, _enableAutoHideHotKey)}',
         checked: _autoHideEnabled,
         onClick: (menuItem) {
           _toggleAutoHide(!_autoHideEnabled);
@@ -703,9 +716,26 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
       MenuItem.separator(),
       MenuItem(
         key: 'preferences',
-        label: 'Preferences',
+        label: 'Preferences\t${_formatHotkey(_preferencesHotKey, _enablePreferencesHotKey)}',
         onClick: (menuItem) {
           _showPreferences();
+        },
+      ),
+      MenuItem.separator(),
+      MenuItem(
+        key: 'toggle_visibility',
+        label: 'Hide/Show\t${_formatHotkey(_visibilityHotKey, _enableVisibilityHotKey)}',
+        onClick: (menuItem) {
+          onTrayIconMouseDown();
+        },
+      ),
+      MenuItem.separator(),
+      MenuItem(
+        key: 'reload_config',
+        label: 'Reload Config',
+        onClick: (menuItem) {
+          _loadConfiguration();
+          _showOverlay('Config Reloaded', const Icon(LucideIcons.refreshCw));
         },
       ),
       MenuItem.separator(),
@@ -719,15 +749,17 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
   Future<void> _setupHotKeys() async {
     await hotKeyManager.unregisterAll();
 
-    if (!_hotKeysEnabled) return;
+    if (!_hotKeysEnabled) {
+      _setupTray();
+      return;
+    }
 
     if (_enableAutoHideHotKey) {
       await hotKeyManager.register(
         _autoHideHotKey,
         keyDownHandler: (hotKey) {
           if (kDebugMode) {
-            print(
-                'Auto-hide hotkey triggered: ${hotKey.toJson()} - toggling to ${!_autoHideEnabled}');
+            print('Auto-hide hotkey triggered.');
           }
           _toggleAutoHide(!_autoHideEnabled);
         },
@@ -739,8 +771,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
         _visibilityHotKey,
         keyDownHandler: (hotKey) {
           if (kDebugMode) {
-            print(
-                'Visibility hotkey triggered: ${hotKey.toJson()} - toggling force hide to ${!_forceHide}');
+            print('Visibility hotkey triggered.');
           }
           setState(() {
             onTrayIconMouseDown();
@@ -754,7 +785,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
         _toggleMoveHotKey,
         keyDownHandler: (hotKey) {
           if (kDebugMode) {
-            print('Toggle move hotkey triggered: ${hotKey.toJson()}');
+            print('Move hotkey triggered.');
           }
           setState(() {
             _ignoreMouseEvents = !_ignoreMouseEvents;
@@ -775,10 +806,9 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
         _preferencesHotKey,
         keyDownHandler: (hotKey) {
           if (kDebugMode) {
-            print('Preferences hotkey triggered: ${hotKey.toJson()}');
+            print('Preferences hotkey triggered. Opening/Focusing Preferences Window.');
           }
-          _showOverlay(
-              'Opening Preferences', const Icon(LucideIcons.appWindow));
+          _showOverlay('Opening Preferences', const Icon(LucideIcons.appWindow));
           _showPreferences();
         },
       );
@@ -789,7 +819,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
         _increaseOpacityHotKey,
         keyDownHandler: (hotKey) {
           if (kDebugMode) {
-            print('Increase opacity hotkey triggered: ${hotKey.toJson()}');
+            print('Increase opacity hotkey triggered.');
           }
           _adjustOpacity(true);
         },
@@ -801,12 +831,14 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
         _decreaseOpacityHotKey,
         keyDownHandler: (hotKey) {
           if (kDebugMode) {
-            print('Decrease opacity hotkey triggered: ${hotKey.toJson()}');
+            print('Decrease opacity hotkey triggered.');
           }
           _adjustOpacity(false);
         },
       );
     }
+
+    _setupTray();
   }
 
   @override
@@ -833,11 +865,8 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
   @override
   void onTrayIconMouseDown() {
     _forceHide = !_forceHide;
-    _showOverlay(
-        _forceHide ? 'Keyboard Hidden' : 'Keyboard Shown',
-        _forceHide
-            ? const Icon(LucideIcons.eyeOff)
-            : const Icon(LucideIcons.eye));
+    _showOverlay(_forceHide ? 'Keyboard Hidden' : 'Keyboard Shown',
+        _forceHide ? const Icon(LucideIcons.eyeOff) : const Icon(LucideIcons.eye));
     if (_isWindowVisible) {
       _fadeOut();
     } else {
@@ -865,8 +894,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
       for (int id in windowIds) {
         Map<String, dynamic>? windowData;
         try {
-          String? dataString =
-              await DesktopMultiWindow.invokeMethod(id, 'getWindowType');
+          String? dataString = await DesktopMultiWindow.invokeMethod(id, 'getWindowType');
           if (dataString != null) {
             windowData = jsonDecode(dataString);
             if (windowData != null && windowData['type'] == 'preferences') {
@@ -918,13 +946,11 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
         case 'updateLayout':
           final layoutName = call.arguments as String;
           setState(() {
-            if ((_kanataEnabled || _useUserLayout) &&
-                _advancedSettingsEnabled) {
-              _initialKeyboardLayout = availableLayouts
-                  .firstWhere((layout) => layout.name == layoutName);
+            if ((_kanataEnabled || _useUserLayout) && _advancedSettingsEnabled) {
+              _initialKeyboardLayout =
+                  availableLayouts.firstWhere((layout) => layout.name == layoutName);
             } else {
-              _keyboardLayout = availableLayouts
-                  .firstWhere((layout) => layout.name == layoutName);
+              _keyboardLayout = availableLayouts.firstWhere((layout) => layout.name == layoutName);
               _initialKeyboardLayout = _keyboardLayout;
             }
           });
@@ -970,7 +996,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
             if (_customFontEnabled && _advancedSettingsEnabled) {
               _initialFontFamily = fontFamily;
             } else {
-              _fontFamily = fontFamily;
+              _initialFontFamily = _fontFamily = fontFamily;
             }
           });
         case 'updateFontWeight':
@@ -1015,15 +1041,13 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
           setState(() => _keyTextColor = Color(keyTextColor));
         case 'updateKeyTextColorNotPressed':
           final keyTextColorNotPressed = call.arguments as int;
-          setState(
-              () => _keyTextColorNotPressed = Color(keyTextColorNotPressed));
+          setState(() => _keyTextColorNotPressed = Color(keyTextColorNotPressed));
         case 'updateKeyBorderColorPressed':
           final keyBorderColorPressed = call.arguments as int;
           setState(() => _keyBorderColorPressed = Color(keyBorderColorPressed));
         case 'updateKeyBorderColorNotPressed':
           final keyBorderColorNotPressed = call.arguments as int;
-          setState(() =>
-              _keyBorderColorNotPressed = Color(keyBorderColorNotPressed));
+          setState(() => _keyBorderColorNotPressed = Color(keyBorderColorNotPressed));
 
         // Animations settings
         case 'updateAnimationEnabled':
