@@ -615,6 +615,8 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
   }
 
   void _adjustOpacity(bool increase) {
+    if (_forceHide) return;
+
     final newOpacity = increase
         ? (_opacity + _opacityStep).clamp(_minOpacity, _maxOpacity)
         : (_opacity - _opacityStep).clamp(_minOpacity, _maxOpacity);
