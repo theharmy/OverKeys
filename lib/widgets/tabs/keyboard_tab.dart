@@ -261,8 +261,8 @@ class _KeyboardTabState extends State<KeyboardTab> {
           label: 'Key shadow blur radius',
           value: _localKeyShadowBlurRadius,
           min: 0,
-          max: 20,
-          divisions: 20,
+          max: 10,
+          divisions: 10,
           onChanged: (value) {
             setState(() => _localKeyShadowBlurRadius = value);
           },

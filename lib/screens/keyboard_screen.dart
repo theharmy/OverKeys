@@ -220,7 +220,6 @@ class KeyboardScreen extends StatelessWidget {
             boxShadow: keyShadowBlurRadius > 0
                 ? [
                     BoxShadow(
-                      blurStyle: BlurStyle.inner,
                       blurRadius: keyShadowBlurRadius,
                       offset: Offset(keyShadowOffsetX, keyShadowOffsetY),
                     ),
