@@ -27,35 +27,37 @@ The custom layout feature in OverKeys allows you to use your own keyboard layout
 4. Click **Open Config**
 5. In the JSON file, edit the `userLayouts` array and set the `defaultUserLayout` field:
 
-    ```json
-    {
-    "userLayouts": [
-        {
-            "name": "MyCustomLayout",
-            "keys": [
-                ["`", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "=", "BSPC"],
-                ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "[", "]"],
-                ["A", "S", "D", "F", "G", "H", "J", "K", "L", ";", "'"],
-                ["Z", "X", "C", "V", "B", "N", "M", ",", ".", "/"],
-                [" "]
-            ]
-        }
-    ],
-    "defaultUserLa yout": "MyCustomLayout",
-    }
-    ```
+   ```json
+   {
+   	"userLayouts": [
+   		{
+   			"name": "MyCustomLayout",
+   			"keys": [
+   				["`", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "=", "BSPC"],
+   				["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "[", "]"],
+   				["A", "S", "D", "F", "G", "H", "J", "K", "L", ";", "'"],
+   				["Z", "X", "C", "V", "B", "N", "M", ",", ".", "/"],
+   				[" "]
+   			]
+   		}
+   	],
+   	"defaultUserLa yout": "MyCustomLayout"
+   }
+   ```
 
 6. Save the file
 7. Toggle **Use custom layout from config** off then on again to apply changes
 
 ## Default User Layouts
 
-OverKeys comes with several pre-configured user layouts, including:
+OverKeys no longer comes with default/pre-configured layouts. Instead, you can find sample layouts in the example configuration file at [sample_config.json](../examples/sample_config.json), which includes:
 
 - Extend (navigation and editing keys)
 - Symbol (special characters and symbols)
 - Arabic (Arabic language keyboard)
 - Russian (Russian language keyboard)
+
+You can copy these layouts from the sample configuration to get started with your own custom layouts.
 
 ## Creating Custom Layouts
 
@@ -63,19 +65,19 @@ You can create custom layouts by adding them to the `userLayouts` section in the
 
 ```json
 {
-    "name": "MyCustomLayout",
-    "keys": [
-        // Top row (required)
-        ["`", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "=", "BSPC"],
-        // Second row
-        ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "[", "]"],
-        // Third row
-        ["A", "S", "D", "F", "G", "H", "J", "K", "L", ";", "'"],
-        // Fourth row
-        ["Z", "X", "C", "V", "B", "N", "M", ",", ".", "/"],
-        // Fifth row
-        [" "]
-    ]
+	"name": "MyCustomLayout",
+	"keys": [
+		// Top row (required)
+		["`", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "=", "BSPC"],
+		// Second row
+		["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "[", "]"],
+		// Third row
+		["A", "S", "D", "F", "G", "H", "J", "K", "L", ";", "'"],
+		// Fourth row
+		["Z", "X", "C", "V", "B", "N", "M", ",", ".", "/"],
+		// Fifth row
+		[" "]
+	]
 }
 ```
 
@@ -83,7 +85,7 @@ You can then set this layout as your default by updating the `defaultUserLayout`
 
 ```json
 {
-    "defaultUserLayout": "MyCustomLayout"
+	"defaultUserLayout": "MyCustomLayout"
 }
 ```
 
@@ -94,18 +96,18 @@ You can then set this layout as your default by updating the `defaultUserLayout`
 3. **Language Support**: Unicode characters are supported for international layouts but is only recommended for use on [alternative layouts](../advanced/alternative-layouts.md) as key press state of these characters won't be detected
 4. **Flexible Row Lengths**: Your custom layout doesn't need to follow standard row lengths. You can create layouts of any dimension. Here's an example of a compact 4×4 layout:
 
-    ```json
-    {
-    "name": "Compact4x4",
-    "keys": [
-        [""], // Mandatory top row, show top row setting turned off
-        ["1", "2", "3", "A"],
-        ["4", "5", "6", "B"],
-        ["7", "8", "9", "C"],
-        ["*", "0", "#", "D"]
-    ]
-    }
-    ```
+   ```json
+   {
+   	"name": "Compact4x4",
+   	"keys": [
+   		[""], // Mandatory top row, show top row setting turned off
+   		["1", "2", "3", "A"],
+   		["4", "5", "6", "B"],
+   		["7", "8", "9", "C"],
+   		["*", "0", "#", "D"]
+   	]
+   }
+   ```
 
 ## Row Length Guidelines
 

@@ -33,23 +33,23 @@ When enabled, OverKeys will display your primary layout with functional key high
 4. Click **Open Config**
 5. In the JSON file, set the `altLayout` field to your preferred alternative layout name:
 
-    ```json
-    {
-        "altLayout": "MyAltLayout"
-    }
-    ```
+   ```json
+   {
+   	"altLayout": "MyAltLayout"
+   }
+   ```
 
 6. Save the file
 7. Toggle the **Show alternative layout** option off then on again to apply changes
 
 ## Default Alternative Layouts
 
-OverKeys comes with two alternative layouts (found under `userLayouts` of the `overkeys_config.json`) pre-configured, including:
+OverKeys no longer comes with default/pre-configured layouts. Instead, you can find sample alternative layouts in the example configuration file at [sample_config.json](../examples/sample_config.json), which includes:
 
 - Arabic
 - Russian
 
-You can select any of these or use any of the built-in keyboard layouts as your alternative layout.
+You can use these sample layouts or any of the built-in keyboard layouts as your alternative layout.
 
 ## Creating Custom Alternative Layouts
 
