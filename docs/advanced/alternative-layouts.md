@@ -33,11 +33,11 @@ When enabled, OverKeys will display your primary layout with functional key high
 4. Click **Open Config**
 5. In the JSON file, set the `altLayout` field to your preferred alternative layout name:
 
-   ```json
-   {
-   	"altLayout": "MyAltLayout"
-   }
-   ```
+    ```json
+    {
+        "altLayout": "MyAltLayout"
+    }
+    ```
 
 6. Save the file
 7. Toggle the **Show alternative layout** option off then on again to apply changes
