@@ -40,6 +40,10 @@ Configure the keyboard layout and physical appearance:
 - **Show grave key**: Display the backtick/tilde key
 - **Key size**: Adjust the size of individual keys
 - **Key border radius**: Control how rounded the keys appear
+- **Key border thickness**: Set the thickness of key borders
+- **Key shadow blur**: Control the softness of key shadows
+- **Key shadow offset X**: Adjust the horizontal shadow position
+- **Key shadow offset Y**: Adjust the vertical shadow position
 - **Key padding**: Set the spacing between keys
 - **Space width**: Adjust the width of the spacebar
 - **Split width**: Set the gap width for split keyboard layouts
