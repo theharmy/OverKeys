@@ -37,12 +37,12 @@
 				{
 					"type": "docs",
 					"section": "📚 Documentation",
-					"hidden": true
+					"hidden": false
 				},
 				{
 					"type": "ci",
 					"section": "⚙️ CI/CD Pipeline",
-					"hidden": true
+					"hidden": false
 				},
 				{
 					"type": "tests",
@@ -57,12 +57,12 @@
 				{
 					"type": "refactor",
 					"section": "🔨 Refactoring",
-					"hidden": true
+					"hidden": false
 				},
 				{
 					"type": "revert",
 					"section": "⏪ Reverts",
-					"hidden": true
+					"hidden": false
 				}
 			],
 			"pull-request-title-pattern": "chore: release v${version}",
