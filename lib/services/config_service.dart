@@ -55,17 +55,24 @@ class ConfigService {
 
   Future<KeyboardLayout?> getUserLayout() async {
     final config = await loadConfig();
+
+    if (config.defaultUserLayout == null) {
+      debugPrint('Cannot get user layout: defaultUserLayout is not defined in the config file');
+      return null;
+    }
+
     final defaultLayoutName = config.defaultUserLayout;
 
-    for (final layout in config.userLayouts) {
-      if (layout.name == defaultLayoutName) {
-        return layout;
+    if (config.userLayouts != null) {
+      for (final layout in config.userLayouts!) {
+        if (layout.name == defaultLayoutName) {
+          return layout;
+        }
       }
     }
 
     try {
-      return availableLayouts
-          .firstWhere((layout) => layout.name == defaultLayoutName);
+      return availableLayouts.firstWhere((layout) => layout.name == defaultLayoutName);
     } catch (e) {
       if (kDebugMode) {
         print('Default user layout "$defaultLayoutName" not found');
@@ -76,23 +83,41 @@ class ConfigService {
 
   Future<KeyboardLayout?> getAltLayout() async {
     final config = await loadConfig();
+
+    if (config.altLayout == null) {
+      debugPrint('Cannot get alt layout: altLayout is not defined in the config file');
+      return null;
+    }
+
     final altLayoutName = config.altLayout;
 
-    for (final layout in config.userLayouts) {
-      if (layout.name == altLayoutName) {
-        return layout;
+    if (config.userLayouts != null) {
+      for (final layout in config.userLayouts!) {
+        if (layout.name == altLayoutName) {
+          return layout;
+        }
       }
     }
 
     try {
-      return availableLayouts
-          .firstWhere((layout) => layout.name == altLayoutName);
+      return availableLayouts.firstWhere((layout) => layout.name == altLayoutName);
     } catch (e) {
       if (kDebugMode) {
         print('Alt layout "$altLayoutName" not found');
       }
       return null;
     }
+  }
+
+  Future<String?> getCustomFont() async {
+    final config = await loadConfig();
+
+    if (config.customFont == null) {
+      debugPrint('Cannot get custom font: customFont is not defined in the config file');
+      return null;
+    }
+
+    return config.customFont;
   }
 
   Future<Map<String, String>?> getCustomShiftMappings() async {

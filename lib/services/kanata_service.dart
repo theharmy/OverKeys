@@ -5,8 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:overkeys/services/config_service.dart';
 import 'package:overkeys/models/keyboard_layouts.dart';
 
-typedef LayerChangeCallback = void Function(
-    KeyboardLayout layout, bool isDefaultUserLayout);
+typedef LayerChangeCallback = void Function(KeyboardLayout layout, bool isDefaultUserLayout);
 
 class KanataService {
   Socket? _kanataSocket;
@@ -26,10 +25,10 @@ class KanataService {
     try {
       ConfigService configService = ConfigService();
       final config = await configService.loadConfig();
-      _host = config.kanataHost;
-      _port = config.kanataPort;
-      _userLayouts = config.userLayouts;
-      _defaultUserLayout = config.defaultUserLayout;
+      _host = config.kanataHost ?? '127.0.0.1';
+      _port = config.kanataPort ?? 4039;
+      _userLayouts = config.userLayouts ?? [];
+      _defaultUserLayout = config.defaultUserLayout ?? 'QWERTY';
       _kanataSocket = await Socket.connect(_host, _port);
       if (kDebugMode) {
         print('Connected to Kanata server at $_host:$_port');
@@ -77,9 +76,7 @@ class KanataService {
       Map<String, dynamic> jsonData = jsonDecode(message);
 
       if (jsonData.containsKey('LayerChange')) {
-        String layoutName =
-            jsonData['LayerChange']['new']?.toString().trim().toUpperCase() ??
-                '';
+        String layoutName = jsonData['LayerChange']['new']?.toString().trim().toUpperCase() ?? '';
 
         if (layoutName.isNotEmpty && onLayerChange != null) {
           try {
@@ -87,13 +84,13 @@ class KanataService {
               (layout) => layout.name.toUpperCase() == layoutName,
               orElse: () => availableLayouts.firstWhere(
                 (layout) => layout.name.toUpperCase() == layoutName,
-                orElse: () => throw Exception(
-                    'Layout not found in Kanata layers or available layouts'),
+                orElse: () =>
+                    throw Exception('Layout not found in Kanata layers or available layouts'),
               ),
             );
 
-            bool isDefaultUserLayout = newLayout.name.toUpperCase() ==
-                _defaultUserLayout.toUpperCase();
+            bool isDefaultUserLayout =
+                newLayout.name.toUpperCase() == _defaultUserLayout.toUpperCase();
 
             onLayerChange!(newLayout, isDefaultUserLayout);
 

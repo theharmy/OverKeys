@@ -298,20 +298,20 @@ class KeyboardScreen extends StatelessWidget {
     // Tactile Markers
     if (rowIndex == 2 && (keyIndex == 3 || keyIndex == 6)) {
       keyWidget = Stack(
-        alignment: showAltLayout ? Alignment.center : Alignment.bottomCenter,
+        alignment: showAltLayout && altLayout != null ? Alignment.center : Alignment.bottomCenter,
         children: [
           keyWidget,
           Positioned(
-            bottom: showAltLayout ? null : markerOffset,
+            bottom: showAltLayout && altLayout != null ? null : markerOffset,
             child: AnimatedContainer(
               duration: Duration(milliseconds: animationEnabled ? animationDuration.toInt() : 20),
               curve: Curves.easeInOutCubic,
               transform: _getMarkerAnimationTransform(isPressed),
-              width: markerWidth * (showAltLayout ? 0.5 : 1),
-              height: showAltLayout ? markerWidth * 0.5 : markerHeight,
+              width: markerWidth * (showAltLayout && altLayout != null ? 0.5 : 1),
+              height: showAltLayout && altLayout != null ? markerWidth * 0.5 : markerHeight,
               decoration: BoxDecoration(
-                color: tactMarkerColor,
-                borderRadius: BorderRadius.circular(markerBorderRadius),
+          color: tactMarkerColor,
+          borderRadius: BorderRadius.circular(markerBorderRadius),
               ),
             ),
           ),

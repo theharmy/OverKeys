@@ -148,7 +148,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
   bool _useUserLayout = false;
   bool _showAltLayout = false;
   bool _initialShowAltLayout = false;
-  KeyboardLayout _altLayout = qwerty;
+  KeyboardLayout? _altLayout;
   bool _customFontEnabled = false;
   bool _use6ColLayout = false;
   bool _kanataEnabled = false;
@@ -304,7 +304,6 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
       _advancedSettingsEnabled = prefs['advancedSettingsEnabled'];
       _useUserLayout = prefs['useUserLayout'];
       _showAltLayout = prefs['showAltLayout'];
-      _altLayout = _keyboardLayout;
       _customFontEnabled = prefs['customFontEnabled'];
       _use6ColLayout = prefs['use6ColLayout'];
       _kanataEnabled = prefs['kanataEnabled'];
@@ -492,11 +491,11 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
     if (!_customFontEnabled || !_advancedSettingsEnabled) return;
 
     final configService = ConfigService();
-    final config = await configService.loadConfig();
+    final customFont = await configService.getCustomFont();
 
-    if (config.customFont.isNotEmpty) {
+    if (customFont != null) {
       setState(() {
-        _fontFamily = config.customFont;
+        _fontFamily = customFont;
       });
     }
   }
