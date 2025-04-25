@@ -148,10 +148,7 @@ class LearnTab extends StatelessWidget {
                           Text(
                             'Restore all finger colors to their default values',
                             style: TextStyle(
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .onSurface
-                                    .withAlpha(153),
+                                color: Theme.of(context).colorScheme.onSurface.withAlpha(153),
                                 fontSize: 14.0),
                             softWrap: true,
                             overflow: TextOverflow.visible,
@@ -162,8 +159,7 @@ class LearnTab extends StatelessWidget {
                     const SizedBox(width: 16),
                     ElevatedButton.icon(
                       icon: Icon(LucideIcons.refreshCw,
-                          color: Theme.of(context).colorScheme.primary,
-                          size: 24),
+                          color: Theme.of(context).colorScheme.primary, size: 24),
                       label: Text('Reset',
                           style: TextStyle(
                             color: Theme.of(context).colorScheme.primary,
@@ -171,19 +167,25 @@ class LearnTab extends StatelessWidget {
                             fontSize: 16,
                           )),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Theme.of(context)
-                            .colorScheme
-                            .surfaceContainerHighest,
+                        backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
                         elevation: 2,
                         minimumSize: const Size(100, 45),
-                        side: BorderSide(
-                            color: Theme.of(context).colorScheme.primary),
+                        side: BorderSide(color: Theme.of(context).colorScheme.primary),
                       ),
                       onPressed: _resetToDefaultColors,
                     ),
                   ],
                 ),
               ),
+              Text(
+                'NOTE: The colors for key/s in the last row (Thumb keys) are customizable through the "Key(not pressed)" color under the Colors tab.',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontStyle: FontStyle.italic,
+                  color: Theme.of(context).colorScheme.outline,
+                ),
+              ),
+              const SizedBox(height: 20),
             ],
             Image.asset(
               'assets/images/learn_mode.png',
