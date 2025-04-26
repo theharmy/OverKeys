@@ -6,7 +6,8 @@ The 6-column layout feature in OverKeys allows you to visualize 6-column split m
 
 6-column layouts are a specialized type of [custom layout](custom-layouts.md) that limits the keyboard to just 6 columns per hand. These layouts must be created using the custom layout feature and cannot/should not be used with the default built-in layouts.
 
-![image](https://github.com/user-attachments/assets/cca328f6-4e83-4ef6-850c-52109051d308)
+![Screenshot 2025-04-26 105446](https://github.com/user-attachments/assets/ec4f677b-699a-4ce4-ac62-4a668d8dade2)
+![Screenshot 2025-04-26 105349](https://github.com/user-attachments/assets/ccfad8e4-84cc-447d-9549-ae5332b5f113)
 
 ## Setup Instructions
 
