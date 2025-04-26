@@ -66,79 +66,35 @@ class PreferencesService {
   Future<double> getAnimationScale() async => await _prefs.getDouble('animationScale') ?? 2.0;
 
   // HotKey settings
+  Future<HotKey?> _getHotKey(
+    String key,
+    PhysicalKeyboardKey defaultKey,
+    List<HotKeyModifier> defaultModifiers,
+  ) async {
+    final json = await _prefs.getString(key);
+    try {
+      return HotKey.fromJson(jsonDecode(json!));
+    } catch (e) {
+      return HotKey(
+        key: defaultKey,
+        modifiers: defaultModifiers,
+      );
+    }
+  }
+
   Future<bool> getHotKeysEnabled() async => await _prefs.getBool('enableHotKeys') ?? false;
-  Future<HotKey?> getVisibilityHotKey() async {
-    final json = await _prefs.getString('visibilityHotKey');
-    try {
-      return HotKey.fromJson(jsonDecode(json!));
-    } catch (e) {
-      return HotKey(
-        key: PhysicalKeyboardKey.keyQ,
-        modifiers: [HotKeyModifier.alt, HotKeyModifier.control],
-      );
-    }
-  }
-
-  Future<HotKey?> getAutoHideHotKey() async {
-    final json = await _prefs.getString('autoHideHotKey');
-    try {
-      return HotKey.fromJson(jsonDecode(json!));
-    } catch (e) {
-      return HotKey(
-        key: PhysicalKeyboardKey.keyW,
-        modifiers: [HotKeyModifier.alt, HotKeyModifier.control],
-      );
-    }
-  }
-
-  Future<HotKey?> getToggleMoveHotKey() async {
-    final json = await _prefs.getString('toggleMoveHotKey');
-    try {
-      return HotKey.fromJson(jsonDecode(json!));
-    } catch (e) {
-      return HotKey(
-        key: PhysicalKeyboardKey.keyE,
-        modifiers: [HotKeyModifier.alt, HotKeyModifier.control],
-      );
-    }
-  }
-
-  Future<HotKey?> getPreferencesHotKey() async {
-    final json = await _prefs.getString('preferencesHotKey');
-    try {
-      return HotKey.fromJson(jsonDecode(json!));
-    } catch (e) {
-      return HotKey(
-        key: PhysicalKeyboardKey.keyR,
-        modifiers: [HotKeyModifier.alt, HotKeyModifier.control],
-      );
-    }
-  }
-
-  Future<HotKey?> getIncreaseOpacityHotKey() async {
-    final json = await _prefs.getString('increaseOpacityHotKey');
-    try {
-      return HotKey.fromJson(jsonDecode(json!));
-    } catch (e) {
-      return HotKey(
-        key: PhysicalKeyboardKey.arrowUp,
-        modifiers: [HotKeyModifier.alt, HotKeyModifier.control],
-      );
-    }
-  }
-
-  Future<HotKey?> getDecreaseOpacityHotKey() async {
-    final json = await _prefs.getString('decreaseOpacityHotKey');
-    try {
-      return HotKey.fromJson(jsonDecode(json!));
-    } catch (e) {
-      return HotKey(
-        key: PhysicalKeyboardKey.arrowDown,
-        modifiers: [HotKeyModifier.alt, HotKeyModifier.control],
-      );
-    }
-  }
-
+  Future<HotKey?> getVisibilityHotKey() async => _getHotKey(
+      'visibilityHotKey', PhysicalKeyboardKey.keyQ, [HotKeyModifier.alt, HotKeyModifier.control]);
+  Future<HotKey?> getAutoHideHotKey() async => _getHotKey(
+      'autoHideHotKey', PhysicalKeyboardKey.keyW, [HotKeyModifier.alt, HotKeyModifier.control]);
+  Future<HotKey?> getToggleMoveHotKey() async => _getHotKey(
+      'toggleMoveHotKey', PhysicalKeyboardKey.keyE, [HotKeyModifier.alt, HotKeyModifier.control]);
+  Future<HotKey?> getPreferencesHotKey() async => _getHotKey(
+      'preferencesHotKey', PhysicalKeyboardKey.keyR, [HotKeyModifier.alt, HotKeyModifier.control]);
+  Future<HotKey?> getIncreaseOpacityHotKey() async => _getHotKey('increaseOpacityHotKey',
+      PhysicalKeyboardKey.arrowUp, [HotKeyModifier.alt, HotKeyModifier.control]);
+  Future<HotKey?> getDecreaseOpacityHotKey() async => _getHotKey('decreaseOpacityHotKey',
+      PhysicalKeyboardKey.arrowDown, [HotKeyModifier.alt, HotKeyModifier.control]);
   Future<bool> getEnableVisibilityHotKey() async =>
       await _prefs.getBool('enableVisibilityHotKey') ?? true;
   Future<bool> getEnableAutoHideHotKey() async =>
@@ -318,92 +274,111 @@ class PreferencesService {
 
   Future<Map<String, dynamic>> loadAllPreferences() async {
     return {
-      // General settings
-      'launchAtStartup': await getLaunchAtStartup(),
-      'autoHideEnabled': await getAutoHideEnabled(),
-      'autoHideDuration': await getAutoHideDuration(),
-      'opacity': await getOpacity(),
-      'keyboardLayoutName': await getKeyboardLayoutName(),
-
-      // Keyboard settings
-      'keymapStyle': await getKeymapStyle(),
-      'showTopRow': await getShowTopRow(),
-      'showGraveKey': await getShowGraveKey(),
-      'keySize': await getKeySize(),
-      'keyBorderRadius': await getKeyBorderRadius(),
-      'keyBorderThickness': await getKeyBorderThickness(),
-      'keyPadding': await getKeyPadding(),
-      'spaceWidth': await getSpaceWidth(),
-      'splitWidth': await getSplitWidth(),
-      'lastRowSplitWidth': await getLastRowSplitWidth(),
-      'keyShadowBlurRadius': await getKeyShadowBlurRadius(),
-      'keyShadowOffsetX': await getKeyShadowOffsetX(),
-      'keyShadowOffsetY': await getKeyShadowOffsetY(),
-
-      // Text settings
-      'fontFamily': await getFontFamily(),
-      'fontWeight': await getFontWeight(),
-      'keyFontSize': await getKeyFontSize(),
-      'spaceFontSize': await getSpaceFontSize(),
-
-      // Markers settings
-      'markerOffset': await getMarkerOffset(),
-      'markerWidth': await getMarkerWidth(),
-      'markerHeight': await getMarkerHeight(),
-      'markerBorderRadius': await getMarkerBorderRadius(),
-
-      // Colors settings
-      'keyColorPressed': await getKeyColorPressed(),
-      'keyColorNotPressed': await getKeyColorNotPressed(),
-      'markerColor': await getMarkerColor(),
-      'markerColorNotPressed': await getMarkerColorNotPressed(),
-      'keyTextColor': await getKeyTextColor(),
-      'keyTextColorNotPressed': await getKeyTextColorNotPressed(),
-      'keyBorderColorPressed': await getKeyBorderColorPressed(),
-      'keyBorderColorNotPressed': await getKeyBorderColorNotPressed(),
-
-      // Animations settings
-      'animationEnabled': await getAnimationEnabled(),
-      'animationStyle': await getAnimationStyle(),
-      'animationDuration': await getAnimationDuration(),
-      'animationScale': await getAnimationScale(),
-
-      // HotKey settings
-      'hotKeysEnabled': await getHotKeysEnabled(),
-      'visibilityHotKey': await getVisibilityHotKey(),
-      'autoHideHotKey': await getAutoHideHotKey(),
-      'toggleMoveHotKey': await getToggleMoveHotKey(),
-      'preferencesHotKey': await getPreferencesHotKey(),
-      'increaseOpacityHotKey': await getIncreaseOpacityHotKey(),
-      'decreaseOpacityHotKey': await getDecreaseOpacityHotKey(),
-      'enableVisibilityHotKey': await getEnableVisibilityHotKey(),
-      'enableAutoHideHotKey': await getEnableAutoHideHotKey(),
-      'enableToggleMoveHotKey': await getEnableToggleMoveHotKey(),
-      'enablePreferencesHotKey': await getEnablePreferencesHotKey(),
-      'enableIncreaseOpacityHotKey': await getEnableIncreaseOpacityHotKey(),
-      'enableDecreaseOpacityHotKey': await getEnableDecreaseOpacityHotKey(),
-
-      // Learn settings
-      'learningModeEnabled': await getLearningModeEnabled(),
-      'pinkyLeftColor': await getPinkyLeftColor(),
-      'ringLeftColor': await getRingLeftColor(),
-      'middleLeftColor': await getMiddleLeftColor(),
-      'indexLeftColor': await getIndexLeftColor(),
-      'indexRightColor': await getIndexRightColor(),
-      'middleRightColor': await getMiddleRightColor(),
-      'ringRightColor': await getRingRightColor(),
-      'pinkyRightColor': await getPinkyRightColor(),
-
-      // Advanced settings
-      'advancedSettingsEnabled': await getAdvancedSettingsEnabled(),
-      'useUserLayout': await getUseUserLayout(),
-      'showAltLayout': await getShowAltLayout(),
-      'customFontEnabled': await getCustomFontEnabled(),
-      'use6ColLayout': await getUse6ColLayout(),
-      'kanataEnabled': await getKanataEnabled(),
-      'keyboardFollowsMouse': await getKeyboardFollowsMouse(),
+      ...await _loadGeneralPreferences(),
+      ...await _loadKeyboardPreferences(),
+      ...await _loadTextPreferences(),
+      ...await _loadMarkersPreferences(),
+      ...await _loadColorsPreferences(),
+      ...await _loadAnimationsPreferences(),
+      ...await _loadHotKeyPreferences(),
+      ...await _loadLearnPreferences(),
+      ...await _loadAdvancedPreferences(),
     };
   }
+
+  Future<Map<String, dynamic>> _loadGeneralPreferences() async => {
+        'launchAtStartup': await getLaunchAtStartup(),
+        'autoHideEnabled': await getAutoHideEnabled(),
+        'autoHideDuration': await getAutoHideDuration(),
+        'opacity': await getOpacity(),
+        'keyboardLayoutName': await getKeyboardLayoutName(),
+      };
+
+  Future<Map<String, dynamic>> _loadKeyboardPreferences() async => {
+        'keymapStyle': await getKeymapStyle(),
+        'showTopRow': await getShowTopRow(),
+        'showGraveKey': await getShowGraveKey(),
+        'keySize': await getKeySize(),
+        'keyBorderRadius': await getKeyBorderRadius(),
+        'keyBorderThickness': await getKeyBorderThickness(),
+        'keyPadding': await getKeyPadding(),
+        'spaceWidth': await getSpaceWidth(),
+        'splitWidth': await getSplitWidth(),
+        'lastRowSplitWidth': await getLastRowSplitWidth(),
+        'keyShadowBlurRadius': await getKeyShadowBlurRadius(),
+        'keyShadowOffsetX': await getKeyShadowOffsetX(),
+        'keyShadowOffsetY': await getKeyShadowOffsetY(),
+      };
+
+  Future<Map<String, dynamic>> _loadTextPreferences() async => {
+        'fontFamily': await getFontFamily(),
+        'fontWeight': await getFontWeight(),
+        'keyFontSize': await getKeyFontSize(),
+        'spaceFontSize': await getSpaceFontSize(),
+      };
+
+  Future<Map<String, dynamic>> _loadMarkersPreferences() async => {
+        'markerOffset': await getMarkerOffset(),
+        'markerWidth': await getMarkerWidth(),
+        'markerHeight': await getMarkerHeight(),
+        'markerBorderRadius': await getMarkerBorderRadius(),
+      };
+
+  Future<Map<String, dynamic>> _loadColorsPreferences() async => {
+        'keyColorPressed': await getKeyColorPressed(),
+        'keyColorNotPressed': await getKeyColorNotPressed(),
+        'markerColor': await getMarkerColor(),
+        'markerColorNotPressed': await getMarkerColorNotPressed(),
+        'keyTextColor': await getKeyTextColor(),
+        'keyTextColorNotPressed': await getKeyTextColorNotPressed(),
+        'keyBorderColorPressed': await getKeyBorderColorPressed(),
+        'keyBorderColorNotPressed': await getKeyBorderColorNotPressed(),
+      };
+
+  Future<Map<String, dynamic>> _loadAnimationsPreferences() async => {
+        'animationEnabled': await getAnimationEnabled(),
+        'animationStyle': await getAnimationStyle(),
+        'animationDuration': await getAnimationDuration(),
+        'animationScale': await getAnimationScale(),
+      };
+
+  Future<Map<String, dynamic>> _loadHotKeyPreferences() async => {
+        'hotKeysEnabled': await getHotKeysEnabled(),
+        'visibilityHotKey': await getVisibilityHotKey(),
+        'autoHideHotKey': await getAutoHideHotKey(),
+        'toggleMoveHotKey': await getToggleMoveHotKey(),
+        'preferencesHotKey': await getPreferencesHotKey(),
+        'increaseOpacityHotKey': await getIncreaseOpacityHotKey(),
+        'decreaseOpacityHotKey': await getDecreaseOpacityHotKey(),
+        'enableVisibilityHotKey': await getEnableVisibilityHotKey(),
+        'enableAutoHideHotKey': await getEnableAutoHideHotKey(),
+        'enableToggleMoveHotKey': await getEnableToggleMoveHotKey(),
+        'enablePreferencesHotKey': await getEnablePreferencesHotKey(),
+        'enableIncreaseOpacityHotKey': await getEnableIncreaseOpacityHotKey(),
+        'enableDecreaseOpacityHotKey': await getEnableDecreaseOpacityHotKey(),
+      };
+
+  Future<Map<String, dynamic>> _loadLearnPreferences() async => {
+        'learningModeEnabled': await getLearningModeEnabled(),
+        'pinkyLeftColor': await getPinkyLeftColor(),
+        'ringLeftColor': await getRingLeftColor(),
+        'middleLeftColor': await getMiddleLeftColor(),
+        'indexLeftColor': await getIndexLeftColor(),
+        'indexRightColor': await getIndexRightColor(),
+        'middleRightColor': await getMiddleRightColor(),
+        'ringRightColor': await getRingRightColor(),
+        'pinkyRightColor': await getPinkyRightColor(),
+      };
+
+  Future<Map<String, dynamic>> _loadAdvancedPreferences() async => {
+        'advancedSettingsEnabled': await getAdvancedSettingsEnabled(),
+        'useUserLayout': await getUseUserLayout(),
+        'showAltLayout': await getShowAltLayout(),
+        'customFontEnabled': await getCustomFontEnabled(),
+        'use6ColLayout': await getUse6ColLayout(),
+        'kanataEnabled': await getKanataEnabled(),
+        'keyboardFollowsMouse': await getKeyboardFollowsMouse(),
+      };
 
   Future<void> saveAllPreferences(Map<String, dynamic> prefs) async {
     // General settings
