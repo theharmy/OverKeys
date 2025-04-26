@@ -96,7 +96,7 @@ class _MarkersTabState extends State<MarkersTab> {
           value: _localMarkerHeight,
           min: 0,
           max: 10,
-          divisions: 10,
+          divisions: 20,
           subtitle: widget.showAltLayout
               ? 'When alternative layout is shown, marker height is not used and instead equals the marker width after computation'
               : null,
