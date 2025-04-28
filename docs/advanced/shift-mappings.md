@@ -4,7 +4,7 @@ The custom shift mappings feature in OverKeys allows you to define your own shif
 
 ## Overview
 
-https://github.com/user-attachments/assets/93ab7a80-5ccf-4404-87c0-952bd61378b5
+<https://github.com/user-attachments/assets/93ab7a80-5ccf-4404-87c0-952bd61378b5>
 
 When you press Shift plus a key, the keyboard typically produces an alternate symbol. OverKeys lets you customize these shift mappings, overriding the default system behavior for specific keys in your layouts.
 
