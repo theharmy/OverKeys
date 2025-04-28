@@ -32,5 +32,7 @@ By default, OverKeys comes with the following keyboard shortcuts:
 - **Ctrl+Alt+W**: Toggles Auto Hide mode
 - **Ctrl+Alt+E**: Toggles Move mode for repositioning the keyboard
 - **Ctrl+Alt+R**: Opens the Preferences window
+- **Ctrl+Alt+Up**: Increases keyboard opacity
+- **Ctrl+Alt+Down**: Decreases keyboard opacity
 
 These shortcuts can be customized in the Preferences window.
