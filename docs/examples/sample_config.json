@@ -1,6 +1,7 @@
 {
 	// This is an example configuration file for Overkeys.
 	// Copy contents or  rename this file to "overkeys_config.json"
+	// Remove comments if not using JSONC
 	"defaultUserLayout": "Canary",
 	"altLayout": "Arabic",
 	"customFont": "Lexend",
@@ -13,7 +14,9 @@
 				["1", "2", "3", "4", "5", "⤒", "←", "↓", "→", "⤓", ""],
 				["6", "7", "8", "9", "0", "", "", "", "", ""],
 				[" "]
-			]
+			],
+			"trigger": "F14",
+			"type": "held"
 		},
 		{
 			"name": "Symbol",
@@ -23,7 +26,9 @@
 				["!", "-", "+", "=", "`", "|", ".", "(", ")", "?", "'"],
 				["^", "/", "*", "_", "\\", "&", "$", "[", "]", "#"],
 				[" "]
-			]
+			],
+			"trigger": "F15",
+			"type": "toggle"
 		},
 		{
 			"name": "Arabic",

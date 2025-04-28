@@ -127,6 +127,7 @@ This project was initially developed to help with system-wide practice of the **
 - **Always on top**: Keep the keyboard visible above all windows
 - **Auto-hide**: The keyboard hides automatically when not in use
 - **Keymap layouts**: Supports staggered, matrix, and split matrix (5-col and [6-col](/docs/advanced/6-column-layouts.md)) layouts
+- **[Layer switching](/docs/advanced/layers.md)**: Switch between multiple custom keyboard layers for QMK, ZMK, or other programmable keyboard firmware using configurable triggers and toggle modes
 - **[Layer switching (Kanata)](./docs/advanced/kanata-integration.md)**: Connect to [Kanata](https://github.com/jtroo/kanata) through TCP to dynamically display the active layer
 - **User configurations**: Add and use [custom keyboard layouts](/docs/advanced/custom-layouts.md) through configuration files
 - **Side-by-side layouts**: Display [alternative layouts](/docs/advanced/alternative-layouts.md) alongside the default layout
