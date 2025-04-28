@@ -41,7 +41,7 @@ The custom layout feature in OverKeys allows you to use your own keyboard layout
                 ]
             }
         ],
-        "defaultUserLa yout": "MyCustomLayout"
+        "defaultUserLayout": "MyCustomLayout"
     }
     ```
 
@@ -85,7 +85,7 @@ You can then set this layout as your default by updating the `defaultUserLayout`
 
 ```json
 {
-	"defaultUserLayout": "MyCustomLayout"
+    "defaultUserLayout": "MyCustomLayout"
 }
 ```
 
