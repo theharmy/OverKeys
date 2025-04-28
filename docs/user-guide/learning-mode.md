@@ -15,5 +15,6 @@ Learning Mode helps new users practice proper finger placement by color-coding k
 ## Implementation Notes
 
 - Learning Mode takes precedence over custom color settings
+- Thumb keys (bottom row) use the "Key(not pressed)" color setting from the Colors tab
 - You can toggle Learning Mode on/off without affecting your saved color preferences
 - When disabled, OverKeys will return to using your custom color settings
