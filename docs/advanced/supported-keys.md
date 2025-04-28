@@ -27,7 +27,7 @@ This document lists all keys supported by OverKeys for use in custom layouts. Us
 
 | Key          |
 | ------------ |
-| `F1` - `F12` |
+| `F1` - `F24` |
 
 ## Navigation Keys
 
