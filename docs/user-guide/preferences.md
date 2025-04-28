@@ -25,11 +25,11 @@ To open the Preferences window:
 
 The General tab contains basic configuration options:
 
-- **Launch at startup**: Start OverKeys automatically when your system boots
-- **Auto-hide**: Automatically hide the keyboard after a period of inactivity
+- **Open on system startup**: Start OverKeys automatically when your system boots
+- **Auto-hide keyboard**: Automatically hide the keyboard after a period of inactivity
 - **Auto-hide duration**: Set how many seconds of inactivity before hiding (0.5-5.0 seconds)
 - **Opacity**: Control the overall transparency of the keyboard overlay (10-100%)
-- **Keyboard layout**: Select the keyboard layout (QWERTY, etc.)
+- **Layout**: Select the keyboard layout (QWERTY, etc.)
 
 ## Keyboard Tab
 
@@ -41,13 +41,13 @@ Configure the keyboard layout and physical appearance:
 - **Key size**: Adjust the size of individual keys
 - **Key border radius**: Control how rounded the keys appear
 - **Key border thickness**: Set the thickness of key borders
-- **Key shadow blur**: Control the softness of key shadows
-- **Key shadow offset X**: Adjust the horizontal shadow position
-- **Key shadow offset Y**: Adjust the vertical shadow position
 - **Key padding**: Set the spacing between keys
 - **Space width**: Adjust the width of the spacebar
 - **Split width**: Set the gap width for split keyboard layouts
 - **Last row split width**: Set the gap width of the last row for split keyboard layouts
+- **Key shadow blur radius**: Control the softness of key shadows
+- **Key shadow offset X**: Adjust the horizontal shadow position
+- **Key shadow offset Y**: Adjust the vertical shadow position
 
 ## Text Tab
 
@@ -71,14 +71,14 @@ Configure the tactile markers on home row keys:
 
 Controls the visual colors of the keyboard:
 
-- **Key color (pressed)**: Set the color of keys when pressed
-- **Key color (not pressed)**: Set the color of keys when not pressed
-- **Marker color (pressed)**: Set the color of tactile markers when pressed
-- **Marker color (not pressed)**: Set the color of tactile markers when not pressed
-- **Key text color (pressed)**: Set the text color when keys are pressed
-- **Key text color (not pressed)**: Set the text color when keys are not pressed
-- **Key border color (pressed)**: Set the color of borders around keys when pressed
-- **Key border color (not pressed)**: Set the color of borders around keys when not pressed
+- **Key (pressed)**: Set the color of keys when pressed
+- **Key (not pressed)**: Set the color of keys when not pressed
+- **Marker (pressed)**: Set the color of tactile markers when pressed
+- **Marker (not pressed)**: Set the color of tactile markers when not pressed
+- **Text (pressed)**: Set the text color when keys are pressed
+- **Text (not pressed)**: Set the text color when keys are not pressed
+- **Border (pressed)**: Set the color of borders around keys when pressed
+- **Border (not pressed)**: Set the color of borders around keys when not pressed
 
 ## Animations Tab
 
@@ -94,10 +94,12 @@ Customize keyboard animation settings:
 Configure keyboard shortcuts for controlling OverKeys:
 
 - **Enable hotkeys**: Turn keyboard shortcuts on or off
-- **Visibility hotkey**: Set a shortcut to force show/hide the keyboard (regardless if auto-hide is on/off)
-- **Auto-hide hotkey**: Set a shortcut to toggle the auto-hide feature
-- **Move hotkey**: Set a shortcut to toggle the ability to move the keyboard
-- **Preferences hotkey**: Set a shortcut to quickly open the preferences window
+- **Toggle Visibility**: Set a shortcut to force show/hide the keyboard (regardless if auto-hide is on/off)
+- **Toggle Auto Hide**: Set a shortcut to toggle the auto-hide feature
+- **Toggle Move**: Set a shortcut to toggle the ability to move the keyboard
+- **Open Preferences**: Set a shortcut to quickly open the preferences window
+- **Increase Opacity**: Set a shortcut to make the keyboard more opaque
+- **Decrease Opacity**: Set a shortcut to make the keyboard more transparent
 
 ## Learn Tab
 
@@ -113,11 +115,14 @@ Configure learning mode settings to help with touch typing:
 
 Access additional configuration options:
 
-- **Enable advanced settings**: Unlock additional functionalities and customization options
-- **Use user layout**: Use a custom keyboard layout
+- **Turn on advanced settings**: Unlock additional functionalities and customization options
+- **Use user layouts**: Use a custom keyboard layout and enable layers functionality
 - **Show alternative layout**: Display another layout alongside the main one
+- **Use custom font**: Enable using a custom font for key labels
 - **Use 6-column layout**: Enable 6-column split matrix layout
-- **Kanata integration**: Enable integration with Kanata keyboard software
+- **Connect to Kanata**: Enable integration with Kanata keyboard software
+- **Keyboard follows mouse**: EXPERIMENTAL - Makes the keyboard follow your mouse cursor across monitors
+- **Open config file**: Access and modify the configuration file directly
 
 ## About Tab
 
