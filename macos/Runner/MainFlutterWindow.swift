@@ -1,7 +1,10 @@
 import Cocoa
 import FlutterMacOS
+import hid_listener
 
 class MainFlutterWindow: NSWindow {
+  let listener = HidListener()
+  
   override func awakeFromNib() {
     let flutterViewController = FlutterViewController()
     let windowFrame = self.frame

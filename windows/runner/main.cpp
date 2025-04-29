@@ -1,6 +1,7 @@
 #include <flutter/dart_project.h>
 #include <flutter/flutter_view_controller.h>
 #include <windows.h>
+#include <hid_listener/hid_listener_plugin_windows.h>
 
 #include "flutter_window.h"
 #include "utils.h"
@@ -13,6 +14,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prev,
     ::SetForegroundWindow(hwnd);
     return EXIT_FAILURE;
   }
+
+  HidListener listener;
 
   // Attach to console when present (e.g., 'flutter run') or create a
   // new console when running with a debugger.
