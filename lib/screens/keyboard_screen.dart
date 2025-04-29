@@ -180,7 +180,7 @@ class KeyboardScreen extends StatelessWidget {
 
   Widget buildKeys(int rowIndex, String key, int keyIndex, {bool isLastKeyFirstRow = false}) {
     bool isShiftPressed =
-        (keyPressStates["LShift"] ?? false) || (keyPressStates["RShift"] ?? false);
+        (keyPressStates["Shift Left"] ?? false) || (keyPressStates["Shift Right"] ?? false);
     if (isShiftPressed) {
       if (customShiftMappings != null && customShiftMappings!.containsKey(key)) {
         key = customShiftMappings![key]!;
@@ -412,7 +412,7 @@ class KeyboardScreen extends StatelessWidget {
     }
     String altKey = altRow[keyIndex];
     bool isShiftPressed =
-        (keyPressStates["LShift"] ?? false) || (keyPressStates["RShift"] ?? false);
+        (keyPressStates["Shift Left"] ?? false) || (keyPressStates["Shift Right"] ?? false);
     if (isShiftPressed) {
       if (customShiftMappings != null && customShiftMappings!.containsKey(altKey)) {
         altKey = customShiftMappings![altKey]!;
