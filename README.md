@@ -43,7 +43,7 @@
 
 <https://github.com/user-attachments/assets/c687a448-52b0-41bc-9b6b-07e61c2d3b31>
 
-OverKeys is a free and open-source on-screen keyboard layout visualizer designed for users to practice alternative keyboard layouts, such as **Colemak**, **Dvorak**, **Graphite**, **Focal**, and many more. Learn and practice your layouts system-wide, personalize keyboard appearance, and improve your typing.
+OverKeys is a free and open-source keyboard layout visualizer designed for users to practice alternative keyboard layouts, such as **Colemak**, **Dvorak**, **Graphite**, **Focal**, and many more. Learn and practice your layouts system-wide, personalize keyboard appearance, and improve your typing.
 
 This project was initially developed to help with the creator's system-wide practice of the **Canary layout**, but has since evolved to support user-defined layouts, layer switching integration, and customization options.
 
