@@ -27,6 +27,7 @@ dependencies:
   url_launcher: ^6.3.1
   hotkey_manager: ^0.2.3
   lucide_icons: ^0.257.0
+  hid_listener: ^2.0.1
 
 dev_dependencies:
   flutter_test:

@@ -1,11 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:window_manager/window_manager.dart';
 import 'package:desktop_multi_window/desktop_multi_window.dart';
+import 'package:hid_listener/hid_listener.dart';
+import 'package:hotkey_manager/hotkey_manager.dart';
 import 'package:launch_at_startup/launch_at_startup.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:hotkey_manager/hotkey_manager.dart';
+import 'package:window_manager/window_manager.dart';
 import 'app.dart';
 import 'screens/preferences_screen.dart';
 
@@ -15,11 +16,17 @@ void main(List<String> args) async {
   await windowManager.ensureInitialized();
   await hotKeyManager.unregisterAll();
 
+  if (getListenerBackend() != null) {
+    if (!getListenerBackend()!.initialize()) {
+      debugPrint("Failed to initialize listener backend");
+    }
+  } else {
+    debugPrint("No listener backend for this platform");
+  }
+
   if (isSubWindow) {
     final windowId = int.parse(args[1]);
-    final arguments = args[2].isEmpty
-        ? const {}
-        : jsonDecode(args[2]) as Map<String, dynamic>;
+    final arguments = args[2].isEmpty ? const {} : jsonDecode(args[2]) as Map<String, dynamic>;
 
     if (arguments["name"] == "preferences") {
       WindowOptions windowOptions = const WindowOptions(
