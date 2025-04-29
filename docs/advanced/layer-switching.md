@@ -1,6 +1,6 @@
-# User-Defined Layers
+# Layer Switching
 
-The user-defined layers feature in OverKeys allows you to switch between multiple custom keyboard layers, each with its own key arrangement and activation method. This is particularly useful when using keyboard firmware like QMK or ZMK, where you can configure the keyboard to have different layers.
+The layer switching feature in OverKeys allows you to switch between multiple custom keyboard layers, each with its own key arrangement and activation method. This is particularly useful when using keyboard firmware like QMK or ZMK, where you can configure the keyboard to have different layers.
 
 While OverKeys doesn't directly communicate with QMK or ZMK (unlike its [Kanata integration](./kanata-integration.md)), you can still visualize different layers by configuring your keyboard firmware to send designated trigger keys (typically F13-F24) when switching layers.
 

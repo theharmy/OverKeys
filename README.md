@@ -6,8 +6,8 @@
   <img src="assets/images/OK.png" alt="OverKeys Logo" width="160" height="160">
   <h1 align="center">OverKeys</h1>
   
-  <h3 align="center">An open-source keyboard layout visualizer for Windows</h3> 
-    
+  <h3 align="center">An open-source keyboard layout visualizer for Windows</h3>
+
   <p align="center">
     <a href="#getting-started">Install Now</a>
     ·
@@ -43,7 +43,7 @@
 
 <https://github.com/user-attachments/assets/c687a448-52b0-41bc-9b6b-07e61c2d3b31>
 
-OverKeys is a free and open-source on-screen keyboard layout visualizer designed for users to practice alternative keyboard layouts, such as **Colemak**, **Dvorak**, **Graphite**, **Focal**, and many more. Learn and practice your layouts system-wide, personalize keyboard appearance, and improve your typing. 
+OverKeys is a free and open-source on-screen keyboard layout visualizer designed for users to practice alternative keyboard layouts, such as **Colemak**, **Dvorak**, **Graphite**, **Focal**, and many more. Learn and practice your layouts system-wide, personalize keyboard appearance, and improve your typing.
 
 This project was initially developed to help with the creator's system-wide practice of the **Canary layout**, but has since evolved to support user-defined layouts, layer switching integration, and customization options.
 
@@ -129,7 +129,7 @@ This project was initially developed to help with the creator's system-wide prac
 - **User configurations**: Add and use [custom keyboard layouts](/docs/advanced/custom-layouts.md) through configuration files
 - **Side-by-side layouts**: Display [alternative layouts](/docs/advanced/alternative-layouts.md) alongside the default layout
 - **Top row/Number row**: Optional row above the main keyboard for numbers or user-configured keys
-- **[Layer switching](/docs/advanced/layers.md)**: Switch between multiple custom keyboard layers for QMK, ZMK, or other programmable keyboard firmware using configurable triggers and toggle modes
+- **[Layer switching](/docs/advanced/layer-switching.md)**: Switch between multiple custom keyboard layers for QMK, ZMK, or other programmable keyboard firmware using configurable triggers and toggle modes
 - **[Layer switching (Kanata)](./docs/advanced/kanata-integration.md)**: Connect to [Kanata](https://github.com/jtroo/kanata) through TCP to dynamically display the active layer
 - **[Learning Mode](/docs/user-guide/learning-mode.md)**: Color-code keys based on proper finger positions for touch typing
 - **[Reactive Shift Mapping](/docs/advanced/shift-mappings.md)**: Display alternate key symbols when Shift key is pressed
@@ -181,7 +181,7 @@ Complete documentation for OverKeys is available in the [docs](docs/index.md) fo
 - [Custom Layouts](/docs/advanced/custom-layouts.md)
 - [Alternative Layouts](/docs/advanced/alternative-layouts.md)
 - [6-Column Layouts](/docs/advanced/6-column-layouts.md)
-- [User-Defined Layers](docs/advanced/layers.md)
+- [Layer Switching](docs/advanced/layer-switching.md)
 - [Kanata Integration](/docs/advanced/kanata-integration.md)
 - [Shift Mappings](/docs/advanced/shift-mappings.md)
 - [Supported Keys](/docs/advanced/supported-keys.md)
