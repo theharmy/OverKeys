@@ -1,14 +1,14 @@
 <a id="readme-top"></a>
 
-<!-- PROJECT LOGO -->
 <br />
 <div align="center">
+  <!-- PROJECT LOGO -->
   <img src="assets/images/OK.png" alt="OverKeys Logo" width="160" height="160">
   <h1 align="center">OverKeys</h1>
+  
+  <h3 align="center">An open-source keyboard layout visualizer for Windows</h3> 
+    
   <p align="center">
-    A customizable, open-source on-screen keyboard visualizer for alternative layouts!
-    <br />
-    <br />
     <a href="#getting-started">Install Now</a>
     ·
     <a href="https://github.com/conventoangelo/OverKeys/issues/new?template=bug_report.md">Report Bug</a>
@@ -43,9 +43,9 @@
 
 <https://github.com/user-attachments/assets/c687a448-52b0-41bc-9b6b-07e61c2d3b31>
 
-OverKeys is an open-source on-screen keyboard visualizer designed for users to practice alternative keyboard layouts, such as **Canary**, **Colemak**, **Dvorak**, and many more. Built in [**Flutter**](https://flutter.dev/), it allows full customizability, making it perfect for users learning or working with non-traditional layouts.
+OverKeys is a free and open-source on-screen keyboard layout visualizer designed for users to practice alternative keyboard layouts, such as **Colemak**, **Dvorak**, **Graphite**, **Focal**, and many more. Learn and practice your layouts system-wide, personalize keyboard appearance, and improve your typing. 
 
-This project was initially developed to help with system-wide practice of the **Canary layout**, but has since evolved to support multiple layouts, layer switching integration, and customization options.
+This project was initially developed to help with the creator's system-wide practice of the **Canary layout**, but has since evolved to support user-defined layouts, layer switching integration, and customization options.
 
 ### Samples
 
@@ -124,14 +124,13 @@ This project was initially developed to help with system-wide practice of the **
     </ul>
   </details>
 - **Customizable styles**: Change colors, fonts, sizes, offsets, and key styles
-- **Always on top**: Keep the keyboard visible above all windows
 - **Auto-hide**: The keyboard hides automatically when not in use
-- **Keymap layouts**: Supports staggered, matrix, and split matrix (5-col and [6-col](/docs/advanced/6-column-layouts.md)) layouts
-- **[Layer switching](/docs/advanced/layers.md)**: Switch between multiple custom keyboard layers for QMK, ZMK, or other programmable keyboard firmware using configurable triggers and toggle modes
-- **[Layer switching (Kanata)](./docs/advanced/kanata-integration.md)**: Connect to [Kanata](https://github.com/jtroo/kanata) through TCP to dynamically display the active layer
+- **Keymap styles**: Supports staggered, matrix, and split matrix (5-col and [6-col](/docs/advanced/6-column-layouts.md)) styles
 - **User configurations**: Add and use [custom keyboard layouts](/docs/advanced/custom-layouts.md) through configuration files
 - **Side-by-side layouts**: Display [alternative layouts](/docs/advanced/alternative-layouts.md) alongside the default layout
 - **Top row/Number row**: Optional row above the main keyboard for numbers or user-configured keys
+- **[Layer switching](/docs/advanced/layers.md)**: Switch between multiple custom keyboard layers for QMK, ZMK, or other programmable keyboard firmware using configurable triggers and toggle modes
+- **[Layer switching (Kanata)](./docs/advanced/kanata-integration.md)**: Connect to [Kanata](https://github.com/jtroo/kanata) through TCP to dynamically display the active layer
 - **[Learning Mode](/docs/user-guide/learning-mode.md)**: Color-code keys based on proper finger positions for touch typing
 - **[Reactive Shift Mapping](/docs/advanced/shift-mappings.md)**: Display alternate key symbols when Shift key is pressed
 
@@ -175,13 +174,14 @@ Complete documentation for OverKeys is available in the [docs](docs/index.md) fo
 
 - [Preferences](/docs/user-guide/preferences.md)
 - [Learning Mode](/docs/user-guide/learning-mode.md)
-- [Supported Layouts](#features)
+- [Built-in Layouts](#features)
 
 ### Advanced Features
 
 - [Custom Layouts](/docs/advanced/custom-layouts.md)
 - [Alternative Layouts](/docs/advanced/alternative-layouts.md)
 - [6-Column Layouts](/docs/advanced/6-column-layouts.md)
+- [User-Defined Layers](docs/advanced/layers.md)
 - [Kanata Integration](/docs/advanced/kanata-integration.md)
 - [Shift Mappings](/docs/advanced/shift-mappings.md)
 - [Supported Keys](/docs/advanced/supported-keys.md)
@@ -197,6 +197,12 @@ Contributions are what make the open-source community such an amazing place to l
 3. Commit your Changes (`git commit -m 'feat: add some amazing feature'`).
 4. Push to the Branch (`git push origin feat/amazing-feature`).
 5. Open a Pull Request.
+
+### Top contributors:
+
+<a href="https://github.com/conventoangelo/OverKeys/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=conventoangelo/OverKeys" alt="contrib.rocks image" />
+</a>
 
 ## Building from Source
 
@@ -214,11 +220,8 @@ Contributions are what make the open-source community such an amazing place to l
    flutter run -d windows  # For testing
    # OR
    flutter build windows   # For release build
+   # Release executable is located at `build\windows\x64\runner\Release`
    ```
-
-3. **Find the Build**:
-
-   - Release executable is located at `build\windows\x64\runner\Release`
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
