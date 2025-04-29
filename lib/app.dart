@@ -1,11 +1,13 @@
+// ignore_for_file: deprecated_member_use
+
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'dart:isolate';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:desktop_multi_window/desktop_multi_window.dart';
+import 'package:hid_listener/hid_listener.dart';
 import 'package:hotkey_manager/hotkey_manager.dart';
 import 'package:launch_at_startup/launch_at_startup.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -172,6 +174,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
   Map<String, String>? _customShiftMappings;
   final Set<String> _activeTriggers = {};
   List<KeyboardLayout> _userLayers = [];
+  int? _keyboardListenerId;
 
   @override
   void initState() {
@@ -184,10 +187,10 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
     trayManager.addListener(this);
     windowManager.addListener(this);
     _setupTray();
-    _setupKeyListener();
     _setupHotKeys();
     _setupMethodHandler();
     _initStartup();
+    _registerKeyboardListener();
     _setupKanataLayerChangeHandler();
     _loadConfiguration();
     if (_showTopRow) {
@@ -202,6 +205,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
   void dispose() {
     windowManager.removeListener(this);
     trayManager.removeListener(this);
+    getListenerBackend()!.removeKeyboardListener(_keyboardListenerId!);
     unhook();
     _autoHideTimer?.cancel();
     _overlayTimer?.cancel();
@@ -211,16 +215,78 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
     super.dispose();
   }
 
-  void _startMouseTracking() {
-    _mouseCheckTimer?.cancel();
-    if (_keyboardFollowsMouse && _advancedSettingsEnabled) {
-      _mouseCheckTimer = Timer.periodic(const Duration(milliseconds: 500),
-          (_) => windowManager.setAlignment(Alignment.bottomCenter));
-    }
+  void _registerKeyboardListener() async {
+    _keyboardListenerId = getListenerBackend()!.addKeyboardListener(_onKeyEvent);
   }
 
-  void _stopMouseTracking() {
-    _mouseCheckTimer?.cancel();
+  void _onKeyEvent(RawKeyEvent event) {
+    final keyCode = event.logicalKey;
+    final isPressed = event is RawKeyDownEvent;
+    final isShiftPressed =
+        (_keyPressStates['Shift Left'] ?? false) || (_keyPressStates['Shift Right'] ?? false);
+    final key = getKeyFromKeyLabelShift(keyCode.keyLabel, isShiftPressed);
+
+    debugPrint(
+        'Key: ${key.padRight(10)}\tPressed: ${isPressed.toString().padRight(5)}\tShift: $isShiftPressed');
+
+    setState(() {
+      _keyPressStates[key] = isPressed;
+
+      if ((key == 'Shift Left' || key == 'Shift Right') && !isPressed) {
+        for (final entry in _keyPressStates.entries) {
+          if (isShiftedSymbol(entry.key) && entry.value) {
+            _keyPressStates[entry.key] = false;
+          }
+        }
+      }
+
+      if (isShiftedSymbol(key) && !isPressed) {
+        final unshiftedSymbol = getUnshiftedSymbol(key);
+        if (unshiftedSymbol != null) {
+          _keyPressStates[unshiftedSymbol] = false;
+        }
+      }
+
+      if ((key == '"') && !isPressed) {
+        _keyPressStates['\''] = false;
+      }
+    });
+
+    if (_forceHide) return;
+    if (_autoHideEnabled && !_isWindowVisible && isPressed) {
+      _fadeIn();
+    } else {
+      _resetAutoHideTimer();
+    }
+
+    if (_useUserLayout && _advancedSettingsEnabled) {
+      final activeLayer = _userLayers.where((l) => l.trigger == key);
+      for (final layout in activeLayer) {
+        if (layout.type == 'toggle' && isPressed) {
+          setState(() {
+            if (_keyboardLayout.name != layout.name) {
+              _keyboardLayout = layout;
+            } else if (_defaultUserLayout != null) {
+              _keyboardLayout = _defaultUserLayout!;
+            }
+          });
+        } else if (layout.type == 'held') {
+          if (isPressed && !_activeTriggers.contains(key)) {
+            setState(() {
+              _keyboardLayout = layout;
+              _activeTriggers.add(key);
+            });
+          } else if (!isPressed && _activeTriggers.contains(key)) {
+            setState(() {
+              if (_defaultUserLayout != null) {
+                _keyboardLayout = _defaultUserLayout!;
+              }
+              _activeTriggers.remove(key);
+            });
+          }
+        }
+      }
+    }
   }
 
   Future<void> _loadAllPreferences() async {
@@ -561,78 +627,6 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
     _resetAutoHideTimer();
   }
 
-  void _setupKeyListener() {
-    final receivePort = ReceivePort();
-    Isolate.spawn(setHook, receivePort.sendPort).then((_) {}).catchError((error) {
-      if (kDebugMode) {
-        print('Error spawning Isolate: $error');
-      }
-    });
-
-    receivePort.listen(_handleKeyEvent);
-  }
-
-  void _handleKeyEvent(dynamic message) {
-    if (message is! List) return;
-
-    if (message[0] is String) {
-      if (message[0] == 'session_unlock') {
-        setState(() => _keyPressStates.clear());
-      }
-      return;
-    }
-
-    if (message[0] is! int) return;
-
-    final keyCode = message[0] as int;
-    final isPressed = message[1] as bool;
-    final isShiftDown = message[2] as bool;
-    final key = getKeyFromKeyCodeShift(keyCode, isShiftDown);
-
-    if (kDebugMode) {
-      print(
-          'Key: ${key.padRight(10)}\tKeyCode: ${keyCode.toString().padRight(5)}\tPressed: ${isPressed.toString().padRight(5)}\tShift: $isShiftDown');
-    }
-    setState(() {
-      _keyPressStates[key] = isPressed;
-    });
-    if (_forceHide) return;
-    if (_autoHideEnabled && !_isWindowVisible && isPressed) {
-      _fadeIn();
-    } else {
-      _resetAutoHideTimer();
-    }
-
-    if (_useUserLayout && _advancedSettingsEnabled) {
-      final activeLayer = _userLayers.where((l) => l.trigger == key);
-      for (final layout in activeLayer) {
-        if (layout.type == 'toggle' && isPressed) {
-          setState(() {
-            if (_keyboardLayout.name != layout.name) {
-              _keyboardLayout = layout;
-            } else if (_defaultUserLayout != null) {
-              _keyboardLayout = _defaultUserLayout!;
-            }
-          });
-        } else if (layout.type == 'held') {
-          if (isPressed && !_activeTriggers.contains(key)) {
-            setState(() {
-              _keyboardLayout = layout;
-              _activeTriggers.add(key);
-            });
-          } else if (!isPressed && _activeTriggers.contains(key)) {
-            setState(() {
-              if (_defaultUserLayout != null) {
-                _keyboardLayout = _defaultUserLayout!;
-              }
-              _activeTriggers.remove(key);
-            });
-          }
-        }
-      }
-    }
-  }
-
   void _resetAutoHideTimer() {
     if (!_autoHideEnabled) return;
 
@@ -943,7 +937,6 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
   @override
   void onTrayIconRightMouseDown() {
     trayManager.popUpContextMenu(
-      // ignore: deprecated_member_use
       bringAppToFront: true,
     );
   }
@@ -1357,6 +1350,18 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
       }
       return null;
     });
+  }
+
+  void _startMouseTracking() {
+    _mouseCheckTimer?.cancel();
+    if (_keyboardFollowsMouse && _advancedSettingsEnabled) {
+      _mouseCheckTimer = Timer.periodic(const Duration(milliseconds: 500),
+          (_) => windowManager.setAlignment(Alignment.bottomCenter));
+    }
+  }
+
+  void _stopMouseTracking() {
+    _mouseCheckTimer?.cancel();
   }
 
   @override
