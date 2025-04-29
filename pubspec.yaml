@@ -40,12 +40,12 @@ flutter:
   fonts:
     - family: GeistMono
       fonts:
-        - asset: assets/fonts/GeistMono-Regular.ttf
-        - asset: assets/fonts/GeistMono-Medium.ttf
+        - asset: assets/fonts/GEISTMONO-REGULAR.ttf
+        - asset: assets/fonts/GEISTMONO-MEDIUM.ttf
           weight: 500
         - asset: assets/fonts/GeistMono-SemiBold.ttf
           weight: 600
-        - asset: assets/fonts/GeistMono-Bold.ttf
+        - asset: assets/fonts/GEISTMONO-BOLD.ttf
           weight: 700
     - family: Manrope
       fonts:
