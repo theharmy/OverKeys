@@ -70,7 +70,9 @@ void main(List<String> args) async {
       await windowManager.setAlwaysOnTop(true);
       await windowManager.setAsFrameless();
       await windowManager.setSize(Size(windowWidth, windowHeight));
-      await windowManager.setIgnoreMouseEvents(true);
+      if (!Platform.isLinux) {
+        await windowManager.setIgnoreMouseEvents(true);
+      }
       await windowManager.setAlignment(Alignment.bottomCenter);
       await windowManager.setSkipTaskbar(true);
       await windowManager.show();

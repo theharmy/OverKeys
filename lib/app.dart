@@ -733,10 +733,12 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
   Future<void> _setupTray() async {
     final String iconPath =
         Platform.isWindows ? 'assets/images/app_icon.ico' : 'assets/images/app_icon.png';
-    await Future.wait([
+    final futures = <Future<void>>[
       trayManager.setIcon(iconPath),
-      trayManager.setToolTip('OverKeys'),
-    ]);
+      if (!Platform.isLinux)
+        trayManager.setToolTip('OverKeys'),
+    ];
+    await Future.wait(futures);
     trayManager.setContextMenu(Menu(items: [
       MenuItem.checkbox(
         key: 'toggle_mouse_events',
