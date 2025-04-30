@@ -149,6 +149,7 @@ OverKeys can be installed through several methods:
    ```pwsh
    winget install AngeloConvento.OverKeys
    ```
+   <sub>Note: Please check if `winget` version is updated to the latest version as in the repo. Otherwise, use the [installer](https://github.com/conventoangelo/OverKeys/releases/latest) to have the latest version.</sub>
 
 2. **Using the Installer**
 
