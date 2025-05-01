@@ -37,7 +37,7 @@ When enabled, OverKeys will use the font specified in your configuration file fo
     ```
 
 6. Save the file
-7. Toggle the **Use custom font** option off then on again to apply changes
+7. Right-click the tray icon and click **Reload config** to apply changes
 
 ## Implementation Notes
 
@@ -45,9 +45,9 @@ When enabled, OverKeys will use the font specified in your configuration file fo
 - Font names are case-sensitive
 - If the specified font is not found, OverKeys will fall back to the default app font, i.e., Geist Mono
 - Custom fonts is applied to all layout types including alternative layouts and layers
+- Some fonts may not display certain special characters correctly
 
 ## Troubleshooting
 
 - If your custom font isn't displaying correctly, verify the font name exactly matches the installed font name
 - Make sure the font is properly installed on your system
-- Some fonts may not display certain special characters correctly

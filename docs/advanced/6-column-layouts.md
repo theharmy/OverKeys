@@ -28,7 +28,7 @@ The 6-column layout feature in OverKeys allows you to visualize 6-column split m
 4. Click **Open Config**
 5. In the JSON file, edit the `userLayouts` array and set the `defaultUserLayout` field:
 
-    ```json
+    ```jsonc
     {
         // other settings...
         "userLayouts": [
@@ -50,7 +50,7 @@ The 6-column layout feature in OverKeys allows you to visualize 6-column split m
     ```
 
 6. Save the file
-7. Toggle the **Use user layouts** option off then on again to apply change
+7. Right-click the tray icon and click **Reload config** to apply changes
 
 ## Implementation Notes
 

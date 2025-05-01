@@ -16,7 +16,6 @@ For a more native layer switching experience and synchronization, consider using
 4. Go to the **General** tab
 5. Toggle the **Enable advanced settings** option
 6. Toggle the **Use user layouts** option
-7. Restart OverKeys if needed
 
 ### Using Configuration File
 
@@ -66,7 +65,7 @@ For a more native layer switching experience and synchronization, consider using
    > **Note:** For best compatibility, use F13–F24 as triggers, or any key (not alias) listed in [Supported Keys](./supported-keys.md). The `type` field determines if the layer is active only while the trigger is held (`"held"`) or toggles on/off with each press (`"toggle"`).
 
 6. Save the file
-7. Toggle **Use user layouts** off then on again to apply changes
+7. Right-click the tray icon and click **Reload config** to apply changes
 
 ## Creating Custom Layers
 

@@ -17,7 +17,6 @@ The custom layout feature in OverKeys allows you to use your own keyboard layout
 4. Go to the **General** tab
 5. Toggle the **Enable advanced settings** option
 6. Toggle the **Use user layouts** option
-7. Restart OverKeys if needed
 
 ### Using Configuration File
 
@@ -46,7 +45,7 @@ The custom layout feature in OverKeys allows you to use your own keyboard layout
     ```
 
 6. Save the file
-7. Toggle **Use user layouts** off then on again to apply changes
+7. Right-click the tray icon and click **Reload config** to apply changes
 
 ## Default User Layouts
 
@@ -63,7 +62,7 @@ You can copy these layouts from the sample configuration to get started with you
 
 You can create custom layouts by adding them to the `userLayouts` section in the configuration file. Each layout requires a unique name and a keys array that defines the layout structure:
 
-```json
+```jsonc
 {
     "name": "MyCustomLayout",
     "keys": [
@@ -85,7 +84,7 @@ You can then set this layout as your default by updating the `defaultUserLayout`
 
 ```json
 {
-    "defaultUserLayout": "MyCustomLayout"
+ "defaultUserLayout": "MyCustomLayout"
 }
 ```
 
@@ -96,16 +95,16 @@ You can then set this layout as your default by updating the `defaultUserLayout`
 3. **Language Support**: Unicode characters are supported for international layouts but is only recommended for use on [alternative layouts](../advanced/alternative-layouts.md) as key press state of these characters won't be detected
 4. **Flexible Row Lengths**: Your custom layout doesn't need to follow standard row lengths. You can create layouts of any dimension. Here's an example of a compact 4×4 layout:
 
-    ```json
+    ```jsonc
     {
-    "name": "Compact4x4",
-    "keys": [
+        "name": "Compact4x4",
+        "keys": [
         [""], // Mandatory top row, show top row setting turned off
         ["1", "2", "3", "A"],
         ["4", "5", "6", "B"],
         ["7", "8", "9", "C"],
         ["*", "0", "#", "D"]
-    ]
+        ]
     }
     ```
 

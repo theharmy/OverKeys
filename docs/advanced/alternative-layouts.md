@@ -23,7 +23,6 @@ When enabled, OverKeys will display your primary layout with functional key high
 4. Go to the **General** tab
 5. Toggle the **Enable advanced settings** option
 6. Toggle the **Show alternative layout** option
-7. Restart OverKeys if needed
 
 ### Using Configuration File
 
@@ -40,7 +39,7 @@ When enabled, OverKeys will display your primary layout with functional key high
     ```
 
 6. Save the file
-7. Toggle the **Show alternative layout** option off then on again to apply changes
+7. Right-click the tray icon and click **Reload config** to apply changes
 
 ## Default Alternative Layouts
 
