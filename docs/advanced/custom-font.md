@@ -4,7 +4,6 @@ The custom font feature in OverKeys allows you to use your own font for the keyb
 
 - Better readability
 - Specific fonts for language support
-- Unique visual styling
 - Custom font preferences
 
 ## Overview

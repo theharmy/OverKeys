@@ -146,10 +146,11 @@ OverKeys can be installed through several methods:
 
 1. **Using Winget (Recommended)**
 
-   ```pwsh
-   winget install AngeloConvento.OverKeys
-   ```
-   <sub>Note: Please check if `winget` version is updated to the latest version as in the repo. Otherwise, use the [installer](https://github.com/conventoangelo/OverKeys/releases/latest) to have the latest version.</sub>
+    ```pwsh
+    winget install AngeloConvento.OverKeys
+    ```
+
+    <sub>Note: Please check if `winget` version is updated to the latest version as in the repo. Otherwise, use the [installer](https://github.com/conventoangelo/OverKeys/releases/latest) to have the latest version.</sub>
 
 2. **Using the Installer**
 
@@ -179,6 +180,7 @@ Complete documentation for OverKeys is available in the [docs](docs/index.md) fo
 
 ### Advanced Features
 
+- [Custom Font](/docs/advanced/custom-font.md)
 - [Custom Layouts](/docs/advanced/custom-layouts.md)
 - [Alternative Layouts](/docs/advanced/alternative-layouts.md)
 - [6-Column Layouts](/docs/advanced/6-column-layouts.md)
@@ -199,7 +201,7 @@ Contributions are what make the open-source community such an amazing place to l
 4. Push to the Branch (`git push origin feat/amazing-feature`).
 5. Open a Pull Request.
 
-### Top contributors:
+### Top contributors
 
 <a href="https://github.com/conventoangelo/OverKeys/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=conventoangelo/OverKeys" alt="contrib.rocks image" />

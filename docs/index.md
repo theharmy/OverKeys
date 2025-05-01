@@ -15,6 +15,7 @@ Welcome to the OverKeys documentation! This guide will help you get started with
 
 ## Advanced Features
 
+- [Custom Font](advanced/custom-font.md) - Use a system-installed font not found in the dropdown
 - [Custom Layouts](advanced/custom-layouts.md) - Create and use your own keyboard layouts
 - [Alternative Layout Toggle](advanced/alternative-layouts.md) - Quickly switch between different layouts
 - [6-Column Layouts](advanced/6-column-layouts.md) - Set up OverKeys for a 6-column split matrix keyboard
