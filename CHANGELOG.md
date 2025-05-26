@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.3.1](https://github.com/conventoangelo/OverKeys/compare/v0.3.0...v0.3.1) (2025-05-26)
+
+
+### ✨ Features
+
+* added greek, russian, and arabic (language) layouts ([63b369e](https://github.com/conventoangelo/OverKeys/commit/63b369e36107b21aeb8430ba6e0b2cc3160bf244))
+* added support for recognizing keypress states of foreign layouts([#122](https://github.com/conventoangelo/OverKeys/issues/122)) ([63b369e](https://github.com/conventoangelo/OverKeys/commit/63b369e36107b21aeb8430ba6e0b2cc3160bf244))
+* numpad keys now share state with regular keys ([#118](https://github.com/conventoangelo/OverKeys/issues/118)) ([0d2856f](https://github.com/conventoangelo/OverKeys/commit/0d2856f147e8cf1e819d64f69750a3c19c322920))
+
+
+### 🐛 Bug Fixes
+
+* update alias mappings to reflect numpad keys behavior change ([0d2856f](https://github.com/conventoangelo/OverKeys/commit/0d2856f147e8cf1e819d64f69750a3c19c322920))
+
+
+### 📚 Documentation
+
+* add 6-column split matrix sample layout ([2f84394](https://github.com/conventoangelo/OverKeys/commit/2f843944b2b51eb10029cd2839242b508e653bbf))
+* add custom font feature documentation ([f3ea673](https://github.com/conventoangelo/OverKeys/commit/f3ea67342d4c983165d23b576c3e44448c446de6))
+* update configuration instructions to use 'Reload config' instead of restarting OverKeys ([2c29063](https://github.com/conventoangelo/OverKeys/commit/2c290636374af138fdc292760d0ea118bf88b81d))
+* update docs to reflect numpad keys behavior change ([0d2856f](https://github.com/conventoangelo/OverKeys/commit/0d2856f147e8cf1e819d64f69750a3c19c322920))
+
 ## [0.3.0](https://github.com/conventoangelo/OverKeys/compare/v0.2.17...v0.3.0) (2025-04-28)
 
 
