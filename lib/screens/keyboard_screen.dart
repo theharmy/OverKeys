@@ -320,7 +320,8 @@ class KeyboardScreen extends StatelessWidget {
     );
 
     // Tactile Markers
-    if (rowIndex == 2 && (keyIndex == 3 || keyIndex == 6)) {
+    if (rowIndex == 2 && (keyIndex == 3 || keyIndex == 7)) {
+      //    if (rowIndex == 2 && (keyIndex == 3 || keyIndex == 6)) {
       keyWidget = Stack(
         alignment: showAltLayout && altLayout != null
             ? Alignment.center
@@ -459,19 +460,40 @@ class KeyboardScreen extends StatelessWidget {
     if (rowIndex == 0 && !use6ColLayout) {
       keyIndex -= 1;
     }
+    
+    // Adjust for angle mod and wide mod finger assignments
+    if (rowIndex == 1) {
+      // Top letter row: keep same 
+      keyIndex -= 0;
+    }
+    
+    if (rowIndex == 2) {
+      // Middle row row: shift left by 1 for keeping sym button
+      keyIndex -= 1;
+    }
+
+    if (rowIndex == 3 && keyIndex >3) {
+      // shift bottom letter row one to the left
+      keyIndex -= 1;
+    }
+    
     switch (keyIndex) {
+      case -2: 
+        return pinkyLeftColor;
       case -1:
         return pinkyLeftColor;
       case 0:
-        return pinkyLeftColor;
-      case 1:
         return ringLeftColor;
-      case 2:
+      case 1:
         return middleLeftColor;
-      case 3:
-      case 4:
+      case 2:
         return indexLeftColor;
+      case 3:
+        return indexLeftColor;
+      case 4:
+        return indexRightColor;
       case 5:
+        return indexRightColor;
       case 6:
         return indexRightColor;
       case 7:
@@ -479,10 +501,12 @@ class KeyboardScreen extends StatelessWidget {
       case 8:
         return ringRightColor;
       case 9:
+        return pinkyRightColor;
       case 10:
+        return pinkyRightColor;
       case 11:
       case 12:
-        return pinkyRightColor;
+      case 13:
       default:
         return keyColorNotPressed;
     }
